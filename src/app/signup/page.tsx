@@ -25,6 +25,8 @@ const Page = () => {
     confirmPassword: "",
     employess: ""
   });
+  const [showPassword, setShowPassword]=useState(false);
+  const [showConfirmPassword, setShowConfirmPassword]=useState(false)
 
    const handleLoading = () => {
     setLoading(true);
@@ -153,16 +155,25 @@ const Page = () => {
           <label className="block text-[14px] mb-1">
             Password <span className="text-red-500">*</span>
           </label>
-          <input
-            type="password"
+         <div className="relative w-full">
+           <input
+            type={showPassword ? "text" : "password"}
             className="w-full border-1 p-[10px] py-[5px] rounded-[5px]"
             name="password"
             value={data.password}
             onChange={handleChange}
           />
+          <button
+        type="button"
+        onClick={() => setShowPassword(!showPassword)}
+        className="absolute top-1/2 right-2 transform -translate-y-1/2 text-sm text-blue-600"
+      >
+        {showPassword ? "Hide" : "Show"}
+      </button>
+         </div>
         </div>
 
-        <div className="w-full mb-[1rem]">
+        <div className="w-full mb-[1rem] relative">
           <label className=" text-[14px] ">
             Confirm Password <span className="text-red-500">*</span>
           </label>
@@ -173,12 +184,19 @@ const Page = () => {
             <span className="text-green-400 text-sm mt-1 mx-3">Passwords matched</span>
           )}
           <input
-            type="password"
+            type={showConfirmPassword ? "text" : "password"}
             className="w-full border-1 p-[10px] py-[5px] rounded-[5px] mt-1"
             name="confirmPassword"
             value={data.confirmPassword}
             onChange={handleChange}
           />
+          <button
+        type="button"
+        onClick={() => setShowConfirmPassword(!showPassword)}
+        className="absolute top-1/2 right-2 transform -translate-y-1/2 text-sm text-blue-600 mt-3"
+      >
+        {showPassword ? "Hide" : "Show"}
+      </button>
           
         </div>
 

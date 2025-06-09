@@ -12,6 +12,7 @@ import Image from "next/image";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] =useState(false);
   const [loading, setLoading] = useState(false);
   const cookies = useCookies();
   const router = useRouter();
@@ -104,13 +105,22 @@ const Login = () => {
               Forgot Password
             </label>
           </div>
-          <input
-            type="password"
+          <div className="relative w-full">
+            <input
+            type={showPassword ? "text": "password"}
             className="border border-gray-500 rounded p-2 w-full outline-none"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+          <button
+        type="button"
+        onClick={() => setShowPassword(!showPassword)}
+        className="absolute top-1/2 right-2 transform -translate-y-1/2 text-sm text-blue-600"
+      >
+        {showPassword ? "Hide" : "Show"}
+      </button>
+          </div>
 
           <div className="w-full my-6">
             <button
