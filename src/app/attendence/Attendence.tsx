@@ -1,0 +1,711 @@
+"use client";
+import Link from "next/link";
+import React, { useEffect, useState } from "react";
+import { PiPencilSimpleLineFill } from "react-icons/pi";
+import Calender from "./Calender";
+import axios, { AxiosRequestConfig } from "axios";
+import { useCookies } from "next-client-cookies";
+// import Image from "next/image";
+
+const LeaveAttendance = () => {
+  const [visible, setVisible] = useState(false);
+  const [checkInbutton, setcheckInbutton] = useState(false);
+  const [checkOutbutton, setcheckOutbutton] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
+  // const [loading, setLoading] = useState(false);
+  const [attendanceRecords, setAttendanceRecords] = useState<any[]>([]);
+  const [leaveRequest, setLeaveRequest] = useState<LeaveRequest[]>([]);
+  const [leave, setLeave] = useState<LeaveData | null>(null);
+  const [checkedMap, setCheckedMap] = useState<{ [key: number]: boolean }>({});
+
+  const [formData, setFormData] = useState({
+    leaveTypeName: "",
+    fromDate: "",
+    toDate: "",
+    remarks: "",
+  });
+  const [editData, setEditData] = useState({
+    checkIn: "",
+    checkOut: "",
+    remarks: "",
+    leaveTypeName: "",
+    date: "",
+  });
+  const cookies = useCookies();
+
+  type LeaveRequest = {
+    date: string;
+    remarks: string;
+    leaveType: {
+      name: string;
+    };
+    fromDate: string;
+    toDate: string;
+    id: number;
+  };
+  interface LeaveType {
+    allocated: number;
+    remaining: number;
+    taken: number;
+    leaveTypeId: number;
+  }
+  interface LeaveData {
+    attendance: {
+      casual: {
+        remaining: LeaveType;
+        history: any[];
+      };
+      medical: {
+        remaining: LeaveType;
+        history: any[];
+      };
+      earned: {
+        remaining: LeaveType;
+        history: any[];
+      };
+    };
+  }
+
+  const handleChange = (e: any) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  useEffect(() => {
+    const handleGetcookies = async () => {
+      const storeCookies = cookies.get("token");
+      setToken(storeCookies ?? null);
+    };
+    handleGetcookies();
+  }, []);
+
+  function formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+
+  const handleButton = () => {
+    const today = formatDate(new Date());
+    attendanceRecords.forEach((item) => {
+      if (item.date === today) {
+        if (item.checkIn) {
+          setcheckInbutton(true);
+          setcheckOutbutton(false);
+        }
+
+        if (item.checkOut) {
+          setcheckOutbutton(true);
+        }
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (token && attendanceRecords.length > 0) {
+      handleButton();
+    }
+    const now = new Date();
+    const sixPM = new Date();
+    sixPM.setHours(18, 45, 0, 0);
+    const timeUntilSix = (sixPM as any) - (now as any);
+    if (timeUntilSix > 0) {
+      const timeout = setTimeout(() => {
+        // setDisable(false);
+      }, timeUntilSix);
+      return () => clearTimeout(timeout);
+    } else {
+      // setDisable(false);
+    }
+  }, [token, attendanceRecords]);
+
+  const handleData = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setEditData((prev) => ({ ...prev, [name]: value }));
+    // console.log(name, value);
+  };
+
+  const handleRefresh = () => {
+    window.location.reload();
+  };
+
+  //handlechecKIn Api
+  const handleCheckInApi = async () => {
+    if (!token) return console.error("Token not found");
+
+    try {
+      const config: AxiosRequestConfig = {
+        url: `${process.env.NEXT_PUBLIC_API_URL}/users/checkIn`,
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        data: {},
+      };
+
+      const response = await axios.request(config);
+      const newEntry = response.data.attendance;
+      console.log(newEntry);
+      setcheckInbutton(true);
+      handleRefresh();
+      setcheckOutbutton(false);
+      // console.log(response.data);
+    } catch (error) {
+      console.error("Check In API error:", error);
+    }
+  };
+
+  //CheckOut API
+  const handleCheckOutApi = async () => {
+    if (!token) return console.error("Token not found");
+    try {
+      const config: AxiosRequestConfig = {
+        url: `${process.env.NEXT_PUBLIC_API_URL}/users/checkOut`,
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        data: {},
+      };
+
+      await axios.request(config);
+      setcheckOutbutton(true);
+      handleRefresh();
+    } catch (error) {
+      console.error("Check Out API error:", error);
+    }
+  };
+
+  //Handle Attendence record
+  useEffect(() => {
+    const handleAttendance = async () => {
+      try {
+        const config: AxiosRequestConfig = {
+          url: `${process.env.NEXT_PUBLIC_API_URL}/users/getAttendanceDetails`,
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          data: {},
+        };
+        const response = await axios.request(config);
+        setAttendanceRecords(response.data.attendance);
+      } catch (error) {
+        console.error("Error fetching attendance:", error);
+      }
+    };
+    if (token) {
+      handleAttendance();
+      handleButton();
+    }
+  }, [token]);
+
+  const applyLeave = async () => {
+    if (!token) return console.error("Token not found");
+    try {
+      const config: AxiosRequestConfig = {
+        url: `${process.env.NEXT_PUBLIC_API_URL}/users/applyLeave`,
+        method: "POST",
+        maxBodyLength: Infinity,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        data: formData,
+      };
+
+      await axios.request(config);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const EditAttendance = async () => {
+    try {
+      const config: AxiosRequestConfig = {
+        url: `${process.env.NEXT_PUBLIC_API_URL}/users/upsertAttendance`,
+        method: "POST",
+        maxBodyLength: Infinity,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        data: editData,
+      };
+      const response = await axios.request(config);
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    const userLeave = async () => {
+      try {
+        const config: AxiosRequestConfig = {
+          url: `${process.env.NEXT_PUBLIC_API_URL}/users/getUserLeave`,
+          method: "POST",
+          maxBodyLength: Infinity,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          data: {},
+        };
+
+        const response = await axios.request(config);
+        setLeave(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    if (token) {
+      userLeave();
+    }
+  }, [token]);
+
+  function generateAllDatesOfMonth() {
+    const dates = [];
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth();
+
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    for (let day = 2; day <= daysInMonth + 1; day++) {
+      const date = new Date(year, month, day);
+      dates.push(date.toISOString().split("T")[0]);
+    }
+
+    return dates;
+  }
+  const allDates = generateAllDatesOfMonth();
+
+  useEffect(() => {
+    const getLeaveRequest = async () => {
+      try {
+        const config: AxiosRequestConfig = {
+          url: `${process.env.NEXT_PUBLIC_API_URL}/users/getMyRequest`,
+          method: "POST",
+          maxBodyLength: Infinity,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          data: {},
+        };
+        const response = await axios.request(config);
+        setLeaveRequest(response.data.requests);
+        // console.log(response.data.requests);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (token) {
+      getLeaveRequest();
+    }
+  }, [token]);
+
+  const arr: any = [];
+  useEffect(() => {
+    if (token && leaveRequest) {
+      try {
+        leaveRequest.forEach((item) => {
+          if (checkedMap[item.id]) {
+            arr.push(item.id);
+          }
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }, [token, leaveRequest, checkedMap]);
+
+  const cancelRequest = async () => {
+    try {
+      const config: AxiosRequestConfig = {
+        url: `${process.env.NEXT_PUBLIC_API_URL}/users/cancelRequest`,
+        method: "POST",
+        maxBodyLength: Infinity,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        data: {
+          requestId: arr,
+        },
+      };
+      await axios.request(config);
+      // console.log(response);
+      handleRefresh();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  return (
+    <>
+      <div className="text-[28px] font-bold text-white p-3">
+        Leave & Attendance
+      </div>
+
+      <div className="flex flex-col xl:flex-row w-full gap-6 bg-[#0f172a] relative text-white p-2 min-h-[88vh] overflow-y-auto">
+        <div className="flex-1 space-y-6">
+          <div className="bg-gray-800 p-4 rounded shadow">
+            <div className="flex justify-between items-center mb-4">
+              <div>
+                <h2 className="text-xl font-bold">
+                  Mark attendance for today (15 May, 2025)
+                </h2>
+                <p>
+                  You can mark your attendance for today. For any other day,
+                  please use the edit option below.
+                </p>
+              </div>
+              <div className="flex items-center justify-center flex-col">
+                <button
+                  className={`bg-blue-600 w-[110px] h-[36px] ms-1 rounded cursor-pointer mb-4
+                 ${checkInbutton ? "opacity-50 cursor-not-allowed" : ""}`}
+                  onClick={handleCheckInApi}
+                  disabled={checkInbutton}
+                >
+                  Check In
+                </button>
+
+                <button
+                  className={`bg-blue-600 w-[110px] h-[36px] ms-1 rounded cursor-pointer
+                  ${checkOutbutton ? "opacity-50 cursor-not-allowed" : ""}`}
+                  onClick={handleCheckOutApi}
+                  disabled={checkOutbutton}
+                >
+                  Check Out
+                </button>
+              </div>
+            </div>
+            <div className="bg-gray-700 w-full flex justify-center items-center rounded border-1 border-[#646161]">
+              <Calender />
+            </div>
+          </div>
+
+          <button
+            className="btn btn-primary"
+            onClick={() => setVisible((prev) => !prev)}
+          >
+            Apply leave
+          </button>
+
+          <div className="bg-gray-800 p-4 rounded shadow overflow-x-auto">
+            <h3 className="text-lg font-semibold mb-2">Attendance</h3>
+            <p className="mb-3">
+              To apply for leaves, or to update your attendance data, please
+              click on the edit button next to a date. To apply for many leaves
+              together, please
+              <Link href={""} className="text-blue-500 mx-2">
+                click here.
+              </Link>
+            </p>
+
+            <div className="w-full overflow-x-auto">
+              <table className="min-w-[600px] w-full text-sm text-left border-separate border-spacing-y-2">
+                <thead className="text-gray-400 bg-[#313A46] border-b border-gray-600">
+                  <tr>
+                    <th className="py-4 px-2">Date</th>
+                    <th>Status</th>
+                    <th>Check In</th>
+                    <th>Check Out</th>
+                    <th>Duration</th>
+                    <th>Remarks</th>
+                    <th>Edit</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {allDates.map((date, index) => {
+                    const record = attendanceRecords.find(
+                      (r) => r.date === date
+                    );
+                    return (
+                      <tr
+                        key={index}
+                        className="border-b border-gray-700 hover:bg-gray-700 font-semibold"
+                      >
+                        <td className="py-2 px-2">{date}</td>
+                        <td>{record?.status || "--"}</td>
+                        <td>{record?.checkIn || "--"}</td>
+                        <td>{record?.checkOut || "--"}</td>
+                        <td>{record?.duration || "--"}</td>
+                        <td>{record?.remarks || "--"}</td>
+                        <td>
+                          <button
+                            className="text-blue-400 font-bold hover:underline"
+                            onClick={() => {
+                              setOpen(true);
+                              setEditData({
+                                checkIn: record?.checkIn || "",
+                                checkOut: record?.checkOut || "",
+                                remarks: record?.remarks || "",
+                                leaveTypeName: record?.status || "",
+                                date: date,
+                              });
+                            }}
+                          >
+                            <PiPencilSimpleLineFill />
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="bg-gray-800 p-4 rounded shadow">
+            <h3 className="text-lg font-semibold mb-2">Open Requests</h3>
+
+            {leaveRequest.map((item, index) => {
+              return (
+                <>
+                  <div
+                    className="bg-gray-700 p-3 rounded text-sm flex justify-between items-center mb-2"
+                    key={index}
+                  >
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={!!checkedMap[item.id]}
+                        onChange={(e) =>
+                          setCheckedMap((prev) => ({
+                            ...prev,
+                            [item.id]: e.target.checked,
+                          }))
+                        }
+                      />
+                      You have requested {item.leaveType?.name} from
+                      {item?.fromDate} to {item?.toDate} Leave on {item.date}.
+                    </label>
+                    <span>{item.remarks}</span>
+                  </div>
+                </>
+              );
+            })}
+            <button
+              className="mt-2 bg-red-500 px-3 py-1 h-[36px] rounded text-sm cursor-pointer"
+              onClick={cancelRequest}
+            >
+              Delete Requests
+            </button>
+          </div>
+        </div>
+
+        <div className="w-full md:w-64 bg-gray-800 p-4 rounded shadow h-fit">
+          <h3 className="text-lg font-semibold mb-4">Your leave balance</h3>
+          <ul className="space-y-2 text-sm">
+            <li className="text-[#8d9bb0] text-1xl">
+              Casual Leave
+              <strong className="block text-white">
+                {leave
+                  ? `${leave?.attendance?.casual?.remaining?.remaining} / ${leave?.attendance?.casual?.remaining?.allocated}`
+                  : "--"}
+              </strong>
+            </li>
+            <li className="text-[#8d9bb0] text-1xl">
+              Medical Leave
+              <strong className="block text-white">
+                {leave
+                  ? `${leave?.attendance?.medical?.remaining?.remaining}/${leave?.attendance?.medical?.remaining?.allocated}`
+                  : "--"}
+              </strong>
+            </li>
+            <li className="text-[#8d9bb0] text-1xl">
+              Earned Leave
+              <strong className="block text-white">
+                {leave
+                  ? `${leave?.attendance?.earned?.remaining?.remaining}/${leave?.attendance?.earned?.remaining?.allocated}`
+                  : "--"}
+              </strong>
+            </li>
+          </ul>
+          <button className="mt-4 w-full bg-blue-600 py-2 rounded text-sm">
+            View Leaves Taken
+          </button>
+        </div>
+
+        {visible && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+            <div className="bg-gray-900 text-white rounded-2xl shadow-lg w-[90%] max-w-md p-6 relative border border-gray-700">
+              <button
+                className="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl"
+                onClick={() => setVisible(false)}
+              >
+                &times;
+              </button>
+              <h2 className="text-xl font-semibold mb-6">Apply for Leave</h2>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm mb-1">Status</label>
+                  <select
+                    name="leaveTypeName"
+                    value={formData.leaveTypeName}
+                    onChange={handleChange}
+                    className="w-full bg-gray-800 text-white rounded-lg border border-gray-600 px-2 py-2 focus:outline-none focus:ring focus:border-blue-500"
+                  >
+                    <option value="leaveTypeName">Select status</option>
+                    <option value="casual">Casual Leave</option>
+                    <option value="medical">Medical Leave</option>
+                    <option value="earned">Earned Leave</option>
+                    <option value="unpaid">Unpaid Leave</option>
+                  </select>
+                </div>
+
+                <div className="flex space-x-2">
+                  <div className="flex-1">
+                    <label className="block text-sm mb-1">From</label>
+                    <input
+                      type="date"
+                      name="fromDate"
+                      value={formData.fromDate}
+                      onChange={handleChange}
+                      className="w-full px-2 bg-gray-800 text-white rounded-lg border border-gray-600 py-2 focus:outline-none focus:ring focus:border-blue-500"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <label className="block text-sm mb-1">To</label>
+                    <input
+                      type="date"
+                      name="toDate"
+                      value={formData.toDate}
+                      onChange={handleChange}
+                      className="w-full px-2 bg-gray-800 text-white rounded-lg border border-gray-600 py-2 focus:outline-none focus:ring focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm mb-1">
+                    Remarks <span className="text-gray-400">(optional)</span>
+                  </label>
+                  <textarea
+                    name="remarks"
+                    value={formData.remarks}
+                    onChange={handleChange}
+                    className="w-full bg-gray-800 text-white rounded-lg border border-gray-600 px-2 py-2 resize-none focus:outline-none focus:ring focus:border-blue-500"
+                    rows={3}
+                    placeholder="Add any comments..."
+                  />
+                </div>
+
+                <div className="flex justify-end space-x-3 pt-4">
+                  <button
+                    className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg"
+                    onClick={() => setVisible(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+                    onClick={() => {
+                      applyLeave();
+                      setVisible(false);
+                    }}
+                  >
+                    Submit
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {open && (
+          <div className="fixed inset-0 bg-black/80  flex items-center justify-center z-50 md:m-[10px] cursor-pointer">
+            <div className="bg-[#1e293b] text-white w-full max-w-md rounded-xl shadow-lg p-6 m-[10px]">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold">Edit Attendance</h2>
+                <span className="text-sm text-gray-400">for 1st May 2025</span>
+              </div>
+              <label className="block text-sm font-medium mb-1">Status</label>
+              <select
+                className="w-full mb-4 p-2 bg-gray-700 rounded-md focus:outline-none"
+                name="leaveTypeName"
+                value={editData.leaveTypeName}
+                onChange={handleData}
+              >
+                <option value="status">Status</option>
+                <option value="present">Present</option>
+                <option value="earned">Earned Leave</option>
+                <option value="casual">Casual Leave</option>
+                <option value="medical">Medical Leave</option>
+              </select>
+
+              <label className="block text-sm font-medium mb-1">Check In</label>
+              <input
+                type="text"
+                name="checkIn"
+                value={editData.checkIn}
+                className="w-full mb-4 p-2 bg-gray-700 rounded-md focus:outline-none"
+                placeholder="hh:mm"
+                onChange={handleData}
+              />
+
+              <label className="block text-sm font-medium mb-1">
+                Check Out
+              </label>
+              <input
+                type="text"
+                name="checkOut"
+                value={editData.checkOut}
+                className="w-full mb-4 p-2 bg-gray-700 rounded-md focus:outline-none"
+                placeholder="hh:mm"
+                onChange={handleData}
+              />
+
+              <label className="block text-sm font-medium mb-1">Remarks</label>
+              <input
+                type="text"
+                className="w-full mb-6 p-2 bg-gray-700 rounded-md focus:outline-none"
+                placeholder="Go to home"
+                name="remarks"
+                value={editData.remarks}
+                onChange={handleData}
+              />
+
+              <div className="flex gap-3 justify-end">
+                <button className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-md cursor-pointer">
+                  Delete
+                </button>
+                <button
+                  className="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-md cursor-pointer"
+                  onClick={() => setOpen(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md cursor-pointer"
+                  onClick={() => {
+                    EditAttendance();
+                    setOpen(false);
+                    handleRefresh();
+                  }}
+                >
+                  Update
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </>
+  );
+};
+
+export default LeaveAttendance;
