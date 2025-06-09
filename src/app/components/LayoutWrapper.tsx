@@ -20,7 +20,7 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
           <Sidebar isOpen={isSidebarOpen} onClose={() => setSidebarOpen(false)} />
         )}
 
-        <main className="flex-1 overflow-auto p-4 w-full" suppressHydrationWarning>
+        <main className="flex-1 overflow-auto px-4 pb-4 w-full" suppressHydrationWarning>
           {children}
         </main>
       </div>
