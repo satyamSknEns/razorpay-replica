@@ -4,19 +4,8 @@ export default function MyPayPage() {
   return (
     <div className="min-h-screen bg-[#0f172a] text-white flex flex-col md:flex-row">
 
-      {/* <aside className="w-full md:w-64 bg-[#0f172a] border-r border-gray-700 p-6 space-y-6">
-        <h2 className="text-xl font-bold">My Pay</h2>
-        <nav className="space-y-2">
-          <button className="w-full text-left px-4 py-2 bg-blue-600 text-white rounded font-medium hover:bg-blue-700">
-            Pay Slips
-          </button>
-          <button className="w-full text-left px-4 py-2 hover:bg-gray-800 rounded">
-            Form 16
-          </button>
-        </nav>
-      </aside> */}
 
-      <main className="flex-1 p-6 space-y-8">
+      <main className="flex-1 px-6 pb-6 space-y-8">
         <h1 className="text-3xl font-bold">Pay Slips</h1>
 
         <div className="flex flex-col md:flex-row md:items-end md:justify-between space-y-4 md:space-y-0 md:space-x-4">
