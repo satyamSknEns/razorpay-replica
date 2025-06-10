@@ -1,11 +1,10 @@
 "use client";
-import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { PiPencilSimpleLineFill } from "react-icons/pi";
 import Calender from "./Calender";
 import axios, { AxiosRequestConfig } from "axios";
 import { useCookies } from "next-client-cookies";
-// import Image from "next/image";
+import { RxCross2 } from "react-icons/rx";
 
 const LeaveAttendance = () => {
   const [visible, setVisible] = useState(false);
@@ -13,11 +12,78 @@ const LeaveAttendance = () => {
   const [checkOutbutton, setcheckOutbutton] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
-  // const [loading, setLoading] = useState(false);
   const [attendanceRecords, setAttendanceRecords] = useState<any[]>([]);
   const [leaveRequest, setLeaveRequest] = useState<LeaveRequest[]>([]);
   const [leave, setLeave] = useState<LeaveData | null>(null);
-  const [checkedMap, setCheckedMap] = useState<{ [key: number]: boolean }>({});
+  // const [checkedMap, setCheckedMap] = useState<{ [key: number]: boolean }>({});
+  const [deleteReq, setDeleteReq] = useState(false);
+
+  const [checkedMap, setCheckedMap] = useState<{ [key: string]: boolean }>({});
+  const [formErrors, setFormErrors] = useState({
+    leaveTypeName: "",
+    fromDate: "",
+    toDate: "",
+    remarks: "",
+  });
+  const [editFormErrors, setEditFormErrors] = useState({
+    leaveTypeName: "",
+    remarks: "",
+    checkIn:"",
+    checkOut:""
+  });
+
+  const allSelected =
+    leaveRequest.length > 0 &&
+    leaveRequest.every((item) => checkedMap[item.id]);
+
+  const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newChecked = e.target.checked;
+    const newMap: Record<number, boolean> = {};
+    leaveRequest.forEach((item) => {
+      newMap[item.id] = newChecked;
+    });
+    setCheckedMap(newMap);
+  };
+
+  useEffect(() => {
+    const initMap: Record<number, boolean> = {};
+    leaveRequest.forEach((item) => {
+      initMap[item.id] = false;
+    });
+    setCheckedMap(initMap);
+  }, [leaveRequest]);
+
+  const validateEditForm = () => {
+    let valid = true;
+    const newError = {
+      leaveTypeName: "",
+      remarks: "",
+      checkIn:"",
+      checkOut:""
+    };
+    if (!editData.leaveTypeName || editData.leaveTypeName == "status") {
+      newError.leaveTypeName = "Status is required";
+      valid = false;
+    }
+    if (editData.leaveTypeName=="present") {
+       if (!editData.checkIn) {
+      newError.checkIn = "Check In is required";
+      valid = false;
+    }
+    if (!editData.checkOut) {
+      newError.checkOut = "Check Out is required";
+      valid = false;
+    }
+    }
+    else{
+       if (!editData.remarks) {
+      newError.remarks = "Remarks is required";
+      valid = false;
+    }
+    }   
+    setEditFormErrors(newError);
+    return valid;
+  };
 
   const [formData, setFormData] = useState({
     leaveTypeName: "",
@@ -25,6 +91,7 @@ const LeaveAttendance = () => {
     toDate: "",
     remarks: "",
   });
+
   const [editData, setEditData] = useState({
     checkIn: "",
     checkOut: "",
@@ -67,12 +134,46 @@ const LeaveAttendance = () => {
     };
   }
 
+  const validateForm = () => {
+    let valid = true;
+    const newErrors = {
+      leaveTypeName: "",
+      fromDate: "",
+      toDate: "",
+      remarks: "",
+    };
+
+    if (!formData.leaveTypeName) {
+      newErrors.leaveTypeName = "Leave type is required";
+      valid = false;
+    }
+
+    if (!formData.fromDate) {
+      newErrors.fromDate = "From date is required";
+      valid = false;
+    }
+
+    if (!formData.toDate) {
+      newErrors.toDate = "To date is required";
+      valid = false;
+    }
+
+    setFormErrors(newErrors);
+    return valid;
+  };
+
   const handleChange = (e: any) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
+    if (formErrors[name as keyof typeof formErrors]) {
+      setFormErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }));
+    }
   };
 
   useEffect(() => {
@@ -124,12 +225,32 @@ const LeaveAttendance = () => {
     }
   }, [token, attendanceRecords]);
 
+  // const handleData = (
+  //   e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  // ) => {
+  //   const { name, value } = e.target;
+  //   setEditData((prev) => ({ ...prev, [name]: value }));
+  // };
+
   const handleData = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setEditData((prev) => ({ ...prev, [name]: value }));
-    // console.log(name, value);
+
+    if (editFormErrors[name as keyof typeof editFormErrors]) {
+      setEditFormErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }));
+    }
+
+    if (formErrors[name as keyof typeof formErrors]) {
+      setFormErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }));
+    }
   };
 
   const handleRefresh = () => {
@@ -156,7 +277,6 @@ const LeaveAttendance = () => {
       setcheckInbutton(true);
       handleRefresh();
       setcheckOutbutton(false);
-      // console.log(response.data);
     } catch (error) {
       console.error("Check In API error:", error);
     }
@@ -208,6 +328,10 @@ const LeaveAttendance = () => {
   }, [token]);
 
   const applyLeave = async () => {
+    if (!validateForm()) {
+      return;
+    }
+
     if (!token) return console.error("Token not found");
     try {
       const config: AxiosRequestConfig = {
@@ -222,12 +346,18 @@ const LeaveAttendance = () => {
       };
 
       await axios.request(config);
+      setVisible(false);
+      handleRefresh();
     } catch (error) {
       console.log(error);
     }
   };
 
   const EditAttendance = async () => {
+    if (!validateEditForm()) {
+      return;
+    }
+
     try {
       const config: AxiosRequestConfig = {
         url: `${process.env.NEXT_PUBLIC_API_URL}/users/upsertAttendance`,
@@ -241,6 +371,8 @@ const LeaveAttendance = () => {
       };
       const response = await axios.request(config);
       console.log(response.data);
+      setOpen(false);
+      handleRefresh();
     } catch (error) {
       console.log(error);
     }
@@ -262,7 +394,6 @@ const LeaveAttendance = () => {
 
         const response = await axios.request(config);
         setLeave(response.data);
-        console.log(response.data);
       } catch (error) {
         console.log(error);
       }
@@ -304,7 +435,6 @@ const LeaveAttendance = () => {
         };
         const response = await axios.request(config);
         setLeaveRequest(response.data.requests);
-        // console.log(response.data.requests);
       } catch (error) {
         console.log(error);
       }
@@ -331,6 +461,11 @@ const LeaveAttendance = () => {
   }, [token, leaveRequest, checkedMap]);
 
   const cancelRequest = async () => {
+    const selectedIds = Object.keys(checkedMap).filter((id) => checkedMap[id]);
+    if (selectedIds.length === 0) {
+      alert("No leave request selected.");
+      return;
+    }
     try {
       const config: AxiosRequestConfig = {
         url: `${process.env.NEXT_PUBLIC_API_URL}/users/cancelRequest`,
@@ -345,7 +480,6 @@ const LeaveAttendance = () => {
         },
       };
       await axios.request(config);
-      // console.log(response);
       handleRefresh();
     } catch (error) {
       console.log(error);
@@ -403,15 +537,69 @@ const LeaveAttendance = () => {
             Apply leave
           </button>
 
-          <div className="bg-gray-800 p-4 rounded shadow overflow-x-auto">
+          {leaveRequest.length > 0 && (
+            <div className="bg-gray-800 p-4 rounded shadow ">
+              <h3 className="text-lg font-semibold mb-2">Open Requests</h3>
+              {leaveRequest.length > 0 && (
+                <div className="p-3 ">
+                  <input
+                    type="checkbox"
+                    id="select-all"
+                    checked={allSelected}
+                    onChange={handleSelectAll}
+                    disabled={leaveRequest.length === 0}
+                  />
+                  <label htmlFor="" className="ms-3">
+                    Select All
+                  </label>
+                </div>
+              )}
+
+              {leaveRequest.map((item, index) => {
+                return (
+                  <div
+                    className="bg-gray-700 p-3 rounded text-sm flex justify-between items-center mb-2"
+                    key={index}
+                  >
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={!!checkedMap[item.id]}
+                        onChange={(e) =>
+                          setCheckedMap((prev) => ({
+                            ...prev,
+                            [item.id]: e.target.checked,
+                          }))
+                        }
+                      />
+                      You have requested {item.leaveType?.name}{" "}
+                      <span>from</span>
+                      {item?.fromDate} to {item?.toDate} Leave on {item.date}.
+                    </label>
+                    <span>{item.remarks}</span>
+                  </div>
+                );
+              })}
+              <button
+                className={`mt-2 bg-red-500 px-3 py-1 h-[36px] rounded text-sm cursor-pointer ${
+                  leaveRequest.length === 0
+                    ? "opacity-50 cursor-not-allowed"
+                    : ""
+                }`}
+                onClick={cancelRequest}
+                disabled={leaveRequest.length === 0}
+              >
+                Delete Requests
+              </button>
+            </div>
+          )}
+
+          <div className="bg-gray-800 p-4 rounded shadow overflow-x-auto ">
             <h3 className="text-lg font-semibold mb-2">Attendance</h3>
             <p className="mb-3 text-gray-400 text-base">
               To apply for leaves, or to update your attendance data, please
               click on the edit button next to a date. To apply for many leaves
-              together, please
-              <Link href={""} className="text-blue-500 mx-2">
-                click here.
-              </Link>
+              together
             </p>
 
             <div className="w-full overflow-x-auto">
@@ -445,7 +633,7 @@ const LeaveAttendance = () => {
                         <td>{record?.remarks || "--"}</td>
                         <td>
                           <button
-                            className="text-blue-400 font-bold hover:underline"
+                            className="text-blue-400 font-bold hover:underline p-2 cursor-pointer"
                             onClick={() => {
                               setOpen(true);
                               setEditData({
@@ -466,43 +654,6 @@ const LeaveAttendance = () => {
                 </tbody>
               </table>
             </div>
-          </div>
-
-          <div className="bg-gray-800 p-4 rounded shadow">
-            <h3 className="text-lg font-semibold mb-2">Open Requests</h3>
-
-            {leaveRequest.map((item, index) => {
-              return (
-                <>
-                  <div
-                    className="bg-gray-700 p-3 rounded text-sm flex justify-between items-center mb-2"
-                    key={index}
-                  >
-                    <label className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        checked={!!checkedMap[item.id]}
-                        onChange={(e) =>
-                          setCheckedMap((prev) => ({
-                            ...prev,
-                            [item.id]: e.target.checked,
-                          }))
-                        }
-                      />
-                      You have requested {item.leaveType?.name} from
-                      {item?.fromDate} to {item?.toDate} Leave on {item.date}.
-                    </label>
-                    <span>{item.remarks}</span>
-                  </div>
-                </>
-              );
-            })}
-            <button
-              className="mt-2 bg-red-500 px-3 py-1 h-[36px] rounded text-sm cursor-pointer"
-              onClick={cancelRequest}
-            >
-              Delete Requests
-            </button>
           </div>
         </div>
 
@@ -534,7 +685,7 @@ const LeaveAttendance = () => {
               </span>
             </li>
           </ul>
-          <button className="mt-4 w-full bg-blue-600 py-2 rounded text-sm">
+          <button className="mt-4 w-full bg-blue-600 py-2 rounded text-sm cursor-pointer">
             View Leaves Taken
           </button>
         </div>
@@ -559,12 +710,17 @@ const LeaveAttendance = () => {
                     onChange={handleChange}
                     className="w-full bg-gray-800 text-white rounded-lg border border-gray-600 px-2 py-2 focus:outline-none focus:ring focus:border-blue-500"
                   >
-                    <option value="leaveTypeName">Select status</option>
+                    <option value="">Select status</option>
                     <option value="casual">Casual Leave</option>
                     <option value="medical">Medical Leave</option>
                     <option value="earned">Earned Leave</option>
                     <option value="unpaid">Unpaid Leave</option>
                   </select>
+                  {formErrors.leaveTypeName && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {formErrors.leaveTypeName}
+                    </p>
+                  )}
                 </div>
 
                 <div className="flex space-x-2">
@@ -577,6 +733,11 @@ const LeaveAttendance = () => {
                       onChange={handleChange}
                       className="w-full px-2 bg-gray-800 text-white rounded-lg border border-gray-600 py-2 focus:outline-none focus:ring focus:border-blue-500"
                     />
+                    {formErrors.fromDate && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {formErrors.fromDate}
+                      </p>
+                    )}
                   </div>
                   <div className="flex-1">
                     <label className="block text-sm mb-1">To</label>
@@ -587,6 +748,11 @@ const LeaveAttendance = () => {
                       onChange={handleChange}
                       className="w-full px-2 bg-gray-800 text-white rounded-lg border border-gray-600 py-2 focus:outline-none focus:ring focus:border-blue-500"
                     />
+                    {formErrors.toDate && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {formErrors.toDate}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -594,6 +760,7 @@ const LeaveAttendance = () => {
                   <label className="block text-sm mb-1">
                     Remarks <span className="text-gray-400">(optional)</span>
                   </label>
+
                   <textarea
                     name="remarks"
                     value={formData.remarks}
@@ -602,6 +769,11 @@ const LeaveAttendance = () => {
                     rows={3}
                     placeholder="Add any comments..."
                   />
+                  {formErrors.remarks && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {formErrors.remarks}
+                    </p>
+                  )}
                 </div>
 
                 <div className="flex justify-end space-x-3 pt-4">
@@ -614,8 +786,9 @@ const LeaveAttendance = () => {
                   <button
                     className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
                     onClick={() => {
-                      applyLeave();
-                      setVisible(false);
+                      if (validateForm()) {
+                        applyLeave();
+                      }
                     }}
                   >
                     Submit
@@ -635,7 +808,7 @@ const LeaveAttendance = () => {
               </div>
               <label className="block text-sm font-medium mb-1">Status</label>
               <select
-                className="w-full mb-4 p-2 bg-gray-700 rounded-md focus:outline-none"
+                className="w-full mb-2 p-2 bg-gray-700 rounded-md focus:outline-none"
                 name="leaveTypeName"
                 value={editData.leaveTypeName}
                 onChange={handleData}
@@ -647,15 +820,26 @@ const LeaveAttendance = () => {
                 <option value="medical">Medical Leave</option>
               </select>
 
+              {editFormErrors.leaveTypeName && (
+                <p className="text-red-500 text-xs">
+                  {editFormErrors.leaveTypeName}
+                </p>
+              )}
+
               <label className="block text-sm font-medium mb-1">Check In</label>
               <input
                 type="text"
                 name="checkIn"
-                value={editData.checkIn}
+                value={editData.checkIn.slice(0,5)}
                 className="w-full mb-4 p-2 bg-gray-700 rounded-md focus:outline-none"
                 placeholder="hh:mm"
                 onChange={handleData}
               />
+              {editFormErrors.checkIn && (
+                <p className="text-red-500 text-xs">
+                  {editFormErrors.checkIn}
+                </p>
+              )}
 
               <label className="block text-sm font-medium mb-1">
                 Check Out
@@ -663,24 +847,34 @@ const LeaveAttendance = () => {
               <input
                 type="text"
                 name="checkOut"
-                value={editData.checkOut}
+                value={editData.checkOut.slice(0,5)}
                 className="w-full mb-4 p-2 bg-gray-700 rounded-md focus:outline-none"
                 placeholder="hh:mm"
                 onChange={handleData}
               />
+              {editFormErrors.checkOut && (
+                <p className="text-red-500 text-xs">
+                  {editFormErrors.checkOut}
+                </p>
+              )}
 
               <label className="block text-sm font-medium mb-1">Remarks</label>
               <input
                 type="text"
-                className="w-full mb-6 p-2 bg-gray-700 rounded-md focus:outline-none"
+                className="w-full mb-2 p-2 bg-gray-700 rounded-md focus:outline-none"
                 placeholder="Go to home"
                 name="remarks"
                 value={editData.remarks}
                 onChange={handleData}
               />
+              {editFormErrors.remarks && (
+                <p className="text-red-500 text-xs ">
+                  {editFormErrors.remarks}
+                </p>
+              )}
 
               <div className="flex gap-3 justify-end">
-                <button className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-md cursor-pointer">
+                <button className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-md cursor-pointer" onClick={()=>setDeleteReq(true)}>
                   Delete
                 </button>
                 <button
@@ -693,11 +887,40 @@ const LeaveAttendance = () => {
                   className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md cursor-pointer"
                   onClick={() => {
                     EditAttendance();
-                    setOpen(false);
-                    handleRefresh();
                   }}
                 >
                   Update
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {deleteReq && (
+          <div className="fixed inset-0 bg-black/80  flex items-center justify-center z-50 md:m-[10px] cursor-pointer">
+            <div className="bg-[#1e293b] text-white w-full max-w-md rounded-xl shadow-lg  m-[10px]">
+              <div className="flex justify-between items-center mb-2 border-b-1 border-gray-300 p-4">
+                <h2 className="text-xl font-semibold">
+                  Delete Attendance Records
+                </h2>
+                <button onClick={()=>setDeleteReq(false)}>
+                  <RxCross2 />
+                </button>
+              </div>
+
+              <div className="text-[14px] font-semibold my-3 border-b-1 border-gray-300 p-4">
+                Are you sure you want to delete this attendance record?
+              </div>
+
+              <div className="flex gap-3 justify-end p-4">
+                <button
+                  className="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-md cursor-pointer"
+                  onClick={() => setDeleteReq(false)}
+                >
+                  No
+                </button>
+                <button className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-md cursor-pointer">
+                  Yes
                 </button>
               </div>
             </div>
