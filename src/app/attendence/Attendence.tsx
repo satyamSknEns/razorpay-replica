@@ -354,7 +354,7 @@ const LeaveAttendance = () => {
 
   return (
     <>
-      <div className="text-[28px] font-bold text-white p-3">
+      <div className="text-[28px] font-bold text-white px-3 pb-1">
         Leave & Attendance
       </div>
 
@@ -363,17 +363,17 @@ const LeaveAttendance = () => {
           <div className="bg-gray-800 p-4 rounded shadow">
             <div className="flex justify-between items-center mb-4">
               <div>
-                <h2 className="text-xl font-bold">
+                <h2 className="text-xl font-semibold mb-2">
                   Mark attendance for today (15 May, 2025)
                 </h2>
-                <p>
+                <p className="text-gray-400">
                   You can mark your attendance for today. For any other day,
                   please use the edit option below.
                 </p>
               </div>
-              <div className="flex items-center justify-center flex-col">
+              <div className="flex items-center justify-center gap-3 text-sm text-gray-300">
                 <button
-                  className={`bg-blue-600 w-[110px] h-[36px] ms-1 rounded cursor-pointer mb-4
+                  className={`bg-blue-600 px-3 py-1.5 rounded cursor-pointer whitespace-nowrap
                  ${checkInbutton ? "opacity-50 cursor-not-allowed" : ""}`}
                   onClick={handleCheckInApi}
                   disabled={checkInbutton}
@@ -382,7 +382,7 @@ const LeaveAttendance = () => {
                 </button>
 
                 <button
-                  className={`bg-blue-600 w-[110px] h-[36px] ms-1 rounded cursor-pointer
+                  className={`bg-blue-600 px-3 py-1.5 rounded cursor-pointer whitespace-nowrap
                   ${checkOutbutton ? "opacity-50 cursor-not-allowed" : ""}`}
                   onClick={handleCheckOutApi}
                   disabled={checkOutbutton}
@@ -391,7 +391,7 @@ const LeaveAttendance = () => {
                 </button>
               </div>
             </div>
-            <div className="bg-gray-700 w-full flex justify-center items-center rounded border-1 border-[#646161]">
+            <div className="bg-gray-700 w-full rounded border-2 border-[#374457] overflow-x-auto">
               <Calender />
             </div>
           </div>
@@ -405,7 +405,7 @@ const LeaveAttendance = () => {
 
           <div className="bg-gray-800 p-4 rounded shadow overflow-x-auto">
             <h3 className="text-lg font-semibold mb-2">Attendance</h3>
-            <p className="mb-3">
+            <p className="mb-3 text-gray-400 text-base">
               To apply for leaves, or to update your attendance data, please
               click on the edit button next to a date. To apply for many leaves
               together, please
@@ -438,7 +438,7 @@ const LeaveAttendance = () => {
                         className="border-b border-gray-700 hover:bg-gray-700 font-semibold"
                       >
                         <td className="py-2 px-2">{date}</td>
-                        <td>{record?.status || "--"}</td>
+                        <td className="capitalize">{record?.status || "--"}</td>
                         <td>{record?.checkIn || "--"}</td>
                         <td>{record?.checkOut || "--"}</td>
                         <td>{record?.duration || "--"}</td>
@@ -509,29 +509,29 @@ const LeaveAttendance = () => {
         <div className="w-full md:w-64 bg-gray-800 p-4 rounded shadow h-fit">
           <h3 className="text-lg font-semibold mb-4">Your leave balance</h3>
           <ul className="space-y-2 text-sm">
-            <li className="text-[#8d9bb0] text-1xl">
+            <li className="text-gray-300 text-lg italic">
               Casual Leave
-              <strong className="block text-white">
+              <span className="block text-gray-400 text-sm -mt-0.5 not-italic">
                 {leave
                   ? `${leave?.attendance?.casual?.remaining?.remaining} / ${leave?.attendance?.casual?.remaining?.allocated}`
                   : "--"}
-              </strong>
+              </span>
             </li>
-            <li className="text-[#8d9bb0] text-1xl">
+            <li className="text-gray-300 text-lg italic">
               Medical Leave
-              <strong className="block text-white">
+              <span className="block text-gray-400 text-sm -mt-0.5 not-italic">
                 {leave
                   ? `${leave?.attendance?.medical?.remaining?.remaining}/${leave?.attendance?.medical?.remaining?.allocated}`
                   : "--"}
-              </strong>
+              </span>
             </li>
-            <li className="text-[#8d9bb0] text-1xl">
+            <li className="text-gray-300 text-lg italic">
               Earned Leave
-              <strong className="block text-white">
+              <span className="block text-gray-400 text-sm -mt-0.5 not-italic">
                 {leave
                   ? `${leave?.attendance?.earned?.remaining?.remaining}/${leave?.attendance?.earned?.remaining?.allocated}`
                   : "--"}
-              </strong>
+              </span>
             </li>
           </ul>
           <button className="mt-4 w-full bg-blue-600 py-2 rounded text-sm">

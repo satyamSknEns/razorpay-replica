@@ -205,7 +205,7 @@ const PayslipDocument = () => {
                                           marginLeft:"-15px"
                                         }}
                                       >
-                                        {/* Table Header */}
+                                       
                                         <View
                                           style={{
                                             flexDirection: "row",
@@ -222,7 +222,6 @@ const PayslipDocument = () => {
                                           <Text style={{ flex: 1, textAlign: "right" }}>Total Amount</Text>
                                         </View>
 
-                                        {/* Summary Row */}
                                         <View
                                           style={{
                                             flexDirection: "row",
@@ -311,7 +310,7 @@ const PayslipDocument = () => {
                                           marginLeft:"-15px",
                                         }}
                                       >
-                                        {/* Table Header */}
+
                                         <View
                                           style={{
                                             flexDirection: "row",
@@ -327,8 +326,6 @@ const PayslipDocument = () => {
                                           <Text style={{ flex: 1, textAlign: "center" }}>Monthly</Text>
                                           <Text style={{ flex: 1, textAlign: "right" }}>Total Amount</Text>
                                         </View>
-
-                                        {/* Summary Row */}
                                         <View
                                           style={{
                                             flexDirection: "row",
@@ -347,7 +344,6 @@ const PayslipDocument = () => {
                                   </View>
                           </View>
         </View>
-
 
         <View style={{ marginTop: "10px", padding:"0 24px" }}>
           <View
@@ -423,7 +419,7 @@ const PayslipDocument = () => {
                   marginLeft:"-15px",
                 }}
               >
-                {/* Table Header */}
+
                 <View
                   style={{
                     flexDirection: "row",
@@ -441,8 +437,6 @@ const PayslipDocument = () => {
                   <Text style={{ flex: 1, textAlign: "center" }}>Exempted</Text>
                   <Text style={{ flex: 1, textAlign: "right" }}>Taxable</Text>
                 </View>
-
-                {/* Summary Row */}
                 <View
                   style={{
                     flexDirection: "row",
@@ -531,7 +525,6 @@ const PayslipDocument = () => {
                   marginLeft:"-15px"
                 }}
               >
-                {/* Table Header */}
                 <View
                   style={{
                     flexDirection: "row",
@@ -589,8 +582,6 @@ const PayslipDocument = () => {
                   </Text>
                   <Text style={{ flex: 1, textAlign: "right" }}>0</Text>
                 </View>
-
-                {/* Summary Row */}
                 <View
                   style={{
                     flexDirection: "row",
@@ -681,7 +672,6 @@ const PayslipDocument = () => {
                   marginLeft:"-15px"
                 }}
               >
-                {/* Table Header */}
                 <View
                   style={{
                     flexDirection: "row",
@@ -739,8 +729,6 @@ const PayslipDocument = () => {
                   </Text>
                   <Text style={{ flex: 1, textAlign: "right" }}>0</Text>
                 </View>
-
-                {/* Summary Row */}
                 <View
                   style={{
                     flexDirection: "row",
@@ -805,7 +793,6 @@ const PayslipDocument = () => {
                   marginTop: "10px",
                 }}
               >
-                {/* Table Header */}
                 <View
                   style={{
                     flexDirection: "row",
@@ -902,7 +889,6 @@ const PayslipDocument = () => {
                 </Text>
               </View>
              <View style={{ width: "100%", marginTop: "10px" }}>
-  {/* First Row */}
   <View
     style={{
       flexDirection: "row",
@@ -923,15 +909,13 @@ const PayslipDocument = () => {
       )
     )}
   </View>
-
-  {/* Second Row with Background Gradient (simulated as solid for PDF) */}
   <View
     style={{
       flexDirection: "row",
       justifyContent: "space-between",
       paddingHorizontal: 8,
       paddingVertical: 4,
-      backgroundColor: "rgba(176, 191, 252, 0.08)", // #b0bffc2b approximation
+      backgroundColor: "rgba(176, 191, 252, 0.08)",
     }}
   >
     {["April", "May", "June *", "July *", "August *", "September *"].map(
