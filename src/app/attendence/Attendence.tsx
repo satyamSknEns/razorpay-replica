@@ -494,8 +494,8 @@ const LeaveAttendance = () => {
 
       <div className="flex flex-col xl:flex-row w-full gap-6 bg-[#0f172a] relative text-white p-2 min-h-[88vh] overflow-y-auto">
         <div className="flex-1 space-y-6">
-          <div className="bg-gray-800 p-4 rounded shadow">
-            <div className="flex justify-between items-center mb-4">
+          <div className="">
+            <div className="flex justify-between items-center mb-4 bg-gray-800 p-4 rounded shadow flex-wrap gap-4">
               <div>
                 <h2 className="text-xl font-semibold mb-2">
                   Mark attendance for today (15 May, 2025)
@@ -525,13 +525,13 @@ const LeaveAttendance = () => {
                 </button>
               </div>
             </div>
-            <div className="bg-gray-700 w-full rounded border-2 border-[#374457] overflow-x-auto">
+            <div className="w-full overflow-x-auto">
               <Calender />
             </div>
           </div>
 
           <button
-            className="btn btn-primary"
+            className="btn btn-primary bg-blue-600"
             onClick={() => setVisible((prev) => !prev)}
           >
             Apply leave
