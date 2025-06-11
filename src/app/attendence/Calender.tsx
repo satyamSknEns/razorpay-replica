@@ -94,18 +94,28 @@ export default function Calender() {
               </button>
             </div>
         </div>
-<div className='border border-[#2d3a4b] bg-gray-800 rounded py-4'>
-      <div className="grid grid-cols-7 text-center font-semibold mb-2">
-        {daysShort.map((day) => (
-          <div key={day} className='py-2 mx-2'>{day}</div>
-        ))}
-      </div>
+      <div className='border border-[#2d3a4b] bg-gray-800 rounded py-4'>
+          <div className="grid grid-cols-7 text-center font-semibold mb-2">
+            {daysShort.map((day) => (
+              <div key={day} className='py-2 mx-2'>{day}</div>
+            ))}
+          </div>
 
       <div className="grid grid-cols-7 gap-1">
         {days.map((date, i) => {
           const isCurrentMonth = date.month() === currentDate.month()
           const isTodayDate = date.isSame(today, 'day')
+          const isSunday=date.day()===0;
           const isSelected = date.isSame(selectedDate, 'day')
+          const isSaturday = date.day() === 6;
+            const allMonthSaturdays = days.filter(
+              d =>d.day() === 6 &&
+                d.month() === date.month() &&
+                d.year() === date.year()
+            );
+
+            const saturdayIndex = allMonthSaturdays.findIndex(d => d.isSame(date, 'day')) + 1;
+            const isRedDate = isSaturday && [1, 3, 5].includes(saturdayIndex);
 
           return (
             <div
@@ -114,11 +124,9 @@ export default function Calender() {
               className={classNames(
                 'h-10 flex items-center justify-center text-sm cursor-pointer transition duration-150',
                 {
-                  'border-1 border-gray-600 rounded text-white': isSelected,
+                  'bg-blue-800 rounded text-white': isSelected,
                   'bg-gray-700 text-white rounded': isTodayDate && !isSelected,
-                //   'bg-red-900 text-white': isCurrentMonth && date.date() <= 2 && date.day() < 5,
-                //   'bg-yellow-700 text-white': isCurrentMonth && date.date() === 10,
-                //   'text-green-500': isCurrentMonth && !isSelected && !isTodayDate,
+                  'text-green-600 font-semibold': (isSunday || isRedDate) && !isTodayDate && !isSelected,
                   'text-blue-600': !isCurrentMonth,
                 }
               )}
