@@ -647,9 +647,9 @@ const LeaveAttendance = () => {
                       >
                         <td className="py-2 px-2">{date}</td>
                         <td className="capitalize">{record?.status || "--"}</td>
-                        <td>{record?.checkIn.slice(0,5) || "--"}</td>
-                        <td>{record?.checkOut.slice(0,5) || "--"}</td>
-                        <td>{record?.duration.slice(0,5) || "--"}</td>
+                        <td>{record?.checkIn?.slice(0,5) || "--"}</td>
+                        <td>{record?.checkOut?.slice(0,5) || "--"}</td>
+                        <td>{record?.duration?.slice(0,5) || "--"}</td>
                         <td>{record?.remarks || "--"}</td>
                         <td>
                           <button
@@ -878,7 +878,7 @@ const LeaveAttendance = () => {
               <input
                 type="text"
                 name="checkIn"
-                value={editData.checkIn.slice(0, 5)}
+                value={editData.checkIn?.slice(0, 5)}
                 className="w-full mb-4 p-2 bg-gray-700 rounded-md focus:outline-none"
                 placeholder="hh:mm"
                 onChange={handleData}
@@ -893,7 +893,7 @@ const LeaveAttendance = () => {
               <input
                 type="text"
                 name="checkOut"
-                value={editData.checkOut.slice(0, 5)}
+                value={editData.checkOut?.slice(0, 5)}
                 className="w-full mb-4 p-2 bg-gray-700 rounded-md focus:outline-none"
                 placeholder="hh:mm"
                 onChange={handleData}
