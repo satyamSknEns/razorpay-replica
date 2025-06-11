@@ -225,6 +225,7 @@ const LeaveAttendance = () => {
     }
   }, [token, attendanceRecords]);
 
+
   // const handleData = (
   //   e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   // ) => {
@@ -506,16 +507,19 @@ const LeaveAttendance = () => {
                 </p>
               </div>
               <div className="flex items-center justify-center gap-3 text-sm text-gray-300">
-                <button
+                {!checkInbutton && (<button
                   className={`bg-blue-600 px-3 py-1.5 rounded cursor-pointer whitespace-nowrap
                  ${checkInbutton ? "opacity-50 cursor-not-allowed" : ""}`}
                   onClick={handleCheckInApi}
                   disabled={checkInbutton}
                 >
                   Check In
-                </button>
-
-                <button
+                </button>)} 
+                
+                {!checkInbutton ? (
+                  <h2></h2>
+                ):(
+                  checkInbutton && !checkOutbutton ? (  <button
                   className={`bg-blue-600 px-3 py-1.5 rounded cursor-pointer whitespace-nowrap
                   ${checkOutbutton ? "opacity-50 cursor-not-allowed" : ""}`}
                   onClick={handleCheckOutApi}
@@ -523,6 +527,19 @@ const LeaveAttendance = () => {
                 >
                   Check Out
                 </button>
+                ): 
+                (
+                  <button
+                  className={`bg-blue-600 px-3 py-1.5 rounded cursor-pointer whitespace-nowrap
+                  ${checkOutbutton ? "opacity-50 cursor-not-allowed" : ""}`}
+                  onClick={handleCheckOutApi}
+                  disabled={checkOutbutton}
+                >
+                  Check Out
+                </button>
+                )
+                )}
+             
               </div>
             </div>
             <div className="w-full overflow-x-auto">
