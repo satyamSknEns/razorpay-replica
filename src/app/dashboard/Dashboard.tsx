@@ -100,7 +100,7 @@ const Dashboard = () => {
                     <Link href="#" className="mx-1">View personal transactions</Link>
                   </li>
                   <li className="pt-3">
-                    <Link href="#" className="mx-1">Employee directory</Link>
+                    <Link href="/employeeDirectory" className="mx-1">Employee directory</Link>
                   </li>
                 </ul>
               </section>

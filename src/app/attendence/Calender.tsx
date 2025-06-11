@@ -1,10 +1,12 @@
 'use client'
 
-import { useState } from 'react'
-import dayjs from 'dayjs'
-import weekday from 'dayjs/plugin/weekday'
-import isToday from 'dayjs/plugin/isToday'
-import isoWeek from 'dayjs/plugin/isoWeek'
+import { useState } from 'react';
+import dayjs from 'dayjs';
+import weekday from 'dayjs/plugin/weekday';
+import isToday from 'dayjs/plugin/isToday';
+import isoWeek from 'dayjs/plugin/isoWeek';
+import WestIcon from '@mui/icons-material/West';
+import EastIcon from '@mui/icons-material/East';
 
 import classNames from 'classnames'
 
@@ -51,51 +53,51 @@ export default function Calender() {
   const days = generateDates()
 
   return (
-    <div className="w-full p-4 bg-[#1E2939] text-white min-w-[600px] overflow-x-auto">
-      <div className="flex justify-between items-center mb-4">
-        <button className='border border-[#4c5d75] px-2 py-1 ml-2 rounded' onClick={goToPreviousMonth}><span className='mr-1.5'>&lt;</span> Prev</button>
-        <div className="text-center">
-          <button
-            onClick={handleToday}
-            className="text-xl bg-gray-800 px-2 py-1 rounded"
-          >
-            Today
-          </button>
-          <div className="flex gap-2 justify-center items-center mt-4">
-            <select
-              value={currentDate.month()}
-              onChange={(e) =>
-                setCurrentDate(currentDate.month(Number(e.target.value)))
-              }
-              className="bg-gray-800 rounded px-2 py-1 border border-[#4c5d75]"
-            >
-              {Array.from({ length: 12 }, (_, i) => (
-                <option key={i} value={i}>
-                  {dayjs().month(i).format('MMMM')}
-                </option>
-              ))}
-            </select>
-            <select
-              value={currentDate.year()}
-              onChange={(e) =>
-                setCurrentDate(currentDate.year(Number(e.target.value)))
-              }
-              className="bg-gray-800 rounded px-2 py-1 border border-[#4c5d75]"
-            >
-              {Array.from({ length: 12 }, (_, i) => (
-                <option key={i} value={2020 + i}>
-                  {2020 + i}
-                </option>
-              ))}
-            </select>
-          </div>
+    <div className="w-full mt-4 text-white min-w-[430px] overflow-x-auto">
+        <div className="flex justify-between items-center mb-4">
+            <div className="text-center items-center flex gap-3">
+              <button className='border border-[#4c5d75] px-2 pt-.5 pb-1 rounded bg-[#2f3743]' onClick={goToPreviousMonth}><WestIcon fontSize='small'/></button>
+              <button className='border border-[#4c5d75] px-2 pt-.5 pb-1 rounded bg-[#2f3743]' onClick={goToNextMonth}><EastIcon fontSize='small'/></button>
+                <select
+                  value={currentDate.month()}
+                  onChange={(e) =>
+                    setCurrentDate(currentDate.month(Number(e.target.value)))
+                  }
+                  className="bg-gray-800 rounded px-2 py-1 border border-[#4c5d75]"
+                >
+                  {Array.from({ length: 12 }, (_, i) => (
+                    <option key={i} value={i}>
+                      {dayjs().month(i).format('MMMM')}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  value={currentDate.year()}
+                  onChange={(e) =>
+                    setCurrentDate(currentDate.year(Number(e.target.value)))
+                  }
+                  className="bg-gray-800 rounded px-2 py-1 border border-[#4c5d75]"
+                >
+                  {Array.from({ length: 12 }, (_, i) => (
+                    <option key={i} value={2020 + i}>
+                      {2020 + i}
+                    </option>
+                  ))}
+                </select>
+            </div>
+            <div className='border border-[#4c5d75] rounded'>
+              <button
+                onClick={handleToday}
+                className="text-base bg-[#2f3743] px-4 py-1 rounded"
+              >
+                Today
+              </button>
+            </div>
         </div>
-        <button className='border border-[#4c5d75] px-2 py-1 mr-2 rounded' onClick={goToNextMonth}>Next <span className='ml-1.5'>&gt;</span></button>
-      </div>
-
+<div className='border border-[#2d3a4b] bg-gray-800 rounded py-4'>
       <div className="grid grid-cols-7 text-center font-semibold mb-2">
         {daysShort.map((day) => (
-          <div key={day} className='border py-2 mx-2 border-[#2d3a4b] rounded bg-[#2d3a4b]'>{day}</div>
+          <div key={day} className='py-2 mx-2'>{day}</div>
         ))}
       </div>
 
@@ -110,10 +112,10 @@ export default function Calender() {
               key={i}
               onClick={() => setSelectedDate(date)} 
               className={classNames(
-                'h-10 flex items-center justify-center text-sm cursor-pointer transition duration-150 border py-2 m-2 border-[#2d3a4b] rounded',
+                'h-10 flex items-center justify-center text-sm cursor-pointer transition duration-150',
                 {
-                  'bg-blue-600 text-white': isSelected,
-                  'bg-gray-700 text-white': isTodayDate && !isSelected,
+                  'border-1 border-gray-600 rounded text-white': isSelected,
+                  'bg-gray-700 text-white rounded': isTodayDate && !isSelected,
                 //   'bg-red-900 text-white': isCurrentMonth && date.date() <= 2 && date.day() < 5,
                 //   'bg-yellow-700 text-white': isCurrentMonth && date.date() === 10,
                 //   'text-green-500': isCurrentMonth && !isSelected && !isTodayDate,
@@ -126,6 +128,7 @@ export default function Calender() {
           )
         })}
       </div>
+    </div>
     </div>
   )
 }
