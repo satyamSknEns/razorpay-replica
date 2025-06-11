@@ -647,9 +647,9 @@ const LeaveAttendance = () => {
                       >
                         <td className="py-2 px-2">{date}</td>
                         <td className="capitalize">{record?.status || "--"}</td>
-                        <td>{record?.checkIn || "--"}</td>
-                        <td>{record?.checkOut || "--"}</td>
-                        <td>{record?.duration || "--"}</td>
+                        <td>{record?.checkIn.slice(0,5) || "--"}</td>
+                        <td>{record?.checkOut.slice(0,5) || "--"}</td>
+                        <td>{record?.duration.slice(0,5) || "--"}</td>
                         <td>{record?.remarks || "--"}</td>
                         <td>
                           <button
@@ -726,7 +726,7 @@ const LeaveAttendance = () => {
               }`}
             >
               <button
-                className="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl"
+                className="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl cursor-pointer"
                 onClick={() => {
                   setApplyAnimation(false);
                   setTimeout(() => {
@@ -816,7 +816,7 @@ const LeaveAttendance = () => {
 
                 <div className="flex justify-end space-x-3 pt-4">
                   <button
-                    className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg"
+                    className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg cursor-pointer"
                     onClick={() => {
                       setApplyAnimation(false);
                       setTimeout(() => {
@@ -828,7 +828,7 @@ const LeaveAttendance = () => {
                     Cancel
                   </button>
                   <button
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg cursor-pointer"
                     onClick={() => {
                       if (validateForm()) {
                         applyLeave();
