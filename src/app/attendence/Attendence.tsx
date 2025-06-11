@@ -15,8 +15,11 @@ const LeaveAttendance = () => {
   const [attendanceRecords, setAttendanceRecords] = useState<any[]>([]);
   const [leaveRequest, setLeaveRequest] = useState<LeaveRequest[]>([]);
   const [leave, setLeave] = useState<LeaveData | null>(null);
+  const [animation, setAnimation] = useState<boolean>(true);
+  const [applyAnimation, setApplyAnimation] = useState<boolean>(true);
   // const [checkedMap, setCheckedMap] = useState<{ [key: number]: boolean }>({});
   const [deleteReq, setDeleteReq] = useState(false);
+  const [delAnimation, setDelAnimation] = useState<boolean>(true);
 
   const [checkedMap, setCheckedMap] = useState<{ [key: string]: boolean }>({});
   const [formErrors, setFormErrors] = useState({
@@ -28,8 +31,8 @@ const LeaveAttendance = () => {
   const [editFormErrors, setEditFormErrors] = useState({
     leaveTypeName: "",
     remarks: "",
-    checkIn:"",
-    checkOut:""
+    checkIn: "",
+    checkOut: "",
   });
 
   const allSelected =
@@ -58,29 +61,28 @@ const LeaveAttendance = () => {
     const newError = {
       leaveTypeName: "",
       remarks: "",
-      checkIn:"",
-      checkOut:""
+      checkIn: "",
+      checkOut: "",
     };
     if (!editData.leaveTypeName || editData.leaveTypeName == "status") {
       newError.leaveTypeName = "Status is required";
       valid = false;
     }
-    if (editData.leaveTypeName=="present") {
-       if (!editData.checkIn) {
-      newError.checkIn = "Check In is required";
-      valid = false;
+    if (editData.leaveTypeName == "present") {
+      if (!editData.checkIn) {
+        newError.checkIn = "Check In is required";
+        valid = false;
+      }
+      if (!editData.checkOut) {
+        newError.checkOut = "Check Out is required";
+        valid = false;
+      }
+    } else {
+      if (!editData.remarks) {
+        newError.remarks = "Remarks is required";
+        valid = false;
+      }
     }
-    if (!editData.checkOut) {
-      newError.checkOut = "Check Out is required";
-      valid = false;
-    }
-    }
-    else{
-       if (!editData.remarks) {
-      newError.remarks = "Remarks is required";
-      valid = false;
-    }
-    }   
     setEditFormErrors(newError);
     return valid;
   };
@@ -225,7 +227,6 @@ const LeaveAttendance = () => {
     }
   }, [token, attendanceRecords]);
 
-
   // const handleData = (
   //   e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   // ) => {
@@ -251,6 +252,14 @@ const LeaveAttendance = () => {
         ...prev,
         [name]: "",
       }));
+    }
+    if (name === "leaveTypeName") {
+      setEditFormErrors({
+        leaveTypeName: "",
+        checkIn: "",
+        checkOut: "",
+        remarks: "",
+      });
     }
   };
 
@@ -507,39 +516,25 @@ const LeaveAttendance = () => {
                 </p>
               </div>
               <div className="flex items-center justify-center gap-3 text-sm text-gray-300">
-                {!checkInbutton && (<button
-                  className={`bg-blue-600 px-3 py-1.5 rounded cursor-pointer whitespace-nowrap
-                 ${checkInbutton ? "opacity-50 cursor-not-allowed" : ""}`}
-                  onClick={handleCheckInApi}
-                  disabled={checkInbutton}
-                >
-                  Check In
-                </button>)} 
-                
-                {!checkInbutton ? (
-                  <h2></h2>
-                ):(
-                  checkInbutton && !checkOutbutton ? (  <button
-                  className={`bg-blue-600 px-3 py-1.5 rounded cursor-pointer whitespace-nowrap
-                  ${checkOutbutton ? "opacity-50 cursor-not-allowed" : ""}`}
-                  onClick={handleCheckOutApi}
-                  disabled={checkOutbutton}
-                >
-                  Check Out
-                </button>
-                ): 
-                (
+                {!checkInbutton && !checkOutbutton ? (
                   <button
-                  className={`bg-blue-600 px-3 py-1.5 rounded cursor-pointer whitespace-nowrap
+                    className={`bg-blue-600 px-3 py-1.5 rounded cursor-pointer whitespace-nowrap
+                 ${checkInbutton ? "opacity-50 cursor-not-allowed" : ""}`}
+                    onClick={handleCheckInApi}
+                    disabled={checkInbutton}
+                  >
+                    Check In
+                  </button>
+                ) : (
+                  <button
+                    className={`bg-blue-600 px-3 py-1.5 rounded cursor-pointer whitespace-nowrap
                   ${checkOutbutton ? "opacity-50 cursor-not-allowed" : ""}`}
-                  onClick={handleCheckOutApi}
-                  disabled={checkOutbutton}
-                >
-                  Check Out
-                </button>
-                )
+                    onClick={handleCheckOutApi}
+                    disabled={checkOutbutton}
+                  >
+                    Check Out
+                  </button>
                 )}
-             
               </div>
             </div>
             <div className="w-full overflow-x-auto">
@@ -549,7 +544,15 @@ const LeaveAttendance = () => {
 
           <button
             className="btn btn-primary bg-blue-600"
-            onClick={() => setVisible((prev) => !prev)}
+            onClick={() => {
+              setVisible((prev) => !prev);
+              setFormErrors({
+                leaveTypeName: "",
+                fromDate: "",
+                toDate: "",
+                remarks: "",
+              });
+            }}
           >
             Apply leave
           </button>
@@ -652,6 +655,7 @@ const LeaveAttendance = () => {
                           <button
                             className="text-blue-400 font-bold hover:underline p-2 cursor-pointer"
                             onClick={() => {
+                              setDelAnimation(true);
                               setOpen(true);
                               setEditData({
                                 checkIn: record?.checkIn || "",
@@ -659,6 +663,13 @@ const LeaveAttendance = () => {
                                 remarks: record?.remarks || "",
                                 leaveTypeName: record?.status || "",
                                 date: date,
+                              });
+
+                              setEditFormErrors({
+                                leaveTypeName: "",
+                                checkIn: "",
+                                checkOut: "",
+                                remarks: "",
                               });
                             }}
                           >
@@ -709,10 +720,20 @@ const LeaveAttendance = () => {
 
         {visible && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-            <div className="bg-gray-900 text-white rounded-2xl shadow-lg w-[90%] max-w-md p-6 relative border border-gray-700">
+            <div
+              className={`bg-gray-900 text-white rounded-2xl shadow-lg w-[90%] max-w-md p-6 relative border border-gray-700 ${
+                applyAnimation ? "scale-up-center" : "scale-down-center"
+              }`}
+            >
               <button
                 className="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl"
-                onClick={() => setVisible(false)}
+                onClick={() => {
+                  setApplyAnimation(false);
+                  setTimeout(() => {
+                    setVisible(false);
+                    setApplyAnimation(true);
+                  }, 300);
+                }}
               >
                 &times;
               </button>
@@ -796,7 +817,13 @@ const LeaveAttendance = () => {
                 <div className="flex justify-end space-x-3 pt-4">
                   <button
                     className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg"
-                    onClick={() => setVisible(false)}
+                    onClick={() => {
+                      setApplyAnimation(false);
+                      setTimeout(() => {
+                        setVisible(false);
+                        setApplyAnimation(true);
+                      }, 300);
+                    }}
                   >
                     Cancel
                   </button>
@@ -818,7 +845,11 @@ const LeaveAttendance = () => {
 
         {open && (
           <div className="fixed inset-0 bg-black/80  flex items-center justify-center z-50 md:m-[10px] cursor-pointer">
-            <div className="bg-[#1e293b] text-white w-full max-w-md rounded-xl shadow-lg p-6 m-[10px]">
+            <div
+              className={`bg-[#1e293b] text-white w-full max-w-md rounded-xl shadow-lg p-6 m-[10px] ${
+                animation ? "scale-up-center" : "scale-down-center"
+              } `}
+            >
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold">Edit Attendance</h2>
                 <span className="text-sm text-gray-400">for 1st May 2025</span>
@@ -847,15 +878,13 @@ const LeaveAttendance = () => {
               <input
                 type="text"
                 name="checkIn"
-                value={editData.checkIn.slice(0,5)}
+                value={editData.checkIn.slice(0, 5)}
                 className="w-full mb-4 p-2 bg-gray-700 rounded-md focus:outline-none"
                 placeholder="hh:mm"
                 onChange={handleData}
               />
               {editFormErrors.checkIn && (
-                <p className="text-red-500 text-xs">
-                  {editFormErrors.checkIn}
-                </p>
+                <p className="text-red-500 text-xs">{editFormErrors.checkIn}</p>
               )}
 
               <label className="block text-sm font-medium mb-1">
@@ -864,7 +893,7 @@ const LeaveAttendance = () => {
               <input
                 type="text"
                 name="checkOut"
-                value={editData.checkOut.slice(0,5)}
+                value={editData.checkOut.slice(0, 5)}
                 className="w-full mb-4 p-2 bg-gray-700 rounded-md focus:outline-none"
                 placeholder="hh:mm"
                 onChange={handleData}
@@ -891,12 +920,22 @@ const LeaveAttendance = () => {
               )}
 
               <div className="flex gap-3 justify-end">
-                <button className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-md cursor-pointer" onClick={()=>setDeleteReq(true)}>
+                <button
+                  className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-md cursor-pointer"
+                  onClick={() => setDeleteReq(true)}
+                >
                   Delete
                 </button>
                 <button
                   className="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-md cursor-pointer"
-                  onClick={() => setOpen(false)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setAnimation((prev) => !prev);
+                    setTimeout(() => {
+                      setOpen(false);
+                      setAnimation((prev) => !prev);
+                    }, 300);
+                  }}
                 >
                   Cancel
                 </button>
@@ -915,24 +954,43 @@ const LeaveAttendance = () => {
 
         {deleteReq && (
           <div className="fixed inset-0 bg-black/80  flex items-center justify-center z-50 md:m-[10px] cursor-pointer">
-            <div className="bg-[#1e293b] text-white w-full max-w-md rounded-xl shadow-lg  m-[10px]">
-              <div className="flex justify-between items-center mb-2 border-b-1 border-gray-300 p-4">
+            <div
+              className={`bg-[#1e293b] text-white w-full max-w-md rounded-xl shadow-lg  m-[10px]  ${
+                delAnimation ? "scale-up-center" : "scale-down-center"
+              }`}
+            >
+              <div className="flex justify-between items-center mb-2 border-b-1 border-gray-500 p-4">
                 <h2 className="text-xl font-semibold">
                   Delete Attendance Records
                 </h2>
-                <button onClick={()=>setDeleteReq(false)}>
+                <button
+                  className="cursor-pointer p-2"
+                  onClick={() => {
+                    setDelAnimation((prev) => !prev);
+                    setTimeout(() => {
+                      setDeleteReq(false);
+                      setDelAnimation(true);
+                    }, 300);
+                  }}
+                >
                   <RxCross2 />
                 </button>
               </div>
 
-              <div className="text-[14px] font-semibold my-3 border-b-1 border-gray-300 p-4">
+              <div className="text-[18px] font-semibold my-3 border-b-1 border-gray-500 p-4">
                 Are you sure you want to delete this attendance record?
               </div>
 
               <div className="flex gap-3 justify-end p-4">
                 <button
                   className="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-md cursor-pointer"
-                  onClick={() => setDeleteReq(false)}
+                  onClick={() => {
+                    setDelAnimation((prev) => !prev);
+                    setTimeout(() => {
+                      setDeleteReq(false);
+                      setDelAnimation(true);
+                    }, 300);
+                  }}
                 >
                   No
                 </button>
