@@ -5,6 +5,7 @@ import Calender from "./Calender";
 import axios, { AxiosRequestConfig } from "axios";
 import { useCookies } from "next-client-cookies";
 import { RxCross2 } from "react-icons/rx";
+import CloseIcon from "@mui/icons-material/Close";
 
 const LeaveAttendance = () => {
   const [visible, setVisible] = useState(false);
@@ -20,7 +21,8 @@ const LeaveAttendance = () => {
   // const [checkedMap, setCheckedMap] = useState<{ [key: number]: boolean }>({});
   const [deleteReq, setDeleteReq] = useState(false);
   const [delAnimation, setDelAnimation] = useState<boolean>(true);
-
+  const [isOpen, setIsOpen] = useState(false);
+  const [leaveAnimation, setLeaveAnimation] = useState(false);
   const [checkedMap, setCheckedMap] = useState<{ [key: string]: boolean }>({});
   const [formErrors, setFormErrors] = useState({
     leaveTypeName: "",
@@ -647,9 +649,9 @@ const LeaveAttendance = () => {
                       >
                         <td className="py-2 px-2">{date}</td>
                         <td className="capitalize">{record?.status || "--"}</td>
-                        <td>{record?.checkIn?.slice(0,5) || "--"}</td>
-                        <td>{record?.checkOut?.slice(0,5) || "--"}</td>
-                        <td>{record?.duration?.slice(0,5) || "--"}</td>
+                        <td>{record?.checkIn?.slice(0, 5) || "--"}</td>
+                        <td>{record?.checkOut?.slice(0, 5) || "--"}</td>
+                        <td>{record?.duration?.slice(0, 5) || "--"}</td>
                         <td>{record?.remarks || "--"}</td>
                         <td>
                           <button
@@ -713,10 +715,55 @@ const LeaveAttendance = () => {
               </span>
             </li>
           </ul>
-          <button className="mt-4 w-full bg-blue-600 py-2 rounded text-sm cursor-pointer">
+          <button
+            onClick={()=>{
+              setLeaveAnimation(true)
+              setIsOpen(true)
+            }}
+            className="mt-4 w-full bg-blue-600 py-2 rounded text-sm cursor-pointer "
+          >
             View Leaves Taken
           </button>
         </div>
+
+        {isOpen && (
+          <div className="fixed inset-0 bg-opacity-80 bg-[#212020ad] flex items-center justify-center z-50 ">
+            <div
+              className={`bg-gray-800 rounded px-4 pb-4 w-[500px] transition-all ${leaveAnimation ? "scale-up-center" : "scale-down-center"}`}
+            >
+              <div className="flex justify-end">
+                <button
+                  className="mt-3 bg-red-600 text-white px-3 py-.75 cursor-pointer rounded text-right"
+                  onClick={() =>{
+                    setLeaveAnimation(false)
+                    setTimeout(()=>{
+                      setIsOpen(false)
+                    },300)
+                  }}
+                >
+                  <CloseIcon fontSize="small" className="-mt-1" />
+                </button>
+              </div>
+              <h2 className="text-2xl font-semibold text-gray-200 border-b border-gray-600 pb-1 mb-3">
+                All the Leaves
+              </h2>
+              <ul>
+                <li className="py-3 border-b border-[#464545] text-sm">
+                  M. L. - 09/01/2025 (Half Day)
+                </li>
+                <li className="py-3 border-b border-[#464545] text-sm">
+                  C. L. - 06/05/2025 (urgent work)
+                </li>
+                <li className="py-3 border-b border-[#464545] text-sm">
+                  M. L. - 06/05/2025 (urgent work)
+                </li>
+                <li className="py-3 text-sm">
+                  C. L. - 06/05/2025 (urgent work)
+                </li>
+              </ul>
+            </div>
+          </div>
+        )}
 
         {visible && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">

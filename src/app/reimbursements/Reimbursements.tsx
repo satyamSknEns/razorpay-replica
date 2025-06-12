@@ -4,7 +4,7 @@ import { FaPaperPlane } from "react-icons/fa";
 
 const Reimbursement = () => {
   return (
-     <div className="flex gap-2 md:flex-col sm:flex-col lg:flex-row flex-col">
+     <div className="flex gap-2 md:flex-col sm:flex-col lg:flex-row flex-col space-x-4 px-2">
     <div className=" bg-[#171F2B] text-white p-6 w-full">
       <h1 className="text-xl font-semibold mb-6">Claim a Reimbursement</h1>
 
@@ -51,7 +51,7 @@ const Reimbursement = () => {
         </div>
 
         <div>
-          <label className="block mb-1 text-sm font-medium text-xs">
+          <label className="block mb-1 text-sm font-medium">
             Supporting images or documents (maximum 5 MB each)
           </label>
           <input

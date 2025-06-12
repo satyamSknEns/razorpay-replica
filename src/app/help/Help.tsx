@@ -1,6 +1,7 @@
 'use client';
-
-import { Mail, MessageSquareMore } from 'lucide-react';
+import MessageIcon from '@mui/icons-material/Message';
+import MailOutlineIcon from '@mui/icons-material/MailOutline';
+import Link from 'next/link';
 
 export default function Help() {
   const helpLinks = [
@@ -17,45 +18,48 @@ export default function Help() {
   ];
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl mx-auto p-4 text-white">
+    <>
+    <div className="text-[28px] font-bold text-white px-3 pb-1">
+       Get Help
+      </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl mx-auto p-4 text-white">
+          <div className="lg:col-span-2 bg-[#151e2f] p-6 rounded-xl shadow-md">
+            <h3 className="text-xl font-semibold mb-3 border-b pb-2 border-b-[#686666]">Quick Links</h3>
 
-      <div className="lg:col-span-2 bg-[#151e2f] p-6 rounded-xl shadow-md">
-        <h2 className="text-2xl font-bold mb-4">Get Help</h2>
-        <h3 className="text-lg font-semibold mb-3">Quick Links</h3>
-
-        <div className="grid sm:grid-cols-2 gap-4 mb-4">
-          {helpLinks.map((text, i) => (
-            <div key={i} className="flex items-start gap-2">
-              <MessageSquareMore size={18} className="mt-1 text-gray-400" />
-              <p className="text-sm text-gray-200">{text}</p>
+            <div className="grid sm:grid-cols-1 mb-4">
+              {helpLinks.map((text, i) => (
+                <Link href="#" key={i} className="flex items-start gap-2 border-b border-[#383636] py-3">
+                  <MessageIcon fontSize='small' className="mt-1 text-gray-500" />
+                  <p className="text-sm text-gray-300">{text}</p>
+                </Link>
+              ))}
             </div>
-          ))}
-        </div>
 
-        <a
-          href="#"
-          className="inline-block mt-4 text-blue-400 hover:text-blue-500 font-medium text-sm"
-        >
-          Search more help articles on the documentation →
-        </a>
-      </div>
-      <div className="bg-[#151e2f] p-6 rounded-xl shadow-md h-fit">
-        <h3 className="text-xl font-bold mb-4">Get in touch</h3>
-        <div className=" border border-blue-500 rounded-lg p-4 relative">
-          <span className="absolute top-0 right-0 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-bl-lg">
-            ?
-          </span>
-          <h4 className="text-white font-semibold mb-1 flex items-center gap-2">
-            <Mail size={18} /> Mail Support
-          </h4>
-          <p className="text-sm text-gray-300">
-            Please email us at <br />
-            <a href="mailto:xpayroll@razorpay.com" className="text-blue-400 hover:underline">
-              xpayroll@razorpay.com
+            <a
+              href="#"
+              className="inline-block mt-4 text-blue-400 hover:text-blue-500 font-medium text-sm"
+            >
+              Search more help articles on the documentation →
             </a>
-          </p>
+          </div>
+          <div className="bg-[#151e2f] p-6 rounded-xl shadow-md h-fit">
+            <h3 className="text-xl font-bold mb-4">Get in touch</h3>
+            <div className=" border border-blue-500 rounded-lg p-4 relative">
+              <span className="absolute top-0 right-0 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-bl-lg">
+                ?
+              </span>
+              <h4 className="text-white font-semibold mb-1 flex items-center gap-2">
+                <MailOutlineIcon fontSize='small' className='p-.5' /> Mail Support
+              </h4>
+              <p className="text-sm text-gray-300">
+                Please email us at <br />
+                <a href="mailto:xpayroll@razorpay.com" className="text-blue-400 hover:underline">
+                  xpayroll@razorpay.com
+                </a>
+              </p>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+     </>
   );
 }
