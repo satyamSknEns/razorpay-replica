@@ -161,7 +161,7 @@ const Profile = () => {
     <div className="min-h-screen bg-[#0C1927] text-white px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-4">
         <h2 className="text-sm text-gray-400">
-          People | <span className="text-white">Kshiteej Dubey</span>
+          People | <span className="text-white">{data?.profile?.name? data?.profile?.name?.charAt(0).toUpperCase() + data?.profile.name.slice(1):"--"}</span>
         </h2>
       </div>
 
@@ -176,21 +176,21 @@ const Profile = () => {
               <table className="w-full text-sm">
                 <tbody className="divide-y divide-gray-700">
                   {[
-                    ["Type", `${data.profile?.role}`],
-                    ["Name", `${data?.profile?.name}`],
-                    ["Email", `${data?.profile?.email}`],
+                    ["Type", `${(data.profile?.role || "--")}`],
+                    ["Name", `${(data?.profile?.name || "--")}`],
+                    ["Email", `${(data?.profile?.email || "--")}`],
                     [
                       "Date of Hiring",
                       `${
-                        data.profile?.joiningDate
+                        (data.profile?.joiningDate
                           ?.toLocaleString()
-                          .split("T")[0]
+                          .split("T")[0] || "--")
                       }`,
                     ],
-                    ["Title", `${data?.profile?.department}`],
-                    ["Employee ID", `ENS30${data.profile?.id}`],
+                    ["Title", `${(data?.profile?.department)|| "--"}`],
+                    ["Employee ID", `ENS30${(data.profile?.id || "--")}`],
                     ["Department", "Research and Development"],
-                    ["Manager", `${data?.profile?.manager?.name}`],
+                    ["Manager", `${(data?.profile?.manager?.name || "--")}`],
                     ["Location", "Uttar Pradesh"],
                   ].map(([label, value], index) => (
                     <tr key={index} className="h-12">

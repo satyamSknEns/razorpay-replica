@@ -6,6 +6,28 @@ import { RxCross2 } from "react-icons/rx";
 import Image from "next/image";
 import { useCookies } from "next-client-cookies";
 import Link from "next/link";
+import axios, { AxiosRequestConfig } from "axios";
+
+
+
+ interface ProfileData {
+    profile?: {
+      id?: number;
+      name?: string;
+      role?: string;
+      email?: string;
+      department?: string;
+      joiningDate?: string;
+      manager?: {
+        name?: string;
+      };
+      serviceDuration?: {
+        years?: number;
+        months?: number;
+        days?: number;
+      };
+    };
+  }
 
 const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
   const [visible, setVisible] = useState(false);
@@ -16,6 +38,9 @@ const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
   const cookies = useCookies();
   const [isMobile, setIsMobile] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
+  const [data, setData] = useState<ProfileData>({});
+
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -25,6 +50,14 @@ const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
     window.addEventListener("resize", checkScreenSize);
     return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
+
+    useEffect(() => {
+      const handleGetcookies = async () => {
+        const storeCookies = cookies.get("token");
+        setToken(storeCookies ?? null);
+      };
+      handleGetcookies();
+    }, []);
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
@@ -86,6 +119,34 @@ const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
 
   const handleNotification = () => setNotification((prev) => !prev);
   const handleVisible = () => setVisible((prev) => !prev);
+
+
+  useEffect(() => {
+      const fetchData = async () => {
+        if (!token) return;
+  
+        try {
+          setLoading(true);
+          const profileConfig: AxiosRequestConfig = {
+            url: `${process.env.NEXT_PUBLIC_API_URL}/users/getUserProfile`,
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            data: {},
+          };
+          const profileResponse = await axios.request(profileConfig);
+          setData(profileResponse.data);
+        } catch (error) {
+          console.log(error);
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      fetchData();
+    }, [token]);
 
   return (
     <>
@@ -170,7 +231,7 @@ const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
             onClick={handleVisible}
             className="h-10 w-[40px] lg:w-[120px] relative cursor-pointer rounded-full bg-gray-700 flex items-center justify-center text-sm font-bold"
           >
-            <span>KD</span>
+            <span className="tracking-widest">{data?.profile?.name?.slice(0,2).toUpperCase()}</span>
           </div>
 
           {visible && (
@@ -191,9 +252,9 @@ const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
                 </div>
 
                 <button onClick={() => (setVisible(false), handleProfile())} className="flex items-center space-x-3 w-full cursor-pointer">
-                  <div className="w-10 h-10 mb-2 bg-blue-600 rounded-full flex items-center justify-center text-sm font-bold">KD</div>
+                  <div className="w-10 h-10 mb-2 bg-blue-600 rounded-full flex items-center justify-center text-sm font-bold tracking-widest">{data?.profile?.name?.slice(0,2).toUpperCase()}</div>
                   <div className="text-justify">
-                    <p className="text-sm font-semibold">Kshiteej Dubey</p>
+                    <p className="text-sm font-semibold">{data?.profile?.name ? data?.profile?.name.charAt(0).toUpperCase()+data?.profile?.name.slice(1):"--"}</p>
                     <p className="text-xs text-gray-400">Employee</p>
                   </div>
                   <svg className="ml-auto w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
