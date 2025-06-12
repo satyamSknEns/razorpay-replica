@@ -178,7 +178,7 @@ const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
 
       <div className="sticky flex items-center top-0 left-0 z-40">
         <Link href="/layout/dashboard" className="w-full h-15 bg-[#0C1927] flex justify-between items-center p-3 relative">
-          <Image src="/logo.png" width={40} height={40} alt="Logo" />
+          <Image src="/logo2.png" width={200} height={200} alt="Logo" />
         </Link>
 
         <div className="flex relative items-center justify-between space-x-4 p-4 bg-gray-900 text-white rounded-lg">

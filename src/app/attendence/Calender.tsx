@@ -53,17 +53,17 @@ export default function Calender() {
   const days = generateDates()
 
   return (
-    <div className="w-full mt-4 text-white min-w-[430px] overflow-x-auto">
+    <div className="w-full mt-4 text-white min-w-[430px] overflow-x-auto cursor-pointer">
         <div className="flex justify-between items-center mb-4">
             <div className="text-center items-center flex gap-3">
-              <button className='border border-[#4c5d75] px-2 pt-.5 pb-1 rounded bg-[#2f3743]' onClick={goToPreviousMonth}><WestIcon fontSize='small'/></button>
-              <button className='border border-[#4c5d75] px-2 pt-.5 pb-1 rounded bg-[#2f3743]' onClick={goToNextMonth}><EastIcon fontSize='small'/></button>
+              <button className='border border-[#4c5d75] px-2 pt-.5 pb-1 rounded bg-[#2f3743] cursor-pointer' onClick={goToPreviousMonth}><WestIcon fontSize='small'/></button>
+              <button className='border border-[#4c5d75] px-2 pt-.5 pb-1 rounded bg-[#2f3743] cursor-pointer' onClick={goToNextMonth}><EastIcon fontSize='small'/></button>
                 <select
                   value={currentDate.month()}
                   onChange={(e) =>
                     setCurrentDate(currentDate.month(Number(e.target.value)))
                   }
-                  className="bg-gray-800 rounded px-2 py-1 border border-[#4c5d75]"
+                  className="bg-gray-800 rounded px-2 py-1 border border-[#4c5d75] cursor-pointer"
                 >
                   {Array.from({ length: 12 }, (_, i) => (
                     <option key={i} value={i}>
@@ -76,7 +76,7 @@ export default function Calender() {
                   onChange={(e) =>
                     setCurrentDate(currentDate.year(Number(e.target.value)))
                   }
-                  className="bg-gray-800 rounded px-2 py-1 border border-[#4c5d75]"
+                  className="bg-gray-800 rounded px-2 py-1 border border-[#4c5d75] cursor-pointer"
                 >
                   {Array.from({ length: 12 }, (_, i) => (
                     <option key={i} value={2020 + i}>
@@ -88,7 +88,7 @@ export default function Calender() {
             <div className='border border-[#4c5d75] rounded'>
               <button
                 onClick={handleToday}
-                className="text-base bg-[#2f3743] px-4 py-1 rounded"
+                className="text-base bg-[#2f3743] px-4 py-1 rounded cursor-pointer"
               >
                 Today
               </button>
