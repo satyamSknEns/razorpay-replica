@@ -9,8 +9,6 @@ import CloseIcon from "@mui/icons-material/Close";
 
 const LeaveAttendance = () => {
   const [visible, setVisible] = useState(false);
-  const [checkInbutton, setcheckInbutton] = useState(false);
-  const [checkOutbutton, setcheckOutbutton] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const [attendanceRecords, setAttendanceRecords] = useState<any[]>([]);
@@ -18,7 +16,6 @@ const LeaveAttendance = () => {
   const [leave, setLeave] = useState<LeaveData | null>(null);
   const [animation, setAnimation] = useState<boolean>(true);
   const [applyAnimation, setApplyAnimation] = useState<boolean>(true);
-  // const [checkedMap, setCheckedMap] = useState<{ [key: number]: boolean }>({});
   const [deleteReq, setDeleteReq] = useState(false);
   const [delAnimation, setDelAnimation] = useState<boolean>(true);
   const [isOpen, setIsOpen] = useState(false);
@@ -195,21 +192,20 @@ const LeaveAttendance = () => {
     return `${year}-${month}-${day}`;
   }
 
-  const handleButton = () => {
-    const today = formatDate(new Date());
-    attendanceRecords.forEach((item) => {
-      if (item.date === today) {
-        if (item.checkIn) {
-          setcheckInbutton(true);
-          setcheckOutbutton(false);
-        }
 
-        if (item.checkOut) {
-          setcheckOutbutton(true);
-        }
+  const handleButton = () => {
+  const today = formatDate(new Date());
+  attendanceRecords.forEach((item) => {
+    if (item.date === today) {
+      if (item.checkIn) {
+        cookies.set("Checkin", "true", { expires: 1 });
       }
-    });
-  };
+      if (item.checkOut) {
+        cookies.set("checkout", "true", { expires: 1 });
+      }
+    }
+  });
+};
 
   useEffect(() => {
     if (token && attendanceRecords.length > 0) {
@@ -221,20 +217,10 @@ const LeaveAttendance = () => {
     const timeUntilSix = (sixPM as any) - (now as any);
     if (timeUntilSix > 0) {
       const timeout = setTimeout(() => {
-        // setDisable(false);
       }, timeUntilSix);
       return () => clearTimeout(timeout);
-    } else {
-      // setDisable(false);
-    }
+    } 
   }, [token, attendanceRecords]);
-
-  // const handleData = (
-  //   e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  // ) => {
-  //   const { name, value } = e.target;
-  //   setEditData((prev) => ({ ...prev, [name]: value }));
-  // };
 
   const handleData = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -286,9 +272,8 @@ const LeaveAttendance = () => {
       const response = await axios.request(config);
       const newEntry = response.data.attendance;
       console.log(newEntry);
-      setcheckInbutton(true);
+      cookies.set("Checkin", "true", { expires: 1 }); 
       handleRefresh();
-      setcheckOutbutton(false);
     } catch (error) {
       console.error("Check In API error:", error);
     }
@@ -308,8 +293,8 @@ const LeaveAttendance = () => {
       };
 
       await axios.request(config);
-      setcheckOutbutton(true);
       handleRefresh();
+     cookies.set("checkout", "true", { expires: 1 });
     } catch (error) {
       console.error("Check Out API error:", error);
     }
@@ -517,22 +502,24 @@ const LeaveAttendance = () => {
                   please use the edit option below.
                 </p>
               </div>
+
+
               <div className="flex items-center justify-center gap-3 text-sm text-gray-300">
-                {!checkInbutton && !checkOutbutton ? (
+                {!cookies.get("Checkin") ? (
                   <button
                     className={`bg-blue-600 px-3 py-1.5 rounded cursor-pointer whitespace-nowrap
-                 ${checkInbutton ? "opacity-50 cursor-not-allowed" : ""}`}
+                         ${cookies.get("Checkin") ? "opacity-50 cursor-not-allowed" : ""}`}
                     onClick={handleCheckInApi}
-                    disabled={checkInbutton}
+                    disabled={!!cookies.get("Checkin")}
                   >
                     Check In
                   </button>
                 ) : (
                   <button
                     className={`bg-blue-600 px-3 py-1.5 rounded cursor-pointer whitespace-nowrap
-                  ${checkOutbutton ? "opacity-50 cursor-not-allowed" : ""}`}
+                         ${cookies.get("checkout") ? "opacity-50 cursor-not-allowed" : ""}`}
                     onClick={handleCheckOutApi}
-                    disabled={checkOutbutton}
+                    disabled={!!cookies.get("checkout")}
                   >
                     Check Out
                   </button>
@@ -793,7 +780,7 @@ const LeaveAttendance = () => {
                     name="leaveTypeName"
                     value={formData.leaveTypeName}
                     onChange={handleChange}
-                    className="w-full bg-gray-800 text-white rounded-lg border border-gray-600 px-2 py-2 focus:outline-none focus:ring focus:border-blue-500"
+                    className=" cursor-pointer w-full bg-gray-800 text-white rounded-lg border border-gray-600 px-2 py-2 focus:outline-none focus:ring focus:border-blue-500"
                   >
                     <option value="">Select status</option>
                     <option value="casual">Casual Leave</option>
@@ -816,7 +803,7 @@ const LeaveAttendance = () => {
                       name="fromDate"
                       value={formData.fromDate}
                       onChange={handleChange}
-                      className="w-full px-2 bg-gray-800 text-white rounded-lg border border-gray-600 py-2 focus:outline-none focus:ring focus:border-blue-500"
+                      className="w-full px-2 bg-gray-800 text-white rounded-lg border border-gray-600 py-2 focus:outline-none focus:ring focus:border-blue-500 cursor-pointer"
                     />
                     {formErrors.fromDate && (
                       <p className="text-red-500 text-xs mt-1">
@@ -831,7 +818,7 @@ const LeaveAttendance = () => {
                       name="toDate"
                       value={formData.toDate}
                       onChange={handleChange}
-                      className="w-full px-2 bg-gray-800 text-white rounded-lg border border-gray-600 py-2 focus:outline-none focus:ring focus:border-blue-500"
+                      className="w-full px-2 bg-gray-800 text-white rounded-lg border border-gray-600 py-2 focus:outline-none focus:ring focus:border-blue-500 cursor-pointer"
                     />
                     {formErrors.toDate && (
                       <p className="text-red-500 text-xs mt-1">
