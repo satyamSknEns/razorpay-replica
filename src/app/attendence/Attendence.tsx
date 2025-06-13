@@ -21,6 +21,9 @@ const LeaveAttendance = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [leaveAnimation, setLeaveAnimation] = useState(false);
   const [checkedMap, setCheckedMap] = useState<{ [key: string]: boolean }>({});
+  const [loadingCheckIn, setLoadingCheckIn] = useState(false);
+  const [loadingCheckOut, setLoadingCheckOut] = useState(false);
+  const [loadingAttendance, setLoadingAttendance] = useState(true);
   const [formErrors, setFormErrors] = useState({
     leaveTypeName: "",
     fromDate: "",
@@ -192,20 +195,38 @@ const LeaveAttendance = () => {
     return `${year}-${month}-${day}`;
   }
 
+  const checkAndClearCookies = () => {
+    const today = formatDate(new Date());
+    const lastDate = cookies.get("lastDate");
+
+    if (lastDate && lastDate !== today) {
+      cookies.remove("Checkin");
+      cookies.remove("checkout");
+    }
+    
+    cookies.set("lastDate", today, { expires: 1 });
+  };
 
   const handleButton = () => {
-  const today = formatDate(new Date());
-  attendanceRecords.forEach((item) => {
-    if (item.date === today) {
-      if (item.checkIn) {
-        cookies.set("Checkin", "true", { expires: 1 });
+    checkAndClearCookies();
+    const today = formatDate(new Date());
+    attendanceRecords.forEach((item) => {
+      if (item.date === today) {
+        if (item.checkIn) {
+          cookies.set("Checkin", "true", { expires: 1 });
+        }
+        if (item.checkOut) {
+          cookies.set("checkout", "true", { expires: 1 });
+        }
       }
-      if (item.checkOut) {
-        cookies.set("checkout", "true", { expires: 1 });
-      }
-    }
-  });
-};
+    });
+  };
+
+  useEffect(() => {
+    setTimeout(() => {
+      checkAndClearCookies();
+    }, 100);
+  }, []);
 
   useEffect(() => {
     if (token && attendanceRecords.length > 0) {
@@ -256,54 +277,135 @@ const LeaveAttendance = () => {
   };
 
   //handlechecKIn Api
+  // const handleCheckInApi = async () => {
+  //   if (!token) return console.error("Token not found");
+
+  //   try {
+  //     setLoadingCheckIn(true);
+  //     const config: AxiosRequestConfig = {
+  //       url: `${process.env.NEXT_PUBLIC_API_URL}/users/checkIn`,
+  //       method: "POST",
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //       data: {},
+  //     };
+
+  //     const response = await axios.request(config);
+  //     const newEntry = response.data.attendance;
+  //     console.log(newEntry);
+  //     cookies.set("Checkin", "true", { expires: 1 }); 
+  //     // handleRefresh();
+  //   } catch (error) {
+  //     console.error("Check In API error:", error);
+  //   } finally {
+  //     setLoadingCheckIn(false);
+  //   }
+  // };
+
   const handleCheckInApi = async () => {
-    if (!token) return console.error("Token not found");
+  if (!token) return console.error("Token not found");
 
-    try {
-      const config: AxiosRequestConfig = {
-        url: `${process.env.NEXT_PUBLIC_API_URL}/users/checkIn`,
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        data: {},
-      };
+  try {
+    setLoadingCheckIn(true);
+    const config: AxiosRequestConfig = {
+      url: `${process.env.NEXT_PUBLIC_API_URL}/users/checkIn`,
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      data: {},
+    };
 
-      const response = await axios.request(config);
-      const newEntry = response.data.attendance;
-      console.log(newEntry);
-      cookies.set("Checkin", "true", { expires: 1 }); 
-      handleRefresh();
-    } catch (error) {
-      console.error("Check In API error:", error);
-    }
-  };
+    const response = await axios.request(config);
+    const newEntry = response.data.attendance;
+    
+    setAttendanceRecords(prev => {
+      const today = formatDate(new Date());
+      const existingIndex = prev.findIndex(r => r.date === today);
+      
+      if (existingIndex >= 0) {
+        const updated = [...prev];
+        updated[existingIndex] = newEntry;
+        return updated;
+      } else {
+        return [...prev, newEntry];
+      }
+    });
+
+    cookies.set("Checkin", "true", { expires: 1 });
+    handleButton();
+
+  } catch (error) {
+    console.error("Check In API error:", error);
+  } finally {
+    setLoadingCheckIn(false);
+  }
+};
 
   //CheckOut API
-  const handleCheckOutApi = async () => {
-    if (!token) return console.error("Token not found");
-    try {
-      const config: AxiosRequestConfig = {
-        url: `${process.env.NEXT_PUBLIC_API_URL}/users/checkOut`,
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        data: {},
-      };
+  // const handleCheckOutApi = async () => {
+  //   if (!token) return console.error("Token not found");
+  //   try {
+  //     setLoadingCheckOut(true);
+  //     const config: AxiosRequestConfig = {
+  //       url: `${process.env.NEXT_PUBLIC_API_URL}/users/checkOut`,
+  //       method: "POST",
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //       data: {},
+  //     };
 
-      await axios.request(config);
-      handleRefresh();
-     cookies.set("checkout", "true", { expires: 1 });
-    } catch (error) {
-      console.error("Check Out API error:", error);
-    }
-  };
+  //     await axios.request(config);
+  //     // handleRefresh();
+  //     cookies.set("checkout", "true", { expires: 1 });
+  //   } catch (error) {
+  //     console.error("Check Out API error:", error);
+  //   } finally {
+  //     setLoadingCheckOut(false);
+  //   }
+  // };
+
+
+
+  const handleCheckOutApi = async () => {
+  if (!token) return console.error("Token not found");
+  try {
+    setLoadingCheckOut(true);
+    const config: AxiosRequestConfig = {
+      url: `${process.env.NEXT_PUBLIC_API_URL}/users/checkOut`,
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      data: {},
+    };
+
+    const response = await axios.request(config);
+    const updatedEntry = response.data.attendance;
+    setAttendanceRecords(prev => 
+      prev.map(record => 
+        record.date === updatedEntry.date ? updatedEntry : record
+      )
+    );
+    
+    cookies.set("checkout", "true", { expires: 1 });
+    handleButton();
+
+  } catch (error) {
+    console.error("Check Out API error:", error);
+  } finally {
+    setLoadingCheckOut(false);
+  }
+};
+
 
   //Handle Attendence record
   useEffect(() => {
     const handleAttendance = async () => {
       try {
+        setLoadingAttendance(true);
         const config: AxiosRequestConfig = {
           url: `${process.env.NEXT_PUBLIC_API_URL}/users/getAttendanceDetails`,
           method: "POST",
@@ -316,6 +418,8 @@ const LeaveAttendance = () => {
         setAttendanceRecords(response.data.attendance);
       } catch (error) {
         console.error("Error fetching attendance:", error);
+      } finally {
+        setLoadingAttendance(false);
       }
     };
     if (token) {
@@ -503,25 +607,44 @@ const LeaveAttendance = () => {
                 </p>
               </div>
 
-
               <div className="flex items-center justify-center gap-3 text-sm text-gray-300">
                 {!cookies.get("Checkin") ? (
                   <button
-                    className={`bg-blue-600 px-3 py-1.5 rounded cursor-pointer whitespace-nowrap
-                         ${cookies.get("Checkin") ? "opacity-50 cursor-not-allowed" : ""}`}
+                    className={`bg-blue-600 px-3 py-1.5 rounded cursor-pointer whitespace-nowrap flex items-center justify-center min-w-[80px] ${
+                      cookies.get("Checkin") || loadingCheckIn
+                        ? "opacity-50 cursor-not-allowed"
+                        : ""
+                    }`}
                     onClick={handleCheckInApi}
-                    disabled={!!cookies.get("Checkin")}
+                    disabled={!!cookies.get("Checkin") || loadingCheckIn}
                   >
-                    Check In
+                    {loadingCheckIn ? (
+                      <div className="flex items-center">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        Processing...
+                      </div>
+                    ) : (
+                      "Check In"
+                    )}
                   </button>
                 ) : (
                   <button
-                    className={`bg-blue-600 px-3 py-1.5 rounded cursor-pointer whitespace-nowrap
-                         ${cookies.get("checkout") ? "opacity-50 cursor-not-allowed" : ""}`}
+                    className={`bg-blue-600 px-3 py-1.5 rounded cursor-pointer whitespace-nowrap flex items-center justify-center min-w-[80px] ${
+                      cookies.get("checkout") || loadingCheckOut
+                        ? "opacity-50 cursor-not-allowed"
+                        : ""
+                    }`}
                     onClick={handleCheckOutApi}
-                    disabled={!!cookies.get("checkout")}
+                    disabled={!!cookies.get("checkout") || loadingCheckOut}
                   >
-                    Check Out
+                    {loadingCheckOut ? (
+                      <div className="flex items-center">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        Processing...
+                      </div>
+                    ) : (
+                      "Check Out"
+                    )}
                   </button>
                 )}
               </div>
@@ -611,66 +734,72 @@ const LeaveAttendance = () => {
               together
             </p>
 
-            <div className="w-full overflow-x-auto">
-              <table className="min-w-[600px] w-full text-sm text-left border-separate border-spacing-y-2">
-                <thead className="text-gray-400 bg-[#313A46] border-b border-gray-600">
-                  <tr>
-                    <th className="py-4 px-2">Date</th>
-                    <th>Status</th>
-                    <th>Check In</th>
-                    <th>Check Out</th>
-                    <th>Duration</th>
-                    <th>Remarks</th>
-                    <th>Edit</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {allDates.map((date, index) => {
-                    const record = attendanceRecords.find(
-                      (r) => r.date === date
-                    );
-                    return (
-                      <tr
-                        key={index}
-                        className="border-b border-gray-700 hover:bg-gray-700 font-semibold"
-                      >
-                        <td className="py-2 px-2">{date}</td>
-                        <td className="capitalize">{record?.status || "--"}</td>
-                        <td>{record?.checkIn?.slice(0, 5) || "--"}</td>
-                        <td>{record?.checkOut?.slice(0, 5) || "--"}</td>
-                        <td>{record?.duration?.slice(0, 5) || "--"}</td>
-                        <td>{record?.remarks || "--"}</td>
-                        <td>
-                          <button
-                            className="text-blue-400 font-bold hover:underline p-2 cursor-pointer"
-                            onClick={() => {
-                              setDelAnimation(true);
-                              setOpen(true);
-                              setEditData({
-                                checkIn: record?.checkIn || "",
-                                checkOut: record?.checkOut || "",
-                                remarks: record?.remarks || "",
-                                leaveTypeName: record?.status || "",
-                                date: date,
-                              });
+            {loadingAttendance ? (
+              <div className="flex justify-center items-center h-32">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+              </div>
+            ) : (
+              <div className="w-full overflow-x-auto">
+                <table className="min-w-[600px] w-full text-sm text-left border-separate border-spacing-y-2">
+                  <thead className="text-gray-400 bg-[#313A46] border-b border-gray-600">
+                    <tr>
+                      <th className="py-4 px-2">Date</th>
+                      <th>Status</th>
+                      <th>Check In</th>
+                      <th>Check Out</th>
+                      <th>Duration</th>
+                      <th>Remarks</th>
+                      <th>Edit</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {allDates.map((date, index) => {
+                      const record = attendanceRecords.find(
+                        (r) => r.date === date
+                      );
+                      return (
+                        <tr
+                          key={index}
+                          className="border-b border-gray-700 hover:bg-gray-700 font-semibold"
+                        >
+                          <td className="py-2 px-2">{date}</td>
+                          <td className="capitalize">{record?.status || "--"}</td>
+                          <td>{record?.checkIn?.slice(0, 5) || "--"}</td>
+                          <td>{record?.checkOut?.slice(0, 5) || "--"}</td>
+                          <td>{record?.duration?.slice(0, 5) || "--"}</td>
+                          <td>{record?.remarks || "--"}</td>
+                          <td>
+                            <button
+                              className="text-blue-400 font-bold hover:underline p-2 cursor-pointer"
+                              onClick={() => {
+                                setDelAnimation(true);
+                                setOpen(true);
+                                setEditData({
+                                  checkIn: record?.checkIn || "",
+                                  checkOut: record?.checkOut || "",
+                                  remarks: record?.remarks || "",
+                                  leaveTypeName: record?.status || "",
+                                  date: date,
+                                });
 
-                              setEditFormErrors({
-                                leaveTypeName: "",
-                                checkIn: "",
-                                checkOut: "",
-                                remarks: "",
-                              });
-                            }}
-                          >
-                            <PiPencilSimpleLineFill />
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+                                setEditFormErrors({
+                                  leaveTypeName: "",
+                                  checkIn: "",
+                                  checkOut: "",
+                                  remarks: "",
+                                });
+                              }}
+                            >
+                              <PiPencilSimpleLineFill />
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </div>
 
