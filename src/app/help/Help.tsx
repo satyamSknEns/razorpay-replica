@@ -22,7 +22,7 @@ export default function Help() {
     <div className="text-[28px] font-bold text-white px-3 pb-1">
        Get Help
       </div>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl mx-auto p-4 text-white">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl mx-auto p-3 text-white">
           <div className="lg:col-span-2 bg-[#151e2f] p-6 rounded-xl shadow-md">
             <h3 className="text-xl font-semibold mb-3 border-b pb-2 border-b-[#686666]">Quick Links</h3>
 

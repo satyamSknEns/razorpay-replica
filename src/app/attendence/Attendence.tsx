@@ -7,6 +7,12 @@ import { useCookies } from "next-client-cookies";
 import { RxCross2 } from "react-icons/rx";
 import CloseIcon from "@mui/icons-material/Close";
 
+
+type LeaveItem = {
+  leaveTypeName: string;
+  takenAt: string;
+};
+
 const LeaveAttendance = () => {
   const [visible, setVisible] = useState(false);
   const [token, setToken] = useState<string | null>(null);
@@ -24,6 +30,7 @@ const LeaveAttendance = () => {
   const [loadingCheckIn, setLoadingCheckIn] = useState(false);
   const [loadingCheckOut, setLoadingCheckOut] = useState(false);
   const [loadingAttendance, setLoadingAttendance] = useState(true);
+  const [leaveHistory, setLeaveHistory]=useState<LeaveItem[]>([]);
   const [formErrors, setFormErrors] = useState({
     leaveTypeName: "",
     fromDate: "",
@@ -50,6 +57,9 @@ const LeaveAttendance = () => {
     setCheckedMap(newMap);
   };
 
+  console.log("leaveHistory",leaveHistory)
+ 
+
   useEffect(() => {
     const initMap: Record<number, boolean> = {};
     leaveRequest.forEach((item) => {
@@ -58,6 +68,9 @@ const LeaveAttendance = () => {
     setCheckedMap(initMap);
   }, [leaveRequest]);
 
+
+  console.log("leaveHistory",leaveHistory)
+  
   const validateEditForm = () => {
     let valid = true;
     const newError = {
@@ -587,6 +600,34 @@ const LeaveAttendance = () => {
     }
   };
 
+
+// Get all the leaves api
+  useEffect(()=>{
+    if(!token) return console.error("Token is not found")
+
+      const fetchLeaveData= async()=>{
+      try{
+        const config: AxiosRequestConfig = {
+          url: `${process.env.NEXT_PUBLIC_API_URL}/users/getAllTakenLeave`,
+          method: "POST",
+          maxBodyLength:Infinity,
+          headers: {
+            "Content-Type":"application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          data: {},
+          
+        };
+        const response = await axios.request(config);
+        setLeaveHistory(response.data.leaveHistory); 
+
+      }catch (error){
+        console.error("Failed to fetch the data", error)
+      }
+    }
+      fetchLeaveData();
+}, [token])
+
   return (
     <>
       <div className="text-[28px] font-bold text-white px-3 pb-1">
@@ -864,18 +905,17 @@ const LeaveAttendance = () => {
                 All the Leaves
               </h2>
               <ul>
-                <li className="py-3 border-b border-[#464545] text-sm">
-                  M. L. - 09/01/2025 (Half Day)
-                </li>
-                <li className="py-3 border-b border-[#464545] text-sm">
-                  C. L. - 06/05/2025 (urgent work)
-                </li>
-                <li className="py-3 border-b border-[#464545] text-sm">
-                  M. L. - 06/05/2025 (urgent work)
-                </li>
-                <li className="py-3 text-sm">
-                  C. L. - 06/05/2025 (urgent work)
-                </li>
+                {leaveHistory?.map((leave, index)=>{
+                  const formattedDate = new Date(leave.takenAt).toLocaleDateString("en-GB");
+                  return(
+                    <li
+                    key={index}
+                    className={`py-3 text-sm ${index !== leaveHistory.length - 1 ? "border-b border-[#464545]" : ""}`}
+                  >
+                    {leave.leaveTypeName.charAt(0).toUpperCase() + leave.leaveTypeName.slice(1)} - {formattedDate}
+                  </li>
+                  )
+                })}
               </ul>
             </div>
           </div>
