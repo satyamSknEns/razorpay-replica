@@ -44,7 +44,7 @@ const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
 
   useEffect(() => {
     const checkScreenSize = () => {
-      setIsMobile(window.innerWidth < 1024);
+      setIsMobile(window.innerWidth < 768);
     };
     checkScreenSize();
     window.addEventListener("resize", checkScreenSize);
@@ -93,8 +93,6 @@ const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
   const removeCookies = () => {
     setLoading(true);
     cookies.remove("token");
-    // setTimeout(() => {
-    // }, 1000);
     handleLoading();
     window.location.href = "/login";
   };
@@ -106,7 +104,6 @@ const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
   };
 
   const handleProfile = () => {
-    // setLoading(true);
     handleLoading();
     window.location.href = "/layout/profile";
   };
@@ -165,14 +162,14 @@ const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
       `}</style>
 
       {loading && (
-        <div className="fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-50">
-          <Image
+        <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center z-50">
+          {/* <Image
             src="/loading.gif"
             alt="Loading"
             width={80}
             height={80}
             className="animate-pulse"
-          />
+          /> */}
         </div>
       )}
 
@@ -236,7 +233,7 @@ const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
 
           {visible && (
             <div className="fixed inset-0 z-40">
-              <div className="absolute inset-0 bg-black/50"></div>
+              <div className="absolute inset-0 "></div>
               <div
                 ref={dropdownref}
                 className={`z-50 text-white bg-[#0C1927] px-4 py-4 border-2 border-gray-700 ${

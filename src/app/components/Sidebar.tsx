@@ -55,11 +55,11 @@ const Sidebar = ({
       className={`
       fixed left-0 top-0 h-full w-60 bg-gray-800 p-4 z-50 transform transition-transform duration-300 ease-in-out
       ${isOpen ? "translate-x-0" : "-translate-x-full"} 
-      lg:translate-x-0 lg:static lg:block
+      md:translate-x-0 md:static md:block
     `}
      
     >
-      <div className="flex justify-end lg:hidden mb-4">
+      <div className="flex justify-end md:hidden mb-4">
         <CloseIcon onClick={onClose} className="text-white cursor-pointer" />
       </div>
 
