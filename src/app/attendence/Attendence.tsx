@@ -37,6 +37,7 @@ const LeaveAttendance = () => {
     toDate: "",
     remarks: "",
   });
+  
   const [editFormErrors, setEditFormErrors] = useState({
     leaveTypeName: "",
     remarks: "",
@@ -289,33 +290,6 @@ const LeaveAttendance = () => {
     window.location.reload();
   };
 
-  //handlechecKIn Api
-  // const handleCheckInApi = async () => {
-  //   if (!token) return console.error("Token not found");
-
-  //   try {
-  //     setLoadingCheckIn(true);
-  //     const config: AxiosRequestConfig = {
-  //       url: `${process.env.NEXT_PUBLIC_API_URL}/users/checkIn`,
-  //       method: "POST",
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //       data: {},
-  //     };
-
-  //     const response = await axios.request(config);
-  //     const newEntry = response.data.attendance;
-  //     console.log(newEntry);
-  //     cookies.set("Checkin", "true", { expires: 1 }); 
-  //     // handleRefresh();
-  //   } catch (error) {
-  //     console.error("Check In API error:", error);
-  //   } finally {
-  //     setLoadingCheckIn(false);
-  //   }
-  // };
-
   const handleCheckInApi = async () => {
   if (!token) return console.error("Token not found");
 
@@ -355,31 +329,6 @@ const LeaveAttendance = () => {
     setLoadingCheckIn(false);
   }
 };
-
-  //CheckOut API
-  // const handleCheckOutApi = async () => {
-  //   if (!token) return console.error("Token not found");
-  //   try {
-  //     setLoadingCheckOut(true);
-  //     const config: AxiosRequestConfig = {
-  //       url: `${process.env.NEXT_PUBLIC_API_URL}/users/checkOut`,
-  //       method: "POST",
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //       data: {},
-  //     };
-
-  //     await axios.request(config);
-  //     // handleRefresh();
-  //     cookies.set("checkout", "true", { expires: 1 });
-  //   } catch (error) {
-  //     console.error("Check Out API error:", error);
-  //   } finally {
-  //     setLoadingCheckOut(false);
-  //   }
-  // };
-
 
 
   const handleCheckOutApi = async () => {
