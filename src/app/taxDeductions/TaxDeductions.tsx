@@ -4,9 +4,9 @@ import Link from "next/link";
 
 export default function TaxHeader() {
   return (
-    <div className="flex flex-col lg:flex-row justify-between gap-6 bg-[#0C1927] text-white p-6">
+    <div className="flex flex-col lg:flex-row justify-between gap-6 bg-[#0C1927] text-white px-4 pb-6">
       <div className="flex-1 space-y-4">
-        <h1 className="text-2xl font-semibold">Tax Deductions FY 2025-2026</h1>
+        <h1 className="text-[28px] font-bold text-white pb-1">Tax Deductions FY 2025-2026</h1>
 
         <div className="bg-[#3e1717] text-sm rounded p-3 border-l-5 border-red-500">
           Please update your{" "}

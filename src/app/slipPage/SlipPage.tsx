@@ -5,10 +5,10 @@ export default function MyPayPage() {
     <div className="min-h-screen bg-[#0f172a] text-white flex flex-col md:flex-row">
 
 
-      <main className="flex-1 px-6 pb-6 space-y-8">
-        <h1 className="text-3xl font-bold">Pay Slips</h1>
+      <main className="flex-1 px-3 pb-6 space-y-8">
+        <h1 className="text-[28px] font-bold text-white">Pay Slips</h1>
 
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between space-y-4 md:space-y-0 md:space-x-4">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between space-y-4 md:space-y-0 md:space-x-4 -mt-3">
           <div className="flex-1">
             <label className="block mb-2 text-sm font-medium">Select financial year</label>
             <select className="w-full bg-gray-800 border border-gray-700 text-white px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">

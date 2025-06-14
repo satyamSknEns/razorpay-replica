@@ -59,7 +59,7 @@ const Dashboard = () => {
   return (
     <>
       <div className="flex items-start bg-gray-900 text-white overflow-y-auto">
-        <div className="lg:flex flex-wrap md:flex-col">
+        <div className="lg:flex flex-wrap w-full">
           <main className="flex-1 px-2 pb-6 space-y-4">
               <div className="bg-[#3e1717] text-sm rounded p-3 border-l-5 border-red-500">
          Your organization is currently marked as inactive on XPayroll. Please see our  <span className="underline text-blue-300 cursor-pointer">FAQ</span> to know why.
@@ -173,7 +173,7 @@ const Dashboard = () => {
               </section>
             </div>
           </main>
-          <span className="hidden min541:inline border-l border-gray-700 ml-4"></span>
+          <span className="hidden lg:flex border-l border-gray-700 ml-4"></span>
           <aside className="w-64 bg-gray-900 p-6 space-y-2">
             <div>
               <h2 className="text-xl font-bold">Welcome,</h2>

@@ -6,8 +6,8 @@ export default function InsuranceForm() {
   const [gender, setGender] = useState('');
 
   return (
-    <div className="max-w-3xl  p-6 bg-white dark:bg-gray-900 rounded-lg shadow-md">
-      <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Details for Insurance</h2>
+    <div className="max-w-3xl  px-3 pb-6 bg-white dark:bg-gray-900 rounded-lg shadow-md">
+      <h2 className="text-[28px] font-bold text-white mb-2 pb-1">Details for Insurance</h2>
       <p className="text-gray-700 dark:text-gray-300 mb-4">
         Final coverage inclusion will depend on the policy your organization selects.
       </p>

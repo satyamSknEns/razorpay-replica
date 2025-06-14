@@ -9,8 +9,8 @@ export default function DocumentUpload() {
   console.log(type,description,file)
 
   return (
-    <div className="max-w-2xl p-6 bg-white rounded-lg shadow-md dark:bg-gray-900">
-      <h2 className="text-2xl font-semibold mb-6 text-gray-900 dark:text-white">Documents</h2>
+    <div className="max-w-2xl px-3 pb-6 bg-white rounded-lg shadow-md dark:bg-gray-900">
+      <h2 className="text-[28px] font-bold text-white mb-2 pb-1">Documents</h2>
 
       <form className="space-y-6">
 

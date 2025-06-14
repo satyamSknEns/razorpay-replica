@@ -4,9 +4,11 @@ import { FaPaperPlane } from "react-icons/fa";
 
 const Reimbursement = () => {
   return (
+    <>
+     <h1 className="text-[28px] font-bold text-white px-3 mb-2 pb-1">Claim a Reimbursement</h1>
      <div className="flex gap-2 md:flex-col sm:flex-col lg:flex-row flex-col space-x-4 px-2">
+     
     <div className=" bg-[#171F2B] text-white p-6 w-full">
-      <h1 className="text-xl font-semibold mb-6">Claim a Reimbursement</h1>
 
       <form className="space-y-4 max-w-lg">
         <div>
@@ -104,6 +106,7 @@ const Reimbursement = () => {
     </div>
 
     </div>
+    </>
   );
 
 };
