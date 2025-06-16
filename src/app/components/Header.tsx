@@ -175,7 +175,7 @@ const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
 
       <div className="sticky flex items-center top-0 left-0 z-40">
         <Link href="/layout/dashboard" className="w-full h-15 bg-[#0C1927] flex justify-between items-center p-3 relative">
-          <Image src="/logo2.png" width={200} height={200} alt="Logo" />
+          <Image src="/logo2.png" width={200} height={60} alt="Logo" />
         </Link>
 
         <div className="flex relative items-center justify-between space-x-4 p-4 bg-gray-900 text-white rounded-lg">
@@ -228,7 +228,7 @@ const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
             onClick={handleVisible}
             className="h-10 w-[40px] lg:w-[120px] relative cursor-pointer rounded-full bg-gray-700 flex items-center justify-center text-sm font-bold"
           >
-            <span className="tracking-widest">{data?.profile?.name?.slice(0,2).toUpperCase()}</span>
+            <span className="tracking-widest">{(data?.profile?.name?.slice(0,2).toUpperCase())|| "EN"}</span>
           </div>
 
           {visible && (
@@ -249,10 +249,10 @@ const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
                 </div>
 
                 <button onClick={() => (setVisible(false), handleProfile())} className="flex items-center space-x-3 w-full cursor-pointer">
-                  <div className="w-10 h-10 mb-2 bg-blue-600 rounded-full flex items-center justify-center text-sm font-bold tracking-widest">{data?.profile?.name?.slice(0,2).toUpperCase()}</div>
+                  <div className="w-10 h-10 mb-2 bg-blue-600 rounded-full flex items-center justify-center text-sm font-bold tracking-widest">{(data?.profile?.name?.slice(0,2).toUpperCase())|| "EN"}</div>
                   <div className="text-justify">
-                    <p className="text-sm font-semibold">{data?.profile?.name ? data?.profile?.name.charAt(0).toUpperCase()+data?.profile?.name.slice(1):"--"}</p>
-                    <p className="text-xs text-gray-400">Employee</p>
+                    <p className="text-sm font-semibold">{data?.profile?.name ? data?.profile?.name.charAt(0).toUpperCase()+data?.profile?.name.slice(1):"ENS"}</p>
+                    <p className="text-xs text-gray-400">{data?.profile?.role ? data?.profile.role.charAt(0).toUpperCase()+data?.profile?.role?.slice(1):"user"}</p>
                   </div>
                   <svg className="ml-auto w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M6 6l6 4-6 4V6z" clipRule="evenodd" />
