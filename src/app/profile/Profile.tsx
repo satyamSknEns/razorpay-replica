@@ -5,6 +5,8 @@ import { useState, useEffect } from "react";
 import { useCookies } from "next-client-cookies";
 import Image from "next/image";
 import { RxCross2 } from "react-icons/rx";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const Profile = () => {
   const [token, setToken] = useState<string | null>(null);
@@ -123,12 +125,16 @@ const Profile = () => {
     };
     await axios.request(config);
     console.log(editDetail);
+    toast.success("data updated successfully")
     setAnimation(false)
     setTimeout(()=>{
       setShow(false)
     },300)
     } catch (error) {
-      console.log(error)
+      toast.dismiss()
+      toast.error("Department or managerId is incorrect")
+      console.error("There is some issue", error)
+          
     }
   };
 
@@ -203,6 +209,7 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-[#0C1927] text-white px-4 py-6 sm:px-6 lg:px-8">
+      <ToastContainer position="top-right" autoClose={3000} />
       <div className="mb-4">
         <h2 className="text-sm text-gray-400">
           People |{" "}
@@ -221,7 +228,7 @@ const Profile = () => {
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-semibold">Basic Information</h2>
               <button
-                className="text-blue-400 hover:underline"
+                className="text-blue-400 hover:underline cursor-pointer"
                 onClick={() => setShow((prev) => !prev)}
               >
                 Edit
@@ -357,7 +364,7 @@ const Profile = () => {
               <div className="flex justify-between items-center mb-2">
                 <h2 className="text-lg font-semibold">Payment Information</h2>
 
-                <button className="text-blue-400 hover:underline text-sm">
+                <button className="text-blue-400 hover:underline text-sm cursor-pointer">
                   Edit
                 </button>
               </div>
@@ -456,7 +463,7 @@ const Profile = () => {
               <div className="flex justify-between items-center mb-2">
                 <h2 className="text-lg font-semibold">Payment Information</h2>
 
-                <button className="text-blue-400 hover:underline text-sm">
+                <button className="text-blue-400 hover:underline text-sm cursor-pointer">
                   Edit
                 </button>
               </div>
@@ -474,7 +481,7 @@ const Profile = () => {
               <div className="flex justify-between items-center mb-2">
                 <h2 className="text-lg font-semibold">Other Information</h2>
 
-                <button className="text-blue-400 hover:underline text-sm">
+                <button className="text-blue-400 hover:underline text-sm cursor-pointer">
                   Edit
                 </button>
               </div>
@@ -515,7 +522,7 @@ const Profile = () => {
             >
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold">Edit User Detail</h2>
-                <button onClick={()=>{
+                <button className="cursor-pointer" onClick={()=>{
                    setAnimation(false);
                     setTimeout(() => {
                       setShow((prev) => !prev);
@@ -623,9 +630,6 @@ const Profile = () => {
               />
 
               <div className="flex gap-3 justify-end">
-                <button className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-md cursor-pointer">
-                  Delete
-                </button>
                 <button
                   className="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-md cursor-pointer"
                   onClick={() => {

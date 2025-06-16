@@ -7,10 +7,13 @@ import { useCookies } from "next-client-cookies";
 import { RxCross2 } from "react-icons/rx";
 import CloseIcon from "@mui/icons-material/Close";
 
-
 type LeaveItem = {
   leaveTypeName: string;
   takenAt: string;
+};
+
+type GroupedLeaves = {
+  [key: string]: string[];
 };
 
 const LeaveAttendance = () => {
@@ -30,14 +33,14 @@ const LeaveAttendance = () => {
   const [loadingCheckIn, setLoadingCheckIn] = useState(false);
   const [loadingCheckOut, setLoadingCheckOut] = useState(false);
   const [loadingAttendance, setLoadingAttendance] = useState(true);
-  const [leaveHistory, setLeaveHistory]=useState<LeaveItem[]>([]);
+  const [leaveHistory, setLeaveHistory] = useState<LeaveItem[]>([]);
   const [formErrors, setFormErrors] = useState({
     leaveTypeName: "",
     fromDate: "",
     toDate: "",
     remarks: "",
   });
-  
+
   const [editFormErrors, setEditFormErrors] = useState({
     leaveTypeName: "",
     remarks: "",
@@ -58,9 +61,6 @@ const LeaveAttendance = () => {
     setCheckedMap(newMap);
   };
 
-  console.log("leaveHistory",leaveHistory)
- 
-
   useEffect(() => {
     const initMap: Record<number, boolean> = {};
     leaveRequest.forEach((item) => {
@@ -69,7 +69,8 @@ const LeaveAttendance = () => {
     setCheckedMap(initMap);
   }, [leaveRequest]);
 
-  
+  console.log("leaveHistory", leaveHistory);
+
   const validateEditForm = () => {
     let valid = true;
     const newError = {
@@ -215,7 +216,7 @@ const LeaveAttendance = () => {
       cookies.remove("Checkin");
       cookies.remove("checkout");
     }
-    
+
     cookies.set("lastDate", today, { expires: 1 });
   };
 
@@ -249,10 +250,9 @@ const LeaveAttendance = () => {
     sixPM.setHours(18, 45, 0, 0);
     const timeUntilSix = (sixPM as any) - (now as any);
     if (timeUntilSix > 0) {
-      const timeout = setTimeout(() => {
-      }, timeUntilSix);
+      const timeout = setTimeout(() => {}, timeUntilSix);
       return () => clearTimeout(timeout);
-    } 
+    }
   }, [token, attendanceRecords]);
 
   const handleData = (
@@ -289,77 +289,73 @@ const LeaveAttendance = () => {
   };
 
   const handleCheckInApi = async () => {
-  if (!token) return console.error("Token not found");
+    if (!token) return console.error("Token not found");
 
-  try {
-    setLoadingCheckIn(true);
-    const config: AxiosRequestConfig = {
-      url: `${process.env.NEXT_PUBLIC_API_URL}/users/checkIn`,
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      data: {},
-    };
+    try {
+      setLoadingCheckIn(true);
+      const config: AxiosRequestConfig = {
+        url: `${process.env.NEXT_PUBLIC_API_URL}/users/checkIn`,
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        data: {},
+      };
 
-    const response = await axios.request(config);
-    const newEntry = response.data.attendance;
-    
-    setAttendanceRecords(prev => {
-      const today = formatDate(new Date());
-      const existingIndex = prev.findIndex(r => r.date === today);
-      
-      if (existingIndex >= 0) {
-        const updated = [...prev];
-        updated[existingIndex] = newEntry;
-        return updated;
-      } else {
-        return [...prev, newEntry];
-      }
-    });
+      const response = await axios.request(config);
+      const newEntry = response.data.attendance;
 
-    cookies.set("Checkin", "true", { expires: 1 });
-    handleButton();
+      setAttendanceRecords((prev) => {
+        const today = formatDate(new Date());
+        const existingIndex = prev.findIndex((r) => r.date === today);
 
-  } catch (error) {
-    console.error("Check In API error:", error);
-  } finally {
-    setLoadingCheckIn(false);
-  }
-};
+        if (existingIndex >= 0) {
+          const updated = [...prev];
+          updated[existingIndex] = newEntry;
+          return updated;
+        } else {
+          return [...prev, newEntry];
+        }
+      });
 
+      cookies.set("Checkin", "true", { expires: 1 });
+      handleButton();
+    } catch (error) {
+      console.error("Check In API error:", error);
+    } finally {
+      setLoadingCheckIn(false);
+    }
+  };
 
   const handleCheckOutApi = async () => {
-  if (!token) return console.error("Token not found");
-  try {
-    setLoadingCheckOut(true);
-    const config: AxiosRequestConfig = {
-      url: `${process.env.NEXT_PUBLIC_API_URL}/users/checkOut`,
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      data: {},
-    };
+    if (!token) return console.error("Token not found");
+    try {
+      setLoadingCheckOut(true);
+      const config: AxiosRequestConfig = {
+        url: `${process.env.NEXT_PUBLIC_API_URL}/users/checkOut`,
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        data: {},
+      };
 
-    const response = await axios.request(config);
-    const updatedEntry = response.data.attendance;
-    setAttendanceRecords(prev => 
-      prev.map(record => 
-        record.date === updatedEntry.date ? updatedEntry : record
-      )
-    );
-    
-    cookies.set("checkout", "true", { expires: 1 });
-    handleButton();
+      const response = await axios.request(config);
+      const updatedEntry = response.data.attendance;
+      setAttendanceRecords((prev) =>
+        prev.map((record) =>
+          record.date === updatedEntry.date ? updatedEntry : record
+        )
+      );
 
-  } catch (error) {
-    console.error("Check Out API error:", error);
-  } finally {
-    setLoadingCheckOut(false);
-  }
-};
-
+      cookies.set("checkout", "true", { expires: 1 });
+      handleButton();
+    } catch (error) {
+      console.error("Check Out API error:", error);
+    } finally {
+      setLoadingCheckOut(false);
+    }
+  };
 
   //Handle Attendence record
   useEffect(() => {
@@ -547,33 +543,41 @@ const LeaveAttendance = () => {
     }
   };
 
-// Get all the leaves api
+  // Get all the leaves api
+  useEffect(() => {
+    if (!token) return 
 
-    useEffect(()=>{
-      if(!token) return 
-
-        const fetchLeaveData= async()=>{
-        try{
-          const config: AxiosRequestConfig = {
-            url: `${process.env.NEXT_PUBLIC_API_URL}/users/getAllTakenLeave`,
-            method: "POST",
-            maxBodyLength:Infinity,
-            headers: {
-              "Content-Type":"application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            data: {},
-            
-          };
-          const response = await axios.request(config);
-          setLeaveHistory(response.data.leaveHistory); 
-
-        }catch (error){
-          console.error("Failed to fetch the data", error)
-        }
+    const fetchLeaveData = async () => {
+      try {
+        const config: AxiosRequestConfig = {
+          url: `${process.env.NEXT_PUBLIC_API_URL}/users/getAllTakenLeave`,
+          method: "POST",
+          maxBodyLength: Infinity,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          data: {},
+        };
+        const response = await axios.request(config);
+        setLeaveHistory(response.data.leaveHistory);
+      } catch (error) {
+        console.error("Failed to fetch the data", error);
       }
-        fetchLeaveData();
-  }, [token])
+    };
+    fetchLeaveData();
+  }, [token]);
+
+  const groupedLeaves: GroupedLeaves = leaveHistory?.reduce((acc, leave) => {
+  const type = leave.leaveTypeName;
+  const formattedDate = new Date(leave.takenAt).toLocaleDateString("en-GB");
+
+  if (!acc[type]) {
+    acc[type] = [];
+  }
+  acc[type].push(formattedDate);
+  return acc;
+}, {} as GroupedLeaves);
 
   return (
     <>
@@ -717,9 +721,7 @@ const LeaveAttendance = () => {
           <div className="bg-gray-800 p-4 rounded shadow overflow-x-auto ">
             <h3 className="text-lg font-semibold mb-2">Attendance</h3>
             <p className="mb-3 text-gray-400 text-base">
-              To apply for leaves, or to update your attendance data, please
-              click on the edit button next to a date. To apply for many leaves
-              together
+             To update your attendance data, please click on the edit button next to each date.
             </p>
 
             {loadingAttendance ? (
@@ -751,7 +753,9 @@ const LeaveAttendance = () => {
                           className="border-b border-gray-700 hover:bg-gray-700 font-semibold"
                         >
                           <td className="py-2 px-2">{date}</td>
-                          <td className="capitalize">{record?.status || "--"}</td>
+                          <td className="capitalize">
+                            {record?.status || "--"}
+                          </td>
                           <td>{record?.checkIn?.slice(0, 5) || "--"}</td>
                           <td>{record?.checkOut?.slice(0, 5) || "--"}</td>
                           <td>{record?.duration?.slice(0, 5) || "--"}</td>
@@ -820,9 +824,9 @@ const LeaveAttendance = () => {
             </li>
           </ul>
           <button
-            onClick={()=>{
-              setLeaveAnimation(true)
-              setIsOpen(true)
+            onClick={() => {
+              setLeaveAnimation(true);
+              setIsOpen(true);
             }}
             className="mt-4 w-full bg-blue-600 py-2 rounded text-sm cursor-pointer "
           >
@@ -833,36 +837,43 @@ const LeaveAttendance = () => {
         {isOpen && (
           <div className="fixed inset-0 bg-opacity-80 bg-[#212020ad] flex items-center justify-center z-50 ">
             <div
-              className={`bg-gray-800 rounded px-4 pb-4 w-[500px] transition-all ${leaveAnimation ? "scale-up-center" : "scale-down-center"}`}
+              className={`bg-gray-800 rounded px-4 pb-4 w-[500px] transition-all ${
+                leaveAnimation ? "scale-up-center" : "scale-down-center"
+              }`}
             >
               <div className="flex justify-end">
                 <button
                   className="mt-3 bg-red-600 text-white px-3 py-.75 cursor-pointer rounded text-right"
-                  onClick={() =>{
-                    setLeaveAnimation(false)
-                    setTimeout(()=>{
-                      setIsOpen(false)
-                    },300)
+                  onClick={() => {
+                    setLeaveAnimation(false);
+                    setTimeout(() => {
+                      setIsOpen(false);
+                    }, 300);
                   }}
                 >
                   <CloseIcon fontSize="small" className="-mt-1" />
                 </button>
               </div>
               <h2 className="text-2xl font-semibold text-gray-200 border-b border-gray-600 pb-1 mb-3">
-                Leaves taken
+               Leaves taken
               </h2>
               <ul>
-                {leaveHistory?.map((leave, index)=>{
-                  const formattedDate = new Date(leave.takenAt).toLocaleDateString("en-GB");
-                  return(
+                {groupedLeaves &&
+                  Object.entries(groupedLeaves).map(([type, dates], index) => (
                     <li
-                    key={index}
-                    className={`py-3 text-sm ${index !== leaveHistory.length - 1 ? "border-b border-[#464545]" : ""}`}
-                  >
-                    {leave.leaveTypeName.charAt(0).toUpperCase() + leave.leaveTypeName.slice(1)} - {formattedDate}
-                  </li>
-                  )
-                })}
+                      key={index}
+                      className={`py-3 text-sm ${
+                        index !== Object.keys(groupedLeaves).length - 1
+                          ? "border-b border-[#464545]"
+                          : ""
+                      }`}
+                    >
+                      <div>{type.charAt(0).toUpperCase() + type.slice(1)}</div>
+                      {dates.map((date, idx) => (
+                        <div key={idx}>{date}</div>
+                      ))}
+                    </li>
+                  ))}
               </ul>
             </div>
           </div>
