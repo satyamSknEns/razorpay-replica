@@ -69,8 +69,6 @@ const LeaveAttendance = () => {
     setCheckedMap(initMap);
   }, [leaveRequest]);
 
-
-  console.log("leaveHistory",leaveHistory)
   
   const validateEditForm = () => {
     let valid = true;
@@ -549,33 +547,33 @@ const LeaveAttendance = () => {
     }
   };
 
-
 // Get all the leaves api
-  useEffect(()=>{
-    if(!token) return console.error("Token is not found")
 
-      const fetchLeaveData= async()=>{
-      try{
-        const config: AxiosRequestConfig = {
-          url: `${process.env.NEXT_PUBLIC_API_URL}/users/getAllTakenLeave`,
-          method: "POST",
-          maxBodyLength:Infinity,
-          headers: {
-            "Content-Type":"application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          data: {},
-          
-        };
-        const response = await axios.request(config);
-        setLeaveHistory(response.data.leaveHistory); 
+    useEffect(()=>{
+      if(!token) return 
 
-      }catch (error){
-        console.error("Failed to fetch the data", error)
+        const fetchLeaveData= async()=>{
+        try{
+          const config: AxiosRequestConfig = {
+            url: `${process.env.NEXT_PUBLIC_API_URL}/users/getAllTakenLeave`,
+            method: "POST",
+            maxBodyLength:Infinity,
+            headers: {
+              "Content-Type":"application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            data: {},
+            
+          };
+          const response = await axios.request(config);
+          setLeaveHistory(response.data.leaveHistory); 
+
+        }catch (error){
+          console.error("Failed to fetch the data", error)
+        }
       }
-    }
-      fetchLeaveData();
-}, [token])
+        fetchLeaveData();
+  }, [token])
 
   return (
     <>
@@ -851,7 +849,7 @@ const LeaveAttendance = () => {
                 </button>
               </div>
               <h2 className="text-2xl font-semibold text-gray-200 border-b border-gray-600 pb-1 mb-3">
-                All the Leaves
+                Leaves taken
               </h2>
               <ul>
                 {leaveHistory?.map((leave, index)=>{
