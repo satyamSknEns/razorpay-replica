@@ -12,6 +12,7 @@ const Help =dynamic(()=>import('../../help/Help'))
 const SlipPage = dynamic(()=>import('../../slipPage/SlipPage'))
 const Profile = dynamic(()=>import('../../profile/Profile'))
 const Settings = dynamic(()=>import('../../settings/Setting'))
+const Teams = dynamic(()=>import('../../teams/Teams'))
 
 
 export default function SectionPage() {
@@ -38,6 +39,8 @@ export default function SectionPage() {
       return <Profile/> 
     case 'settings':
       return <Settings/> 
+    case 'teams':
+      return <Teams/>  
     default:
       return <div>Page {section} not found</div>;
   }

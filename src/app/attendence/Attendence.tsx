@@ -69,7 +69,7 @@ const LeaveAttendance = () => {
     setCheckedMap(initMap);
   }, [leaveRequest]);
 
-  console.log("leaveHistory", leaveHistory);
+  // console.log("leaveHistory", leaveHistory);
 
   const validateEditForm = () => {
     let valid = true;
@@ -545,12 +545,12 @@ const LeaveAttendance = () => {
 
   // Get all the leaves api
   useEffect(() => {
-    if (!token) return 
+    if (!token) return;
 
     const fetchLeaveData = async () => {
       try {
         const config: AxiosRequestConfig = {
-          url: `${process.env.NEXT_PUBLIC_API_URL}/users/getAllTakenLeave`,
+          url: `${process.env.NEXT_PUBLIC_API_URL}/users/getUserLeave`,
           method: "POST",
           maxBodyLength: Infinity,
           headers: {
@@ -559,25 +559,35 @@ const LeaveAttendance = () => {
           },
           data: {},
         };
+
         const response = await axios.request(config);
-        setLeaveHistory(response.data.leaveHistory);
+
+        // Extract histories from each leave type
+        const attendance = response.data.attendance;
+        const allHistories = Object.values(attendance).flatMap(
+          (item: any) => item.history
+        );
+
+        setLeaveHistory(allHistories); // now it's an array
       } catch (error) {
         console.error("Failed to fetch the data", error);
       }
     };
+
     fetchLeaveData();
   }, [token]);
 
   const groupedLeaves: GroupedLeaves = leaveHistory?.reduce((acc, leave) => {
-  const type = leave.leaveTypeName;
-  const formattedDate = new Date(leave.takenAt).toLocaleDateString("en-GB");
+    const type = leave.leaveTypeName;
+    const formattedDate = new Date(leave.takenAt).toLocaleDateString("en-GB");
 
-  if (!acc[type]) {
-    acc[type] = [];
-  }
-  acc[type].push(formattedDate);
-  return acc;
-}, {} as GroupedLeaves);
+    if (!acc[type]) {
+      acc[type] = [];
+    }
+    acc[type].push(formattedDate);
+
+    return acc;
+  }, {} as GroupedLeaves);
 
   return (
     <>
@@ -721,7 +731,8 @@ const LeaveAttendance = () => {
           <div className="bg-gray-800 p-4 rounded shadow overflow-x-auto ">
             <h3 className="text-lg font-semibold mb-2">Attendance</h3>
             <p className="mb-3 text-gray-400 text-base">
-             To update your attendance data, please click on the edit button next to each date.
+              To update your attendance data, please click on the edit button
+              next to each date.
             </p>
 
             {loadingAttendance ? (
@@ -855,7 +866,7 @@ const LeaveAttendance = () => {
                 </button>
               </div>
               <h2 className="text-2xl font-semibold text-gray-200 border-b border-gray-600 pb-1 mb-3">
-               Leaves taken
+                Leaves taken
               </h2>
               <ul>
                 {groupedLeaves &&

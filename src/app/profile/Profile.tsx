@@ -6,12 +6,12 @@ import { useCookies } from "next-client-cookies";
 import Image from "next/image";
 import { RxCross2 } from "react-icons/rx";
 import { ToastContainer, toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 
 const Profile = () => {
   const [token, setToken] = useState<string | null>(null);
-  const [data, setData] = useState<ProfileData>({});
-  const [leave, setLeave] = useState<LeaveData | null>(null);
+  const [data, setUserProfileData] = useState<ProfileData>({});
+  // const [leave, setLeave] = useState<LeaveData | null>(null);
   const [loading, setLoading] = useState(true);
   const [animation, setAnimation] = useState(true);
   const [editDetail, setEditDetail] = useState<editUserDetail>({
@@ -43,38 +43,22 @@ const Profile = () => {
     handleGetcookies();
   }, []);
 
-  interface LeaveType {
-    allocated: number;
-    remaining: number;
-    taken: number;
-    leaveTypeId: number;
-  }
-
-  interface LeaveData {
-    attendance: {
-      casual: {
-        remaining: LeaveType;
-        history: any[];
-      };
-      medical: {
-        remaining: LeaveType;
-        history: any[];
-      };
-      earned: {
-        remaining: LeaveType;
-        history: any[];
-      };
-    };
-  }
-
-  interface ProfileData {
+   interface ProfileData {
     profile?: {
       id?: number;
       name?: string;
       role?: string;
+      DOB?:number;
       email?: string;
       department?: string;
       joiningDate?: string;
+      aadhaarNumber?:string;
+      accountNumber?:string;
+      phoneNumber?:string;
+      maritalStatus?:string;
+      gender?: string;
+      IFSCcode?:string;
+      highestEducationalQualification?:string;
       manager?: {
         name?: string;
       };
@@ -83,92 +67,100 @@ const Profile = () => {
         months?: number;
         days?: number;
       };
+      leaveSummary?:{
+        allocated?: number;
+        remaining?: number;
+        leaveTypeName?: string;
+        leaveTypeId?: string;
+      }[];
+      pan?:string;
+      AnnualSalary?:string;
+      NumberOfBonus?:string;
+      currentAdvanceSalary?:string;
+      shiftTiming?:string;
+      PFStatus?:number;
+      PFUAN?:string;
+      professionalTax?:string;
+      LWFStatus?:string;
+      ESICStatus?:string;
+      ESICIPNumber?:string;
+      location?:string
     };
   }
 
   const paymentInfo = [
-    { label: "PAN", value: "-/NA/-" },
-    { label: "IFSC Code", value: "-/NA/-" },
-    { label: "Account Number", value: "-/NA/-" },
-    { label: "Beneficiary Name", value: "Kshiteej Dubey" },
+    { label: "PAN", value: `${data.profile?.pan}` },
+    { label: "IFSC Code", value: `${data.profile?.IFSCcode}` },
+    { label: "Account Number", value: `${data.profile?.accountNumber}` },
+    { label: "Beneficiary Name", value:  `${data.profile?.name}` },
   ];
 
   const pfDetails = [
-    { label: "PF Status", value: "Disabled (not selected)" },
-    { label: "PF UAN", value: "-/NA/-" },
-    { label: "Professional Tax", value: "Company Disabled" },
-    { label: "LWF Status", value: "Company Disabled" },
-    { label: "ESIC Status", value: "Registration Not Initiated" },
-    { label: "ESIC IP Number", value: "-/NA/-" },
+    { label: "PF Status", value: `${data.profile?.PFStatus}` },
+    { label: "PF UAN", value: `${data.profile?.PFUAN}` },
+    { label: "Professional Tax", value: `${data.profile?.professionalTax}`},
+    { label: "LWF Status", value: `${data.profile?.LWFStatus}` },
+    { label: "ESIC Status", value: `${data.profile?.ESICStatus}` },
+    { label: "ESIC IP Number", value: `${data.profile?.ESICIPNumber}` },
   ];
 
   const otherDetails = [
-    { label: "Phone Number", value: "-/NA/-" },
-    { label: "Gender", value: "-/NA/-" },
-    { label: "Date of Birth", value: "-/NA/-" },
-    { label: "Highest Educational Qualification", value: "-/NA/-" },
-    { label: "Aadhaar Number", value: "-/NA/-" },
-    { label: "Marital Status", value: "-/NA/-" },
+    { label: "Phone Number", value: `${data.profile?.phoneNumber}` },
+    { label: "Gender", value: `${data.profile?.gender}` },
+    { label: "Date of Birth", value: `${String(data.profile?.DOB)?.slice(0,10)}` },
+    { label: "Highest Educational Qualification", value: `${data.profile?.highestEducationalQualification}` },
+    { label: "Aadhaar Number", value: `${data.profile?.aadhaarNumber}` },
+    { label: "Marital Status", value: `${data.profile?.maritalStatus}` },
   ];
 
   const handleUpdateUserDetail = async () => {
     try {
-       const config: AxiosRequestConfig = {
-      url: `${process.env.NEXT_PUBLIC_API_URL}/users/updateUserDetail`,
-      method: "POST",
-      maxBodyLength: Infinity,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      data: editDetail,
-    };
-    await axios.request(config);
-    console.log(editDetail);
-    toast.success("data updated successfully")
-    setAnimation(false)
-    setTimeout(()=>{
-      setShow(false)
-    },300)
+      const config: AxiosRequestConfig = {
+        url: `${process.env.NEXT_PUBLIC_API_URL}/users/updateUserDetail`,
+        method: "POST",
+        maxBodyLength: Infinity,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        data: editDetail,
+      };
+      await axios.request(config);
+      console.log(editDetail);
+      toast.success("data updated successfully");
+      setAnimation(false);
+      setTimeout(() => {
+        setShow(false);
+      }, 300);
     } catch (error) {
-      toast.dismiss()
-      toast.error("Department or managerId is incorrect")
-      console.error("There is some issue", error)
-          
+      toast.dismiss();
+      toast.error("Department or managerId is incorrect");
+      console.error("There is some issue", error);
     }
   };
 
+  
   useEffect(() => {
     const fetchData = async () => {
       if (!token) return;
 
       try {
         setLoading(true);
-        const profileConfig: AxiosRequestConfig = {
-          url: `${process.env.NEXT_PUBLIC_API_URL}/users/getUserProfile`,
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          data: {},
-        };
-        const profileResponse = await axios.request(profileConfig);
-        setData(profileResponse.data);
 
-        const leaveConfig: AxiosRequestConfig = {
-          url: `${process.env.NEXT_PUBLIC_API_URL}/users/getUserLeave`,
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          data: {},
-        };
-        const leaveResponse = await axios.request(leaveConfig);
-        setLeave(leaveResponse.data);
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_URL}/users/getUserProfile`,
+          {},
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        setUserProfileData(response.data);
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching user profile:", error);
       } finally {
         setLoading(false);
       }
@@ -177,7 +169,7 @@ const Profile = () => {
     fetchData();
   }, [token]);
 
-  const userRoles = [{ label: "Role", value: "Employee / Contractor" }];
+  const userRoles = [{ label: "Role", value: `${data.profile?.role}` }];
   const renderTable = (data: any) => (
     <div className="border border-gray-700 rounded overflow-hidden">
       <table className="w-full">
@@ -253,7 +245,7 @@ const Profile = () => {
                     ["Employee ID", `ENS30${data.profile?.id || "--"}`],
                     ["Department", "Research and Development"],
                     ["Manager", `${data?.profile?.manager?.name || "--"}`],
-                    ["Location", "Uttar Pradesh"],
+                    ["Location", `${data.profile?.location}`],
                   ].map(([label, value], index) => (
                     <tr key={index} className="h-12">
                       <td className="text-gray-400 w-1/3">{label}</td>
@@ -274,14 +266,14 @@ const Profile = () => {
                       <td className="px-4 py-2 text-gray-400 w-1/2">
                         Annual Salary
                       </td>
-                      <td className="px-4 py-2 font-semibold">₹0</td>
+                      <td className="px-4 py-2 font-semibold">{data.profile?.AnnualSalary}</td>
                     </tr>
                     <tr className="h-12">
                       <td className="px-4 py-2 text-gray-400">
                         Number of Bonuses
                       </td>
                       <td className="px-4 py-2 flex justify-between items-center">
-                        <span className="font-semibold">0</span>
+                        <span className="font-semibold">{data.profile?.NumberOfBonus}</span>
                         <button className="text-blue-400 hover:underline">
                           View Bonus
                         </button>
@@ -298,9 +290,9 @@ const Profile = () => {
                   <tbody className="divide-y divide-gray-700">
                     <tr className="h-12">
                       <td className="px-4 py-2 text-gray-400 w-1/2">
-                        Current Advance Salary
+                       Current Advance salary
                       </td>
-                      <td className="px-4 py-2 font-semibold">₹0</td>
+                      <td className="px-4 py-2 font-semibold">{data.profile?.AnnualSalary}</td>
                     </tr>
                     <tr className="h-12">
                       <td className="px-4 py-2 text-gray-400">
@@ -325,7 +317,7 @@ const Profile = () => {
                         Shift Timing
                       </td>
 
-                      <td className="px-4 py-2 font-semibold">09:30 - 18:30</td>
+                      <td className="px-4 py-2 font-semibold">{data.profile?.shiftTiming}</td>
                     </tr>
 
                     <tr className="h-12">
@@ -334,9 +326,11 @@ const Profile = () => {
                       </td>
 
                       <td className="px-4 py-2 font-semibold">
-                        {leave
-                          ? `${leave?.attendance?.casual?.remaining?.remaining} / ${leave?.attendance?.casual?.remaining?.allocated}`
-                          : "--"}
+                        {Number(
+                          data.profile?.leaveSummary?.[0]?.leaveTypeId
+                        ) === 3
+                          ?`${data.profile?.leaveSummary?.[0].remaining}/${ data.profile?.leaveSummary?.[0]?.allocated}`
+                          : "---"}
                       </td>
                     </tr>
 
@@ -345,15 +339,28 @@ const Profile = () => {
                         Medical Leave (balance / total)
                       </td>
 
-                      <td className="px-4 py-2 font-semibold">{`${leave?.attendance?.medical?.remaining?.remaining}/${leave?.attendance?.medical?.remaining?.allocated}`}</td>
+                      <td className="px-4 py-2 font-semibold">
+                         {Number(
+                          data.profile?.leaveSummary?.[1]?.leaveTypeId
+                        ) === 2
+                          ? `${data.profile?.leaveSummary?.[1].remaining}/${data.profile?.leaveSummary?.[1]?.allocated}`
+                          : "---"}
+                      </td>
                     </tr>
+
 
                     <tr className="h-12">
                       <td className="px-4 py-2 text-gray-400">
                         Earned Leave (balance / total)
                       </td>
 
-                      <td className="px-4 py-2 font-semibold">{`${leave?.attendance?.earned?.remaining?.remaining}/${leave?.attendance?.earned?.remaining?.allocated}`}</td>
+                      <td className="px-4 py-2 font-semibold">
+                           {Number(
+                          data.profile?.leaveSummary?.[2]?.leaveTypeId
+                        ) === 1
+                          ? `${data.profile?.leaveSummary?.[2].remaining}/${data.profile?.leaveSummary?.[2]?.allocated}`
+                          : "---"}
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -374,19 +381,19 @@ const Profile = () => {
                   <tbody className="divide-y divide-gray-700">
                     <tr className="h-12">
                       <td className="px-4 py-2 text-gray-400 w-1/2">PAN</td>
-                      <td className="px-4 py-2 text-gray-400">-/NA/-</td>
+                      <td className="px-4 py-2 text-gray-400">{data.profile?.pan}</td>
                     </tr>
 
                     <tr className="h-12">
                       <td className="px-4 py-2 text-gray-400">IFSC Code</td>
-                      <td className="px-4 py-2 text-gray-400">-/NA/-</td>
+                      <td className="px-4 py-2 text-gray-400">{data.profile?.IFSCcode}</td>
                     </tr>
 
                     <tr className="h-12">
                       <td className="px-4 py-2 text-gray-400">
                         Account Number
                       </td>
-                      <td className="px-4 py-2 text-gray-400">-/NA/-</td>
+                      <td className="px-4 py-2 text-gray-400">{data.profile?.accountNumber}</td>
                     </tr>
 
                     <tr className="h-12">
@@ -395,8 +402,9 @@ const Profile = () => {
                       </td>
 
                       <td className="px-4 py-2 font-semibold">
-                        Kshiteej Dubey
+                       {data.profile?.name}
                       </td>
+
                     </tr>
                   </tbody>
                 </table>
@@ -417,13 +425,13 @@ const Profile = () => {
                       </td>
 
                       <td className="px-4 py-2 text-white">
-                        Disabled (not selected)
+                       {data.profile?.PFStatus}
                       </td>
                     </tr>
 
                     <tr className="h-12">
                       <td className="px-4 py-2 text-gray-400">PF UAN</td>
-                      <td className="px-4 py-2 text-gray-400">-/NA/-</td>
+                      <td className="px-4 py-2 text-gray-400">{data.profile?.PFUAN}</td>
                     </tr>
 
                     <tr className="h-12">
@@ -431,20 +439,20 @@ const Profile = () => {
                         Professional Tax
                       </td>
 
-                      <td className="px-4 py-2 text-white">Company Disabled</td>
+                      <td className="px-4 py-2 text-white">{data.profile?.professionalTax}</td>
                     </tr>
 
                     <tr className="h-12">
                       <td className="px-4 py-2 text-gray-400">LWF Status</td>
 
-                      <td className="px-4 py-2 text-white">Company Disabled</td>
+                      <td className="px-4 py-2 text-white">{data.profile?.LWFStatus}</td>
                     </tr>
 
                     <tr className="h-12">
                       <td className="px-4 py-2 text-gray-400">ESIC Status</td>
 
                       <td className="px-4 py-2 text-white">
-                        Registration Not Initiated
+                        {data.profile?.ESICStatus}
                       </td>
                     </tr>
 
@@ -452,7 +460,7 @@ const Profile = () => {
                       <td className="px-4 py-2 text-gray-400">
                         ESIC IP Number
                       </td>
-                      <td className="px-4 py-2 text-gray-400">-/NA/-</td>
+                      <td className="px-4 py-2 text-gray-400">{data.profile?.ESICIPNumber}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -509,7 +517,7 @@ const Profile = () => {
             <button className="text-blue-400 text-lg font-bold">–</button>
           </div>
           <p className="text-sm text-gray-400">
-            Upload a photo for Kshiteej Dubey
+            Upload a photo for {data.profile?.name}
           </p>
         </div>
 
@@ -522,13 +530,19 @@ const Profile = () => {
             >
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold">Edit User Detail</h2>
-                <button className="cursor-pointer" onClick={()=>{
-                   setAnimation(false);
+                <button
+                  className="cursor-pointer"
+                  onClick={() => {
+                    setAnimation(false);
                     setTimeout(() => {
                       setShow((prev) => !prev);
-                       setAnimation(true);
+                      setAnimation(true);
                     }, 300);
-                }}> <RxCross2 /></button>
+                  }}
+                >
+                  {" "}
+                  <RxCross2 />
+                </button>
               </div>
               <label className="block text-sm font-medium mb-1">Details</label>
               <input
@@ -537,11 +551,11 @@ const Profile = () => {
                 placeholder="Software Engineer"
                 name="details"
                 value={editDetail.details}
-                onChange={(e) => {                
-                    setEditDetail((prev) => ({
-                      ...prev,
-                      details: e.target.value,
-                    }));
+                onChange={(e) => {
+                  setEditDetail((prev) => ({
+                    ...prev,
+                    details: e.target.value,
+                  }));
                 }}
               />
               <label className="block text-sm font-medium mb-1">
@@ -636,7 +650,7 @@ const Profile = () => {
                     setAnimation(false);
                     setTimeout(() => {
                       setShow((prev) => !prev);
-                       setAnimation(true);
+                      setAnimation(true);
                     }, 300);
                   }}
                 >
@@ -652,6 +666,7 @@ const Profile = () => {
             </div>
           </div>
         )}
+
       </main>
     </div>
   );
