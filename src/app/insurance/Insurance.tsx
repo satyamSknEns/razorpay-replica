@@ -57,7 +57,7 @@ export default function InsuranceForm() {
           <input
             type="tel"
             placeholder="Enter your phone number"
-            className="w-full px-4 py-2 rounded-md border dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+            className="w-[32%] px-4 py-2 rounded-md border dark:bg-gray-800 dark:border-gray-700 dark:text-white"
           />
         </div>
       </div>

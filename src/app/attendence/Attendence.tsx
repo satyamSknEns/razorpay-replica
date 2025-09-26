@@ -753,7 +753,7 @@ const LeaveAttendance = () => {
                       <th>Edit</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  {/* <tbody>
                     {allDates.map((date, index) => {
                       const record = attendanceRecords.find(
                         (r) => r.date === date
@@ -771,6 +771,74 @@ const LeaveAttendance = () => {
                           <td>{record?.checkOut?.slice(0, 5) || "--"}</td>
                           <td>{record?.duration?.slice(0, 5) || "--"}</td>
                           <td>{record?.remarks || "--"}</td>
+                          <td>
+                            <button
+                              className="text-blue-400 font-bold hover:underline p-2 cursor-pointer"
+                              onClick={() => {
+                                setDelAnimation(true);
+                                setOpen(true);
+                                setEditData({
+                                  checkIn: record?.checkIn || "",
+                                  checkOut: record?.checkOut || "",
+                                  remarks: record?.remarks || "",
+                                  leaveTypeName: record?.status || "",
+                                  date: date,
+                                });
+
+                                setEditFormErrors({
+                                  leaveTypeName: "",
+                                  checkIn: "",
+                                  checkOut: "",
+                                  remarks: "",
+                                });
+                              }}
+                            >
+                              <PiPencilSimpleLineFill />
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody> */}
+                  <tbody>
+                    {allDates.map((date, index) => {
+                      const record = attendanceRecords.find(
+                        (r) => r.date === date
+                      );
+                      const leaveReqForDate = leaveRequest.find(
+                        (req) => req.date === date
+                      );
+                      const isLeaveRequest = !!leaveReqForDate;
+
+                      return (
+                        <tr
+                          key={index}
+                          className="border-b border-gray-700 hover:bg-gray-700 font-semibold"
+                        >
+                          <td className="py-2 px-2">{date}</td>
+                          <td className={`capitalize ${isLeaveRequest?"text-[#F39142] ":"text-white"}`}>
+                            {isLeaveRequest
+                              ? "Open Request"
+                              : record?.status || "--"}
+                          </td>
+                          <td>
+                            {isLeaveRequest
+                              ? "--"
+                              : record?.checkIn?.slice(0, 5) || "--"}
+                          </td>
+                          <td>
+                            {isLeaveRequest
+                              ? "--"
+                              : record?.checkOut?.slice(0, 5) || "--"}
+                          </td>
+                          <td>
+                            {isLeaveRequest
+                              ? "--"
+                              : record?.duration?.slice(0, 5) || "--"}
+                          </td>
+                          <td>
+                            {isLeaveRequest ? "--" : record?.remarks || "--"}
+                          </td>
                           <td>
                             <button
                               className="text-blue-400 font-bold hover:underline p-2 cursor-pointer"
@@ -1026,9 +1094,11 @@ const LeaveAttendance = () => {
                 <h2 className="text-xl font-semibold">Edit Attendance</h2>
                 <span className="text-sm text-gray-400">for 1st May 2025</span>
               </div>
-              <label className="block text-sm font-medium mb-1">Status</label>
+              <label className="block text-sm font-medium mb-1 text-gray-400">
+                Status
+              </label>
               <select
-                className="w-full mb-2 p-2 bg-gray-700 rounded-md focus:outline-none"
+                className="w-full mb-2 p-2 bg-gray-700 rounded-md focus:outline-none "
                 name="leaveTypeName"
                 value={editData.leaveTypeName}
                 onChange={handleData}
@@ -1046,7 +1116,9 @@ const LeaveAttendance = () => {
                 </p>
               )}
 
-              <label className="block text-sm font-medium mb-1">Check In</label>
+              <label className="block text-sm font-medium mb-1 text-gray-400">
+                Check In
+              </label>
               <input
                 type="text"
                 name="checkIn"
@@ -1059,7 +1131,7 @@ const LeaveAttendance = () => {
                 <p className="text-red-500 text-xs">{editFormErrors.checkIn}</p>
               )}
 
-              <label className="block text-sm font-medium mb-1">
+              <label className="block text-sm font-medium mb-1 text-gray-400">
                 Check Out
               </label>
               <input
@@ -1076,7 +1148,9 @@ const LeaveAttendance = () => {
                 </p>
               )}
 
-              <label className="block text-sm font-medium mb-1">Remarks</label>
+              <label className="block text-sm font-medium mb-1 text-gray-400">
+                Remarks
+              </label>
               <input
                 type="text"
                 className="w-full mb-2 p-2 bg-gray-700 rounded-md focus:outline-none"
@@ -1092,12 +1166,24 @@ const LeaveAttendance = () => {
               )}
 
               <div className="flex gap-3 justify-end">
-                <button
-                  className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-md cursor-pointer"
-                  onClick={() => setDeleteReq(true)}
-                >
-                  Delete
-                </button>
+                {leaveRequest.some((req) => req.date === editData.date) && (
+                  <button
+                    className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-md cursor-pointer"
+                    onClick={() => setDeleteReq(true)}
+                  >
+                    Delete
+                  </button>
+                )}
+                {/* {leaveRequest && (
+                  <button
+                    className={`bg-red-600  hover:bg-red-700 px-4 py-2 rounded-md cursor-pointer ${
+                      leaveRequest ? "block" : "hidden"
+                    }`}
+                    onClick={() => setDeleteReq(true)}
+                  >
+                    Delete
+                  </button>
+                )} */}
                 <button
                   className="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-md cursor-pointer"
                   onClick={(e) => {
