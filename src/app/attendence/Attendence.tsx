@@ -17,6 +17,9 @@ type GroupedLeaves = {
 };
 
 const LeaveAttendance = () => {
+  // const [requestId, setRequestId] = useState<
+  //   null | undefined | number | string
+  // >();
   const [visible, setVisible] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
@@ -589,6 +592,35 @@ const LeaveAttendance = () => {
     return acc;
   }, {} as GroupedLeaves);
 
+  const deleteLeaveForDate = async (date: string) => {
+    const leaveReq = leaveRequest.find((req) => req.date === date);
+
+    if (!leaveReq) {
+      setDeleteReq(false);
+      return;
+    }
+
+    try {
+      const config: AxiosRequestConfig = {
+        url: `${process.env.NEXT_PUBLIC_API_URL}/users/cancelRequest`,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        data: {
+          requestId: [leaveReq.id],
+        },
+      };
+
+      await axios.request(config);
+      setDeleteReq(false);
+      handleRefresh();
+    } catch (error) {
+      console.error("Error deleting leave request:", error);
+    }
+  };
+
   return (
     <>
       <div className="text-[28px] font-bold text-white px-3 pb-1">
@@ -753,53 +785,6 @@ const LeaveAttendance = () => {
                       <th>Edit</th>
                     </tr>
                   </thead>
-                  {/* <tbody>
-                    {allDates.map((date, index) => {
-                      const record = attendanceRecords.find(
-                        (r) => r.date === date
-                      );
-                      return (
-                        <tr
-                          key={index}
-                          className="border-b border-gray-700 hover:bg-gray-700 font-semibold"
-                        >
-                          <td className="py-2 px-2">{date}</td>
-                          <td className="capitalize">
-                            {record?.status || "--"}
-                          </td>
-                          <td>{record?.checkIn?.slice(0, 5) || "--"}</td>
-                          <td>{record?.checkOut?.slice(0, 5) || "--"}</td>
-                          <td>{record?.duration?.slice(0, 5) || "--"}</td>
-                          <td>{record?.remarks || "--"}</td>
-                          <td>
-                            <button
-                              className="text-blue-400 font-bold hover:underline p-2 cursor-pointer"
-                              onClick={() => {
-                                setDelAnimation(true);
-                                setOpen(true);
-                                setEditData({
-                                  checkIn: record?.checkIn || "",
-                                  checkOut: record?.checkOut || "",
-                                  remarks: record?.remarks || "",
-                                  leaveTypeName: record?.status || "",
-                                  date: date,
-                                });
-
-                                setEditFormErrors({
-                                  leaveTypeName: "",
-                                  checkIn: "",
-                                  checkOut: "",
-                                  remarks: "",
-                                });
-                              }}
-                            >
-                              <PiPencilSimpleLineFill />
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody> */}
                   <tbody>
                     {allDates.map((date, index) => {
                       const record = attendanceRecords.find(
@@ -816,7 +801,11 @@ const LeaveAttendance = () => {
                           className="border-b border-gray-700 hover:bg-gray-700 font-semibold"
                         >
                           <td className="py-2 px-2">{date}</td>
-                          <td className={`capitalize ${isLeaveRequest?"text-[#F39142] ":"text-white"}`}>
+                          <td
+                            className={`capitalize ${
+                              isLeaveRequest ? "text-[#F39142] " : "text-white"
+                            }`}
+                          >
                             {isLeaveRequest
                               ? "Open Request"
                               : record?.status || "--"}
@@ -917,7 +906,7 @@ const LeaveAttendance = () => {
           <div className="fixed inset-0 bg-opacity-80 bg-[#212020ad] flex items-center justify-center z-50 ">
             <div
               className={`bg-gray-800 rounded px-4 pb-4 w-[500px] transition-all ${
-                leaveAnimation ? "scale-up-center" : "scale-down-center"
+                leaveAnimation ? "scale-up-center" : "fade-out"
               }`}
             >
               <div className="flex justify-end">
@@ -962,7 +951,7 @@ const LeaveAttendance = () => {
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
             <div
               className={`bg-gray-900 text-white rounded-2xl shadow-lg w-[90%] max-w-md p-6 relative border border-gray-700 ${
-                applyAnimation ? "scale-up-center" : "scale-down-center"
+                applyAnimation ? "scale-up-center" : "fade-out"
               }`}
             >
               <button
@@ -977,23 +966,25 @@ const LeaveAttendance = () => {
               >
                 &times;
               </button>
-              <h2 className="text-xl font-semibold mb-6">Apply for Leave</h2>
+              <h2 className="text-xl font-semibold mb-6"></h2>
 
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm mb-1">Status</label>
-                  <select
-                    name="leaveTypeName"
-                    value={formData.leaveTypeName}
-                    onChange={handleChange}
-                    className=" cursor-pointer w-full bg-gray-800 text-white rounded-lg border border-gray-600 px-2 py-2 focus:outline-none focus:ring focus:border-blue-500"
-                  >
-                    <option value="">Select status</option>
-                    <option value="casual">Casual Leave</option>
-                    <option value="medical">Medical Leave</option>
-                    <option value="earned">Earned Leave</option>
-                    <option value="unpaid">Unpaid Leave</option>
-                  </select>
+                  <div className="bg-gray-800 w-full rounded-lg px-2 py-2">
+                    <select
+                      name="leaveTypeName"
+                      value={formData.leaveTypeName}
+                      onChange={handleChange}
+                      className=" cursor-pointer w-full bg-gray-800 outline:none text-white border border-none  focus:outline-none focus:border-blue-500"
+                    >
+                      <option value="">Select status</option>
+                      <option value="casual">Casual Leave</option>
+                      <option value="medical">Medical Leave</option>
+                      <option value="earned">Earned Leave</option>
+                      <option value="unpaid">Unpaid Leave</option>
+                    </select>
+                  </div>
                   {formErrors.leaveTypeName && (
                     <p className="text-red-500 text-xs mt-1">
                       {formErrors.leaveTypeName}
@@ -1087,7 +1078,7 @@ const LeaveAttendance = () => {
           <div className="fixed inset-0 bg-black/80  flex items-center justify-center z-50 md:m-[10px] cursor-pointer">
             <div
               className={`bg-[#1e293b] text-white w-full max-w-md rounded-xl shadow-lg p-6 m-[10px] ${
-                animation ? "scale-up-center" : "scale-down-center"
+                animation ? "scale-up-center" : "fade-out"
               } `}
             >
               <div className="flex justify-between items-center mb-4">
@@ -1097,18 +1088,20 @@ const LeaveAttendance = () => {
               <label className="block text-sm font-medium mb-1 text-gray-400">
                 Status
               </label>
-              <select
-                className="w-full mb-2 p-2 bg-gray-700 rounded-md focus:outline-none "
-                name="leaveTypeName"
-                value={editData.leaveTypeName}
-                onChange={handleData}
-              >
-                <option value="status">Status</option>
-                <option value="present">Present</option>
-                <option value="earned">Earned Leave</option>
-                <option value="casual">Casual Leave</option>
-                <option value="medical">Medical Leave</option>
-              </select>
+              <div className="w-full mb-2  p-2 bg-gray-700 rounded-md ">
+                <select
+                  className="w-full bg-gray-700 focus:outline-none"
+                  name="leaveTypeName"
+                  value={editData.leaveTypeName}
+                  onChange={handleData}
+                >
+                  <option value="status">Status</option>
+                  <option value="present">Present</option>
+                  <option value="earned">Earned Leave</option>
+                  <option value="casual">Casual Leave</option>
+                  <option value="medical">Medical Leave</option>
+                </select>
+              </div>
 
               {editFormErrors.leaveTypeName && (
                 <p className="text-red-500 text-xs">
@@ -1214,7 +1207,7 @@ const LeaveAttendance = () => {
           <div className="fixed inset-0 bg-black/80  flex items-center justify-center z-50 md:m-[10px] cursor-pointer">
             <div
               className={`bg-[#1e293b] text-white w-full max-w-md rounded-xl shadow-lg  m-[10px]  ${
-                delAnimation ? "scale-up-center" : "scale-down-center"
+                delAnimation ? "scale-up-center" : "fade-out"
               }`}
             >
               <div className="flex justify-between items-center mb-2 border-b-1 border-gray-500 p-4">
@@ -1252,7 +1245,10 @@ const LeaveAttendance = () => {
                 >
                   No
                 </button>
-                <button className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-md cursor-pointer">
+                <button
+                  className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-md cursor-pointer"
+                  onClick={() => deleteLeaveForDate(editData.date)}
+                >
                   Yes
                 </button>
               </div>
