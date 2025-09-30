@@ -8,6 +8,7 @@ import Button from "@mui/material/Button";
 import Calender from "@/app/attendence/Calender";
 import { PiPencilSimpleLineFill } from "react-icons/pi";
 import { RxCross2 } from "react-icons/rx";
+import CloseIcon from "@mui/icons-material/Close";
 
 interface Attendance {
   id: number;
@@ -83,6 +84,7 @@ const EmployeeDetail = () => {
   const cookies = useCookies();
   const token = cookies.get("token");
 
+  const [view, setView] = useState(false);
   const [employee, setEmployee] = useState<Employee | null>(null);
   const [requestList, setRequestList] = useState<requestList | null>(null);
   const [loading, setLoading] = useState(true);
@@ -119,6 +121,14 @@ const EmployeeDetail = () => {
   });
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [selectAll, setSelectAll] = useState(false);
+  const [selectedId, setSelectedId] = useState<number[]>([]);
+
+  const handleSelect = (id: number) => {
+    setSelectedId((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  };
+  console.log("selectedId", selectedId);
 
   const [formErrors, setFormErrors] = useState({
     leaveTypeName: "",
@@ -128,13 +138,12 @@ const EmployeeDetail = () => {
   });
 
   const [formData, setFormData] = useState({
-    userId:id,
+    userId: id,
     leaveTypeName: "",
     fromDate: "",
     toDate: "",
     remarks: "",
   });
-
 
   const fetchData = async () => {
     if (!id || !token) return;
@@ -274,8 +283,7 @@ const EmployeeDetail = () => {
     try {
       const updateRequest: AxiosRequestConfig = {
         url: `${process.env.NEXT_PUBLIC_API_URL}/users/updateResponse`,
-        method: "POST",
-        maxBodyLength: Infinity,
+        method: "POST", // ✅ aapki API PUT hai
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -286,15 +294,15 @@ const EmployeeDetail = () => {
         },
       };
 
-      const response = await axios.request(updateRequest);
-      if (response.status === 200) {
-        setTimeout(() => {
-          window.location.reload();
-        }, 500);
-      }
-      console.log("Approved:", response.data);
+      await axios.request(updateRequest);
+      // if (response.status === 200) {
+      //   console.log("Updated:", response.data);
+      //   setTimeout(() => {
+      //     window.location.reload();
+      //   }, 500);
+      // }
     } catch (error: any) {
-      throw error("There is something wrong");
+      console.error("There is something wrong", error);
     }
   };
 
@@ -542,12 +550,12 @@ const EmployeeDetail = () => {
   const handleCheckbox = (id: number) => {
     if (selectedIds.includes(id)) {
       setSelectedIds(selectedIds.filter((item) => item !== id));
-      setSelectAll(false); // uncheck select all if any item is unchecked
+      setSelectAll(false);
     } else {
       const newSelected = [...selectedIds, id];
       setSelectedIds(newSelected);
       if (newSelected.length === requestList.pending.length) {
-        setSelectAll(true); // check select all if all items selected
+        setSelectAll(true); 
       }
     }
   };
@@ -613,11 +621,11 @@ const EmployeeDetail = () => {
                         <>
                           <span className="mx-1 capitalize">
                             {data.requester.name}
-                          </span>{" "}
+                          </span>
                           - has requested for -
                           <span className="mx-1 capitalize">
                             {data.leaveType.name}
-                          </span>{" "}
+                          </span>
                           leave of -
                           <span className="mx-1">{data.quantity}</span> days,
                           from {data.fromDate} to {data.toDate} and reason is -
@@ -629,11 +637,11 @@ const EmployeeDetail = () => {
                         <>
                           <span className="mx-1 capitalize">
                             {data.requester.name}
-                          </span>{" "}
+                          </span>
                           - has requested attendance on {data.date} and time is
                           <span className="mx-1 capitalize">
                             {data.checkIn}
-                          </span>{" "}
+                          </span>
                           -<span className="mx-1">{data.checkOut}</span> due to
                           - {data.remarks}
                         </>
@@ -649,6 +657,7 @@ const EmployeeDetail = () => {
               onClick={() => handelApprove()}
               color="primary"
               variant="contained"
+              className="hover:bg-blue-700"
             >
               Approve
             </Button>
@@ -656,6 +665,7 @@ const EmployeeDetail = () => {
               onClick={() => handelReject()}
               variant="outlined"
               color="warning"
+              className="hover:bg-[#ED6C02] hover:text-white"
             >
               Reject
             </Button>
@@ -668,81 +678,77 @@ const EmployeeDetail = () => {
               <p className="text-gray-500">No leave requests found.</p>
             ) : (
               <div className="space-y-4">
+                <div className="flex items-center mb-3 ">
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      onChange={(e) =>
+                        setSelectedId(
+                          e.target.checked ? leaveHistory.map((l) => l.id) : []
+                        )
+                      }
+                      checked={
+                        selectedId.length === leaveHistory.length &&
+                        leaveHistory.length > 0
+                      }
+                    />
+                    Select All
+                  </label>
+                </div>
+
                 {leaveHistory.map((leave) => (
-                  <div key={leave.id} className="flex justify-between">
-                    <div className="flex flex-wrap lg:w-[75%] md:w-full sm:w-full w-full">
-                      {leave.id}.
-                      <span className="mx-1 capitalize">
-                        {employee.user.name}
-                      </span>
-                      has been requested for the
-                      <span className="capitalize mx-2">
+                  <div key={leave.id} className="border-b border-gray-600 pb-3">
+                    <div className="flex items-center gap-2 ">
+                      <input
+                        type="checkbox"
+                        checked={selectedId.includes(leave.id)}
+                        onChange={() => handleSelect(leave.id)}
+                      />
+                      <span>
+                        {employee.user.name} requested
                         {leave.leaveTypeId === 1
                           ? "Casual"
                           : leave.leaveTypeId === 2
                           ? "Medical"
                           : "Earned"}
-                      </span>{" "}
-                      leave from
-                      <span className="ml-2">
-                        {new Date(leave.fromDate).toLocaleDateString()}
-                      </span>
-                      <span className="capitalize mx-2"> to </span>
-                      <span className="mr-2">
-                        {new Date(leave.toDate).toLocaleDateString()}
-                      </span>
-                      due to
-                      <span>{leave.remarks || "--"}</span> and requeste is -
-                      <span
-                        className={
-                          leave.status === "approved"
-                            ? "capitalize"
-                            : leave.status === "rejected"
-                            ? "capitalize"
-                            : "capitalize"
-                        }
-                      >
-                        {leave.status}
+                        leave from
+                        {new Date(leave.fromDate).toLocaleDateString()} to
+                        {new Date(leave.toDate).toLocaleDateString()} due to
+                        {leave.remarks || "--"} ({leave.status})
                       </span>
                     </div>
-
-                    <div className="flex gap-2 items-center justify-end lg:w-[20%] md:w-full sm:w-full w-full">
-                      {leave.status === "approved" && (
-                        <button
-                          onClick={() =>
-                            handelCanceledApprove(leave.id, "rejected")
-                          }
-                          className="text-[#6F282A] bg-[#3E262E] px-4 py-1.5 font-semibold rounded cursor-pointer line-clamp-3"
-                        >
-                          Reject
-                        </button>
-                      )}
-                      {leave.status === "rejected" && (
-                        <button
-                          onClick={() =>
-                            handelCanceledApprove(leave.id, "approved")
-                          }
-                          className="text-[#2748BE] bg-[#203162] px-4 py-1.5 font-semibold rounded cursor-pointer"
-                        >
-                          Approve
-                        </button>
-                      )}
-
-                      <button
-                        onClick={() =>
-                          handelCanceledApprove(leave.id, "approved")
-                        }
-                        className="text-[#6F282A] bg-[#3E262E] px-4 py-1.5 font-semibold rounded cursor-pointer"
-                      >
-                        Update
-                      </button>
-                    </div>
-                    <div></div>
                   </div>
                 ))}
               </div>
             )}
           </section>
+
+          <div className="flex gap-2 items-center mt-5 mb-5">
+            <Button
+              onClick={() =>
+                selectedId.forEach((id) =>
+                  handelCanceledApprove(id, "approved")
+                )
+              }
+              color="primary"
+              variant="contained"
+              className="hover:bg-blue-700"
+            >
+              Approve
+            </Button>
+            <Button
+              onClick={() =>
+                selectedId.forEach((id) =>
+                  handelCanceledApprove(id, "rejected")
+                )
+              }
+              variant="outlined"
+              color="warning"
+              className="hover:bg-[#ED6C02] hover:text-white"
+            >
+              Reject
+            </Button>
+          </div>
 
           <section className="mb-6">
             <h2 className="text-lg font-semibold">Attendance</h2>
@@ -817,7 +823,7 @@ const EmployeeDetail = () => {
                               });
                             }}
                           >
-                            <PiPencilSimpleLineFill />
+                            <PiPencilSimpleLineFill  className="text-blue-700" />
                           </td>
                         </tr>
                       );
@@ -1145,7 +1151,7 @@ const EmployeeDetail = () => {
           <button
             onClick={() => {
               // setLeaveAnimation(true);
-              // setIsOpen(true);
+              setView(true);
             }}
             className="mt-4 w-full bg-blue-600 py-2 rounded text-sm cursor-pointer"
           >
@@ -1153,6 +1159,140 @@ const EmployeeDetail = () => {
           </button>
         </section>
       </section>
+
+      {/* <section className="p-4 border border-gray-600 bg-gray-800 mb-6 rounded">
+      <h2 className="text-lg font-bold mb-3">Leave Requests</h2>
+
+      {leaveHistory.length === 0 ? (
+        <p className="text-gray-500">No leave requests found.</p>
+      ) : (
+        <div className="space-y-4">
+          <div className="flex items-center mb-3">
+            <label>
+              <input
+                type="checkbox"
+                onChange={(e) =>
+                  setSelectedId(
+                    e.target.checked ? leaveHistory.map((l) => l.id) : []
+                  )
+                }
+                checked={selectedId.length === leaveHistory.length}
+              />
+              Select All
+            </label>
+          </div>
+
+          {leaveHistory.map((leave) => (
+            <div
+              key={leave.id}
+              className="flex items-start gap-2 justify-center"
+            >
+              <div>
+                <input
+                  type="checkbox"
+                  checked={selectedId.includes(leave.id)}
+                  onChange={() => handleSelect(leave.id)}
+                />
+              </div>
+              <div>
+                <span className="mx-1 capitalize">{employee.user.name}</span>
+                has been requested for the
+                <span className="capitalize mx-2">
+                  {leave.leaveTypeId === 1
+                    ? "Casual"
+                    : leave.leaveTypeId === 2
+                    ? "Medical"
+                    : "Earned"}
+                </span>
+                leave from
+                <span className="ml-2">
+                  {new Date(leave.fromDate).toLocaleDateString()}
+                </span>
+                <span className="capitalize mx-2"> to </span>
+                <span className="mr-2">
+                  {new Date(leave.toDate).toLocaleDateString()}
+                </span>
+                due to
+                <span>{leave.remarks || "--"}</span> and request is -
+                <span
+                  className={
+                    leave.status === "approved"
+                      ? "text-green-500"
+                      : leave.status === "rejected"
+                      ? "text-red-500"
+                      : "text-yellow-500"
+                  }
+                >
+                  {leave.status}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="flex gap-2 items-center m-2">
+        <button
+          className="text-[#6F282A] bg-[#3E262E] px-4 py-1.5 font-semibold rounded cursor-pointer w-[100px] hover:bg-[#ED6C02] hover:text-white"
+          onClick={() =>
+            selectedId.forEach((id) => handelCanceledApprove(id, "rejected"))
+          }
+        >
+          Reject
+        </button>
+
+        <button
+          className="text-[#2748BE] bg-[#203162] px-4 py-1.5 font-semibold rounded cursor-pointer w-[100px] hover:bg-[#0B4DD8] hover:text-white"
+          onClick={() =>
+            selectedId.forEach((id) => handelCanceledApprove(id, "approved"))
+          }
+        >
+          Approve
+        </button>
+      </div>
+    </section> */}
+
+      {view && (
+        <div className="fixed inset-0 bg-opacity-80 bg-[#212020ad] flex items-center justify-center z-50 ">
+          <div
+            className={`bg-gray-800 rounded px-4 pb-4 w-[500px] transition-all`}
+          >
+            <div className="flex justify-end">
+              <button
+                className="mt-3 bg-red-600 text-white px-3 py-.75 cursor-pointer rounded text-right"
+                onClick={() => {
+                  setTimeout(() => {
+                    setView(false);
+                  }, 300);
+                }}
+              >
+                <CloseIcon fontSize="small" className="-mt-1" />
+              </button>
+            </div>
+            <h2 className="text-2xl font-semibold text-gray-200 border-b border-gray-600 pb-1 mb-3">
+              Leaves taken
+            </h2>
+            {/* <ul>
+                {groupedLeaves &&
+                  Object.entries(groupedLeaves).map(([type, dates], index) => (
+                    <li
+                      key={index}
+                      className={`py-3 text-sm ${
+                        index !== Object.keys(groupedLeaves).length - 1
+                          ? "border-b border-[#464545]"
+                          : ""
+                      }`}
+                    >
+                      <div>{type.charAt(0).toUpperCase() + type.slice(1)}</div>
+                      {dates.map((date, idx) => (
+                        <div key={idx}>{date}</div>
+                      ))}
+                    </li>
+                  ))}
+              </ul> */}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
