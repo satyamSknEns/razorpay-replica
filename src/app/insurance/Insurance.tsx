@@ -6,9 +6,9 @@ export default function InsuranceForm() {
   const [gender, setGender] = useState('');
 
   return (
-    <div className="max-w-3xl  px-3 pb-6 bg-white dark:bg-gray-900 rounded-lg shadow-md">
+    <div className="max-w-3xl  px-3 pb-6 bg-gray-900 rounded-lg shadow-md">
       <h2 className="text-[28px] font-bold text-white mb-2 pb-1">Details for Insurance</h2>
-      <p className="text-gray-700 dark:text-gray-300 mb-4">
+      <p className="text-gray-200 mb-4">
         Final coverage inclusion will depend on the policy your organization selects.
       </p>
 
@@ -19,7 +19,7 @@ export default function InsuranceForm() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block mb-1 text-sm text-gray-700 dark:text-gray-300">Full name</label>
+            <label className="block mb-1 text-sm text-gray-200">Full name</label>
             <input
               type="text"
               defaultValue="Kshiteej Dubey"
@@ -27,14 +27,14 @@ export default function InsuranceForm() {
             />
           </div>
           <div>
-            <label className="block mb-1 text-sm text-gray-700 dark:text-gray-300">Date of birth</label>
+            <label className="block mb-1 text-sm text-gray-200">Date of birth</label>
             <input
               type="date"
               className="w-full px-4 py-2 rounded-md border dark:bg-gray-800 dark:border-gray-700 dark:text-white"
             />
           </div>
           <div>
-            <label className="block mb-1 text-sm text-gray-700 dark:text-gray-300">Gender</label>
+            <label className="block mb-1 text-sm text-gray-200">Gender</label>
             <div className="flex gap-4 mt-1">
               {['Male', 'Female'].map((g) => (
                 <label key={g} className="inline-flex items-center gap-1">
@@ -45,7 +45,7 @@ export default function InsuranceForm() {
                     onChange={() => setGender(g)}
                     className="form-radio text-blue-600"
                   />
-                  <span className="text-sm text-gray-700 dark:text-gray-300">{g}</span>
+                  <span className="text-sm text-gray-200">{g}</span>
                 </label>
               ))}
             </div>
@@ -53,7 +53,7 @@ export default function InsuranceForm() {
         </div>
 
         <div className="mt-3">
-          <label className="block mb-1 text-sm text-gray-700 dark:text-gray-300">Phone</label>
+          <label className="block mb-1 text-sm text-gray-200">Phone</label>
           <input
             type="tel"
             placeholder="Enter your phone number"
@@ -87,7 +87,7 @@ export default function InsuranceForm() {
       <div className="mb-6">
         <label className="inline-flex items-center">
           <input type="checkbox" className="form-checkbox text-blue-600" />
-          <span className="ml-2 text-gray-700 dark:text-gray-300">
+          <span className="ml-2 text-gray-200">
             I hereby declare that all information provided by me is correct according to govt. records.
           </span>
         </label>

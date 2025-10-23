@@ -1,0 +1,239 @@
+import axios, { AxiosRequestConfig } from "axios";
+import { useCookies } from "next-client-cookies";
+import { useEffect, useState } from "react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import DeleteIcon from "@mui/icons-material/Delete";
+
+const Department = () => {
+  const cookies = useCookies();
+  const token = cookies.get("token");
+  const [addLeaveType, setAddLeaveType] = useState(false);
+  const [departmentType, setDepartmentType] = useState([]);
+  const [adddepartmentType, setAdddepartmentType] = useState("");
+  const [deletedid, setDeletedId] = useState("");
+  const [deletePopup, setDeletePopup] = useState(false);
+
+  useEffect(() => {
+    if (!token) return;
+
+    const fetchAllLeaveType = async () => {
+      try {
+        const leaveConfig: AxiosRequestConfig = {
+          url: `${process.env.NEXT_PUBLIC_API_URL}/users/getAllDepartments`,
+          method: "POST",
+          maxBodyLength: Infinity,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          data: {},
+        };
+        const allLeavesType = await axios.request(leaveConfig);
+        console.log("allLeavesType", allLeavesType.data);
+        if (allLeavesType.data.success) {
+          const allHistoryes = allLeavesType.data.departments;
+          setDepartmentType(allHistoryes);
+          console.log("leave history", allHistoryes);
+        } else {
+          console.error("API error:", allLeavesType.data.message);
+        }
+        console.log("allLeavesType", allLeavesType);
+      } catch (error) {
+        console.error("Failed to fetch the data", error);
+      }
+    };
+    fetchAllLeaveType();
+  }, [token]);
+
+  const handleDelete = async (id: number) => {
+    try {
+      const config: AxiosRequestConfig = {
+        url: `${process.env.NEXT_PUBLIC_API_URL}/users/deleteDepartment`,
+        method: "POST",
+        maxBodyLength: Infinity,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        data: {
+          id: id,
+        },
+      };
+      const response = await axios.request(config);
+      if (response.status === 200) {
+        window.location.reload();
+      } else {
+        console.log("there is some this wrong in creating the leave type");
+      }
+    } catch (error) {
+      console.log("there is some error in delete leave type", error);
+    }
+  };
+
+  const AddDepartment = async () => {
+    try {
+      const leaveconfig: AxiosRequestConfig = {
+        url: `${process.env.NEXT_PUBLIC_API_URL}/users/createDepartment`,
+        method: "POST",
+        maxBodyLength: Infinity,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        data: {
+          name: adddepartmentType,
+        },
+      };
+      const response = await axios.request(leaveconfig);
+      if (response.status === 200) {
+        window.location.reload();
+      } else {
+        console.log("there is some this wrong in creating the leave type");
+      }
+    } catch (error) {
+      console.log("There is some error to creatinf the department", error);
+    } finally {
+      setAddLeaveType(false);
+      window.location.reload();
+    }
+  };
+
+  return (
+    <div className="lg:px-6 md:px-6 sm:px-2 px-2 text-white">
+      <h1 className="text-2xl font-bold mb-4">All Departments</h1>
+      <div className="flex justify-end pb-3">
+        <button
+          onClick={() => setAddLeaveType(true)}
+          className="bg-blue-500 py-2 px-3 cursor-pointer rounded"
+        >
+          Add Department Type
+        </button>
+      </div>
+
+      {addLeaveType && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+          <div className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-6 mx-4 animate-scale-up-center min-h-[200px] overflow-auto">
+            <ToastContainer position="top-right" autoClose={3000} />
+            <div className="flex justify-between w-full items-center pb-5 border-b-3 border-gray-600 mt-2">
+              <h3 className="text-2xl font-semibold">Add Leave Type</h3>
+
+              <button
+                className="text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded cursor-pointer"
+                onClick={() => setAddLeaveType(false)}
+              >
+                X
+              </button>
+            </div>
+            <div className="flex flex-col gap-2 mt-4">
+              <label htmlFor="">Department Name</label>
+              <input
+                placeholder="Enter Department Name"
+                className="border border-gray-500 rounded p-2 w-full mb-4 outline-none bg-gray-800 text-white"
+                value={adddepartmentType}
+                onChange={(e) => setAdddepartmentType(e.target.value)}
+                required
+              />
+            </div>
+            <div className="w-full my-6">
+              <button
+                onClick={AddDepartment}
+                className="w-full py-2 bg-[#2E5BFF] text-white rounded-[5px] cursor-pointer"
+              >
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="overflow-x-auto mt-4 rounded">
+        <table className="min-w-full border border-gray-800 text-left">
+          <thead className="bg-gray-700 uppercase text-sm">
+            <tr>
+              <th className="px-4 py-2 border border-gray-600">id</th>
+              <th className="px-4 py-2 border border-gray-600">
+                Department Name
+              </th>
+              <th className="px-4 py-2 border border-gray-600 text-center">
+                Delete
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {departmentType && departmentType.length > 0 ? (
+              departmentType.map((item: any, index) => (
+                <tr key={item.id} className="border border-gray-600">
+                  <td className="px-4 py-2 border border-gray-600">
+                    {index + 1}
+                  </td>
+                  <td className="px-4 py-2 capitalize border border-gray-600">
+                    {item.name}
+                  </td>
+                  <td className="px-4 py-2 text-center border border-gray-600">
+                    <button
+                      onClick={() => {
+                        setDeletePopup(true);
+                        setDeletedId(item.id);
+                      }}
+                      className="bg-red-500 pb-1.5 px-1 rounded cursor-pointer"
+                    >
+                      <DeleteIcon />
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td className="px-4 py-3 text-center text-gray-400">
+                  No Department types found
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {deletePopup && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+          <div className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-4 mx-4 animate-scale-up-center min-h-[150px] overflow-auto">
+            <ToastContainer position="top-right" autoClose={3000} />
+            <div className="flex justify-between w-full items-center pb-5 border-b-2 border-gray-600 mt-2">
+              <h3 className="text-2xl font-semibold">Delete Department Type</h3>
+              <button
+                className="text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded cursor-pointer"
+                onClick={() => setDeletePopup(false)}
+              >
+                X
+              </button>
+            </div>
+
+            <div>
+              <h4 className="text-md border-b border-gray-500 py-5">
+                Are you sure you want to delete this Department Type? This
+                action cannot be undone.
+              </h4>
+              <div className="flex gap-3 my-3 justify-end">
+                <button
+                  onClick={() => handleDelete(Number(deletedid))}
+                  className="bg-red-500 py-1 px-2 rounded font-semibold cursor-pointer"
+                >
+                  Yes
+                </button>
+                <button
+                  onClick={() => setDeletePopup(false)}
+                  className="bg-blue-500 py-1 px-2 rounded font-semibold cursor-pointer"
+                >
+                  No
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Department;

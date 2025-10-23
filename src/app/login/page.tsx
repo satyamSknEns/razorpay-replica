@@ -8,11 +8,13 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useCookies } from "next-client-cookies";
 import Image from "next/image";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] =useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const cookies = useCookies();
   const router = useRouter();
@@ -33,6 +35,11 @@ const Login = () => {
   const handleSettings = () => {
     handleLoading();
     window.location.href = "/signup";
+  };
+
+  const handleForgetpassword = () => {
+    handleLoading();
+    window.location.href = "/forgotPassword";
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -93,6 +100,7 @@ const Login = () => {
           <label className="block w-full mb-1">Email Address</label>
           <input
             type="email"
+            placeholder="Enter email address"
             className="border border-gray-500 rounded p-2 w-full mb-4 outline-none"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -101,25 +109,34 @@ const Login = () => {
 
           <div className="w-full flex justify-between">
             <label className="block mb-1">Password</label>
-            <label className="block text-blue-400 cursor-pointer mb-1">
+            <label
+              onClick={handleForgetpassword}
+              className="block text-blue-400 cursor-pointer mb-1"
+            >
               Forgot Password
             </label>
           </div>
+
           <div className="relative w-full">
             <input
-            type={showPassword ? "text": "password"}
-            className="border border-gray-500 rounded p-2 w-full outline-none"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <button
-        type="button"
-        onClick={() => setShowPassword(!showPassword)}
-        className="absolute top-1/2 right-2 transform -translate-y-1/2 text-sm text-blue-600"
-      >
-        {showPassword ? "Hide" : "Show"}
-      </button>
+              type={showPassword ? "text" : "password"}
+              className="border border-gray-500 rounded p-2 w-full outline-none"
+              placeholder="Enter password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute top-1/2 right-2 transform -translate-y-1/2"
+            >
+              {showPassword ? (
+                <VisibilityIcon fontSize="small" />
+              ) : (
+                <VisibilityOffIcon fontSize="small" />
+              )}
+            </button>
           </div>
 
           <div className="w-full my-6">

@@ -9,19 +9,19 @@ export default function DocumentUpload() {
   console.log(type,description,file)
 
   return (
-    <div className="max-w-2xl px-3 pb-6 bg-white rounded-lg shadow-md dark:bg-gray-900">
+    <div className="max-w-2xl px-3 pb-6 rounded-lg shadow-md bg-gray-900">
       <h2 className="text-[28px] font-bold text-white mb-2 pb-1">Documents</h2>
 
-      <form className="space-y-6">
+      <form className="space-y-6 border border-gray-700 rounded p-5">
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label className="block text-sm font-medium text-gray-200 mb-1">
             Upload new documents <span className="text-red-500">*</span>
           </label>
           <select
             value={type}
             onChange={(e) => setType(e.target.value)}
-            className="w-full px-4 py-2 border rounded-md bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+            className="w-full px-4 py-2 rounded-md bg-gray-700"
           >
             <option value="">Please pick a type</option>
             <option value="invoice">Invoice</option>
@@ -31,7 +31,7 @@ export default function DocumentUpload() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label className="block text-sm font-medium text-gray-200 mb-1">
             Description
           </label>
           <input
@@ -39,18 +39,18 @@ export default function DocumentUpload() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Brief description of the document"
-            className="w-full px-4 py-2 border rounded-md bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+            className="w-full px-4 py-2 rounded-md bg-gray-700"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label className="block text-sm font-medium text-gray-200 mb-1">
             Images or documents (maximum 5 MB each) <span className="text-red-500">*</span>
           </label>
           <input
             type="file"
             onChange={(e) => setFile(e.target.files?.[0] || null)}
-            className="w-full text-sm border rounded-md p-2 bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+            className="w-full text-sm rounded-md p-2 bg-gray-700"
           />
         </div>
 

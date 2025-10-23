@@ -1,4 +1,3 @@
-
 import axios, { AxiosRequestConfig } from "axios";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -8,46 +7,47 @@ const Dashboard = () => {
   const [data, setData] = useState<UserData>({});
   const [token, setToken] = useState<string | null>(null);
   const cookies = useCookies();
-  
-  interface UserData {
-  user?: {
-    name?: string;
-  };
-  manager?: {
-    name?: string;
-  };
-  details?: {
-    details?: string;
-  };
-}
 
-     useEffect(() => {
-        const handleGetcookies = async () => {
-          const storeCookies = cookies.get("token");
-          setToken(storeCookies ?? null);
-        };
-        handleGetcookies();
-      }, []);
-      
-   useEffect(() => {
+  interface UserData {
+    user?: {
+      name?: string;
+    };
+    manager?: {
+      name?: string;
+    };
+    details?: {
+      details?: string;
+    };
+  }
+
+  console.log("0000", data);
+
+  useEffect(() => {
+    const handleGetcookies = async () => {
+      const storeCookies = cookies.get("token");
+      setToken(storeCookies ?? null);
+    };
+    handleGetcookies();
+  }, []);
+
+  useEffect(() => {
     if (!token) return;
-     const handleApi = async () => {
-      
+    const handleApi = async () => {
       try {
-        console.log(token)
+        console.log(token);
         const config: AxiosRequestConfig = {
           url: `${process.env.NEXT_PUBLIC_API_URL}/users/getDetails`,
           method: "POST",
           maxBodyLength: Infinity,
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
           },
-          data: {}
-        }
-        
+          data: {},
+        };
+        console.log("config data", config.url);
         const res = await axios.request(config);
-        setData(res.data)
+        setData(res.data);
       } catch (error) {
         console.error("API Error:", error);
       }
@@ -59,11 +59,11 @@ const Dashboard = () => {
   return (
     <>
       <div className="flex items-start bg-gray-900 text-white overflow-y-auto">
-        <div className="lg:flex flex-wrap">
+        <div className="lg:flex flex-wrap w-full">
           <main className="flex-1 px-2 pb-6 space-y-4">
-              <div className="bg-[#3e1717] text-sm rounded p-3 border-l-5 border-red-500">
+            {/* <div className="bg-[#3e1717] text-sm rounded p-3 border-l-5 border-red-500">
          Your organization is currently marked as inactive on XPayroll. Please see our  <span className="underline text-blue-300 cursor-pointer">FAQ</span> to know why.
-        </div>
+        </div> */}
             <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
               <section className="bg-gray-800 p-4 rounded">
                 <h2 className="text-xl font-semibold border-b-1 border-[#555050] pb-2">
@@ -72,20 +72,32 @@ const Dashboard = () => {
                 <ul className="text-sm text-gray-400 min-h-[8rem]">
                   <li className="border-b-1 border-[#363232] py-3">
                     Please complete your
-                    <Link href={'/layout/profile'} className="text-blue-400 mx-1">profile</Link>
+                    <Link
+                      href={"/layout/profile"}
+                      className="text-blue-400 mx-1"
+                    >
+                      profile
+                    </Link>
                     immediately.
                   </li>
                   <li className="border-b-1 border-[#363232] py-3">
-                    IT declaration and proof window is o  pen now
-                    <Link href="#" className="text-blue-400 mx-1">Save tax now.</Link>
+                    IT declaration and proof window is o pen now
+                    <Link href="#" className="text-blue-400 mx-1">
+                      Save tax now.
+                    </Link>
                   </li>
                   <li className="border-b-1 border-[#363232] py-3">
                     Please upload your compulsory
-                    <Link href="#" className="text-blue-400 mx-1">documents</Link>.
+                    <Link href="#" className="text-blue-400 mx-1">
+                      documents
+                    </Link>
+                    .
                   </li>
                   <li className="pt-3">
                     Please consider
-                    <Link href="#" className="text-blue-400 mx-1">uploading a photo</Link>
+                    <Link href="#" className="text-blue-400 mx-1">
+                      uploading a photo
+                    </Link>
                     of yourself.
                   </li>
                 </ul>
@@ -97,10 +109,14 @@ const Dashboard = () => {
                 </h2>
                 <ul className="text-sm text-blue-300 min-h-[8rem]">
                   <li className="border-b-1 border-[#363232] py-3">
-                    <Link href="#" className="mx-1">View personal transactions</Link>
+                    <Link href="#" className="mx-1">
+                      View personal transactions
+                    </Link>
                   </li>
                   <li className="pt-3">
-                    <Link href="/employeeDirectory" className="mx-1">Employee directory</Link>
+                    <Link href="/employeeDirectory" className="mx-1">
+                      Employee directory
+                    </Link>
                   </li>
                 </ul>
               </section>
@@ -113,9 +129,7 @@ const Dashboard = () => {
                 </h2>
                 <ul className="text-sm text-gray-400 space-y-1 min-h-[8rem]">
                   <li className="text-gray-500 text-[10px] pt-2">15 May</li>
-                  <li className="-mt-1.5">
-                    Saumya Shikhar
-                  </li>
+                  <li className="-mt-1.5">Saumya Shikhar</li>
                 </ul>
               </section>
 
@@ -124,9 +138,7 @@ const Dashboard = () => {
                   Work anniversaries
                 </h2>
                 <ul className="text-sm text-gray-400 space-y-1 min-h-[8rem]">
-                  <li className="text-gray-500 text-[10px] pt-2">
-                    20 MAY
-                  </li>
+                  <li className="text-gray-500 text-[10px] pt-2">20 MAY</li>
                   <li className="-mt-1.5">Hema Jaiswal</li>
                 </ul>
               </section>
@@ -136,11 +148,8 @@ const Dashboard = () => {
                   On Leave
                 </h2>
                 <ul className="text-sm text-gray-400 space-y-1 overflow-y-auto min-h-[8rem]">
-                  <li className="text-gray-500 text-[10px] pt-2">
-                    14 MAY
-                  </li>
+                  <li className="text-gray-500 text-[10px] pt-2">14 MAY</li>
                   <li className="-mt-1.5"> Anand Vishav Singh</li>
-
                 </ul>
               </section>
 
@@ -149,12 +158,8 @@ const Dashboard = () => {
                   Upcoming Holidays
                 </h2>
                 <ul className="text-sm text-gray-400 space-y-1 overflow-y-auto min-h-[8rem]">
-                  <li className="text-gray-500 text-[10px] pt-2">
-                    14 MAY 
-                  </li>
-                  <li className="-mt-1.5">
-                    Anand Vishav Singh
-                  </li>
+                  <li className="text-gray-500 text-[10px] pt-2">14 MAY</li>
+                  <li className="-mt-1.5">Anand Vishav Singh</li>
                 </ul>
               </section>
 

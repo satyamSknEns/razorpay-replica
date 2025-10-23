@@ -7,41 +7,40 @@ import Image from "next/image";
 import { useCookies } from "next-client-cookies";
 import Link from "next/link";
 import axios, { AxiosRequestConfig } from "axios";
+import logo from "../assets/logo2.png";
 
-
-
- interface ProfileData {
-    profile?: {
-      id?: number;
+interface ProfileData {
+  profile?: {
+    id?: number;
+    name?: string;
+    role?: string;
+    email?: string;
+    department?: string;
+    joiningDate?: string;
+    manager?: {
       name?: string;
-      role?: string;
-      email?: string;
-      department?: string;
-      joiningDate?: string;
-      manager?: {
-        name?: string;
-      };
-      serviceDuration?: {
-        years?: number;
-        months?: number;
-        days?: number;
-      };
     };
-  }
+    serviceDuration?: {
+      years?: number;
+      months?: number;
+      days?: number;
+    };
+  };
+}
 
 const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
   const [visible, setVisible] = useState(false);
   const [onNotification, setNotification] = useState(false);
   const dropdownref = useRef<HTMLDivElement>(null);
   const Notificationref = useRef<HTMLDivElement>(null);
-  const notificationButtonRef = useRef<HTMLButtonElement>(null); 
+  const notificationButtonRef = useRef<HTMLButtonElement>(null);
   const cookies = useCookies();
   const [isMobile, setIsMobile] = useState(false);
   const [loading, setLoading] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const [data, setData] = useState<ProfileData>({});
 
-
+  console.log("data", data);
   useEffect(() => {
     const checkScreenSize = () => {
       setIsMobile(window.innerWidth < 768);
@@ -51,22 +50,19 @@ const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
     return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
-    useEffect(() => {
-      const handleGetcookies = async () => {
-        const storeCookies = cookies.get("token");
-        setToken(storeCookies ?? null);
-      };
-      handleGetcookies();
-    }, []);
+  useEffect(() => {
+    const handleGetcookies = async () => {
+      const storeCookies = cookies.get("token");
+      setToken(storeCookies ?? null);
+    };
+    handleGetcookies();
+  }, []);
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
       const target = e.target as Node;
 
-      if (
-        dropdownref.current &&
-        !dropdownref.current.contains(target)
-      ) {
+      if (dropdownref.current && !dropdownref.current.contains(target)) {
         setVisible(false);
       }
 
@@ -117,33 +113,32 @@ const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
   const handleNotification = () => setNotification((prev) => !prev);
   const handleVisible = () => setVisible((prev) => !prev);
 
-
   useEffect(() => {
-      const fetchData = async () => {
-        if (!token) return;
-  
-        try {
-          setLoading(true);
-          const profileConfig: AxiosRequestConfig = {
-            url: `${process.env.NEXT_PUBLIC_API_URL}/users/getUserProfile`,
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            data: {},
-          };
-          const profileResponse = await axios.request(profileConfig);
-          setData(profileResponse.data);
-        } catch (error) {
-          console.log(error);
-        } finally {
-          setLoading(false);
-        }
-      };
-  
-      fetchData();
-    }, [token]);
+    const fetchData = async () => {
+      if (!token) return;
+
+      try {
+        setLoading(true);
+        const profileConfig: AxiosRequestConfig = {
+          url: `${process.env.NEXT_PUBLIC_API_URL}/users/getUserProfile`,
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          data: {},
+        };
+        const profileResponse = await axios.request(profileConfig);
+        setData(profileResponse.data);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [token]);
 
   return (
     <>
@@ -168,20 +163,28 @@ const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
             alt="Loading"
             width={80}
             height={80}
+            C:\Users\suraj\OneDrive\Desktop\New folder (2)\Razerpay-clone\public\logo2.png
             className="animate-pulse"
           /> */}
         </div>
       )}
 
-      <div className="sticky flex items-center top-0 left-0 z-40">
-        <Link href="/layout/dashboard" className="w-full h-15 bg-[#0C1927] flex justify-between items-center p-3 relative">
-          <Image src="/logo2.png" width={200} height={60} alt="Logo" />
+      <div className="sticky flex items-center top-0 left-0 z-40 lg:border-none md:border-none sm:border-b border-b lg:pb-0 md:mb-0 sm:mb-2 mb-2 border-gray-700">
+        <Link
+          href="/layout/dashboard"
+          className="w-full h-15 bg-[#0C1927] flex justify-between items-center p-3 relative"
+        >
+          <Image src={logo} width={200} height={60} alt="Logo img" />
         </Link>
 
         <div className="flex relative items-center justify-between space-x-4 p-4 bg-gray-900 text-white rounded-lg">
           <div className="items-center space-x-1 lg:flex md:hidden sm:hidden hidden">
             <p className="text-sm font-medium">We</p>
-            <svg className="h-4 w-4 text-red-300" fill="currentColor" viewBox="0 0 24 24">
+            <svg
+              className="h-4 w-4 text-red-300"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path d="M12.35 3.9C13.57 2.68 15.23 2 16.95 2c1.72 0 3.38.68 4.6 1.9a6.5 6.5 0 010 9.2l-8.84 8.84a1 1 0 01-1.42 0L2.45 13.1a6.5 6.5 0 019.9-9.2z" />
             </svg>
             <p className="text-sm font-medium">ENS</p>
@@ -203,7 +206,11 @@ const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
               className="kd p-2 bg-gray-800 rounded-full hover:bg-gray-700"
               onClick={handleNotification}
             >
-              <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+              <svg
+                className="w-5 h-5 text-white"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path d="M12 3a6 6 0 00-6 6v5c0 .73-.2 1.41-.54 2H18.54c-.34-.59-.54-1.27-.54-2V9a6 6 0 00-6-6zm10 13a2 2 0 01-2-2V9a8 8 0 00-16 0v5a2 2 0 01-2 2 1 1 0 000 2h20a1 1 0 000-2zm-7.5 5.5a2.5 2.5 0 11-5 0" />
               </svg>
             </button>
@@ -228,7 +235,9 @@ const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
             onClick={handleVisible}
             className="h-10 w-[40px] lg:w-[120px] relative cursor-pointer rounded-full bg-gray-700 flex items-center justify-center text-sm font-bold"
           >
-            <span className="tracking-widest">{(data?.profile?.name?.slice(0,2).toUpperCase())|| "EN"}</span>
+            <span className="tracking-widest">
+              {data?.profile?.name?.slice(0, 2).toUpperCase() || "EN"}
+            </span>
           </div>
 
           {visible && (
@@ -243,47 +252,119 @@ const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
                 }`}
               >
                 <div className="flex justify-end cursor-pointer">
-                  <button onClick={(e) => { e.stopPropagation(); setVisible(false); }}>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setVisible(false);
+                    }}
+                  >
                     <RxCross2 />
                   </button>
                 </div>
 
-                <button onClick={() => (setVisible(false), handleProfile())} className="flex items-center space-x-3 w-full cursor-pointer">
-                  <div className="w-10 h-10 mb-2 bg-blue-600 rounded-full flex items-center justify-center text-sm font-bold tracking-widest">{(data?.profile?.name?.slice(0,2).toUpperCase())|| "EN"}</div>
-                  <div className="text-justify">
-                    <p className="text-sm font-semibold">{data?.profile?.name ? data?.profile?.name.charAt(0).toUpperCase()+data?.profile?.name.slice(1):"ENS"}</p>
-                    <p className="text-xs text-gray-400">{data?.profile?.role ? data?.profile.role.charAt(0).toUpperCase()+data?.profile?.role?.slice(1):"user"}</p>
+                <button
+                  onClick={() => (setVisible(false), handleProfile())}
+                  className="flex items-center space-x-3 w-full cursor-pointer"
+                >
+                  <div className="w-10 h-10 mb-2 bg-blue-600 rounded-full flex items-center justify-center text-sm font-bold tracking-widest">
+                    {data?.profile?.name?.slice(0, 2).toUpperCase() || "EN"}
                   </div>
-                  <svg className="ml-auto w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M6 6l6 4-6 4V6z" clipRule="evenodd" />
+                  <div className="text-justify">
+                    <p className="text-sm font-semibold">
+                      {data?.profile?.name
+                        ? data?.profile?.name.charAt(0).toUpperCase() +
+                          data?.profile?.name.slice(1)
+                        : "ENS"}
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      {data?.profile?.role
+                        ? data?.profile.role.charAt(0).toUpperCase() +
+                          data?.profile?.role?.slice(1)
+                        : "user"}
+                    </p>
+                  </div>
+                  <svg
+                    className="ml-auto w-4 h-4 text-gray-400"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M6 6l6 4-6 4V6z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                 </button>
 
-                <button onClick={() => (setVisible(false), handleSettings())} className="flex w-full items-center space-x-3 hover:bg-gray-800 rounded-md px-2 py-2">
-                  <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v10a2 2 0 002 2h5m6-4l4-4m0 0l-4-4m4 4H9" />
+                <button
+                  onClick={() => (setVisible(false), handleSettings())}
+                  className="flex w-full items-center space-x-3 hover:bg-gray-800 rounded-md px-2 py-2"
+                >
+                  <svg
+                    className="w-5 h-5 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M11 5H6a2 2 0 00-2 2v10a2 2 0 002 2h5m6-4l4-4m0 0l-4-4m4 4H9"
+                    />
                   </svg>
                   <span className="text-sm text-justify">Settings</span>
                 </button>
 
-                <button onClick={() => (setVisible(false), handleHelp())} className="flex items-center space-x-3 hover:bg-gray-800 rounded-md px-2 py-2 w-full">
-                  <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16h6m2 4H7a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v12a2 2 0 01-2 2z" />
+                <button
+                  onClick={() => (setVisible(false), handleHelp())}
+                  className="flex items-center space-x-3 hover:bg-gray-800 rounded-md px-2 py-2 w-full"
+                >
+                  <svg
+                    className="w-5 h-5 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M8 10h.01M12 10h.01M16 10h.01M9 16h6m2 4H7a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v12a2 2 0 01-2 2z"
+                    />
                   </svg>
                   <span className="text-sm text-justify">Help</span>
                 </button>
 
-                <button onClick={() => (setVisible(false), removeCookies())} className="flex items-center space-x-3 hover:bg-gray-800 rounded-md px-2 py-2 text-red-400 w-full">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1" />
+                <button
+                  onClick={() => (setVisible(false), removeCookies())}
+                  className="flex items-center space-x-3 hover:bg-gray-800 rounded-md px-2 py-2 text-red-400 w-full"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1"
+                    />
                   </svg>
-                  <span className="text-sm font-medium text-justify w-full">Logout</span>
+                  <span className="text-sm font-medium text-justify w-full">
+                    Logout
+                  </span>
                 </button>
               </div>
             </div>
           )}
 
-          <div className="lg:hidden w-[40px] h-10 cursor-pointer rounded-full bg-gray-700 flex items-center justify-center" onClick={onMenuClick}>
+          <div
+            className="lg:hidden w-[40px] h-10 cursor-pointer rounded-full bg-gray-700 flex items-center justify-center"
+            onClick={onMenuClick}
+          >
             <MenuIcon className="text-white" />
           </div>
         </div>
