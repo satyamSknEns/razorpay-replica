@@ -63,6 +63,7 @@ const Employees = () => {
   const [leavesTypeList, setLeavesTypeList] = useState("");
   const [quantity, setQuantity] = useState("");
   const [leaveTypes, setLeaveTypes] = useState([]);
+  const [currentManagerName, setCurrentManagerName] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -181,8 +182,8 @@ const Employees = () => {
         console.error("Failed to fetch the data", error);
       }
     };
+
     const fetchLeavesType = async () => {
-      console.log("hello");
       try {
         const leaveConfig: AxiosRequestConfig = {
           url: `${process.env.NEXT_PUBLIC_API_URL}/users/allLeaveType`,
@@ -195,11 +196,9 @@ const Employees = () => {
           data: {},
         };
         const allLeavesType = await axios.request(leaveConfig);
-        console.log("allLeavesType", allLeavesType.data);
         if (allLeavesType.data.success) {
           const allHistoryes = allLeavesType.data.leaveResponse;
           setLeaveTypes(allHistoryes);
-          console.log("leave history", allHistoryes);
         } else {
           console.error("API error:", allLeavesType.data.message);
         }
@@ -214,7 +213,6 @@ const Employees = () => {
     fetchLeavesType();
   }, [token]);
 
-  console.log("leaveTypes", leaveTypes);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -293,7 +291,7 @@ const Employees = () => {
       await axios.request(updateRequest);
       window.location.reload();
     } catch (error) {
-      console.log("There is some error to delete the employee", error);
+      console.error("There is some error to delete the employee", error);
     }
   };
 
@@ -313,7 +311,7 @@ const Employees = () => {
       setSelectedEmployee(employeeData.data.profile);
       setDetals(true);
     } catch (error) {
-      console.log("There is some error to delete the employee", error);
+      console.error("There is some error to delete the employee", error);
     } finally {
       setLoadingDetails(false);
     }
@@ -414,8 +412,35 @@ const Employees = () => {
     }
   };
 
+  const manageManagerDetails = async (id: number) => {
+    try {
+      setAssignManager(true);
+      setSelectedEmployee(id);
+      const updateRequest: AxiosRequestConfig = {
+        url: `${process.env.NEXT_PUBLIC_API_URL}/users/getUserProfile`,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        data: { id },
+      };
+      const employeeData = await axios.request(updateRequest);
+      if (employeeData.status === 200) {
+        const currentManager = employeeData?.data?.profile?.manager;
+        setSelectedManager(currentManager ? currentManager.id : "");
+        setCurrentManagerName(currentManager ? currentManager.name : null);
+      } else {
+        console.error("There is some error in assigning the manager");
+      }
+    } catch (error) {
+      toast.error("Failed to update additional details");
+      console.error(error);
+    } finally {
+    }
+  };
+
   const handleAssignManager = async (id: number) => {
-    console.log("00000", id);
     try {
       const updateRequest: AxiosRequestConfig = {
         url: `${process.env.NEXT_PUBLIC_API_URL}/users/assignManager`,
@@ -430,7 +455,7 @@ const Employees = () => {
       if (assignedManager.status === 200) {
         setAssignManager(false);
       } else {
-        console.log("There is some error in assigning the manager");
+        console.error("There is some error in assigning the manager");
       }
     } catch (error) {
       toast.error("Failed to update additional details");
@@ -440,7 +465,6 @@ const Employees = () => {
   };
 
   const handleAssignLeave = async (id: number) => {
-    console.log("00000", id);
     if (!leavesTypeList || !quantity) {
       toast.error("Please select a leave type and enter quantity");
       return;
@@ -462,14 +486,47 @@ const Employees = () => {
       const assignedLeave = await axios.request(assignLeaveRequest);
       if (assignedLeave.status === 200) {
         setAssignLeave(false);
-        toast.success("Leave assigned successfully !");
       } else {
-        console.log("There is some error in assigning the manager");
+        console.error("There is some error in assigning the manager");
       }
+
+      toast.success("Leave assigned successfully !");
+      setAssignLeave(false);
     } catch (error) {
       toast.error("Failed to update additional details");
       console.error(error);
     } finally {
+      setAssignLeave(false);
+      setQuantity("");
+      setLeavesTypeList("");
+    }
+  };
+
+  const [employeeLeaves, setEmployeeLeaves] = useState([]);
+
+  const handleOpenAssignLeave = async (id: number) => {
+    setAssignLeave(true);
+    setSelectedEmployee({ id });
+
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/users/getUserProfile`,
+        { id },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        setEmployeeLeaves(response?.data?.profile?.leaveSummary || []);
+      } else {
+        toast.error("Failed to fetch leave details");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Error fetching leave data");
     }
   };
 
@@ -586,8 +643,7 @@ const Employees = () => {
                       <span
                         className="bg-blue-500 pb-1.5 px-1 rounded cursor-pointer"
                         onClick={() => {
-                          setSelectedEmployee(emp);
-                          setAssignManager(true);
+                          manageManagerDetails(emp.id);
                         }}
                       >
                         <AssignmentIndIcon />
@@ -596,10 +652,11 @@ const Employees = () => {
                     <td className="p-2 border border-gray-700 text-center">
                       <span
                         className="bg-blue-500 pb-1.5 px-1 rounded cursor-pointer"
-                        onClick={() => {
-                          setSelectedEmployee(emp);
-                          setAssignLeave(true);
-                        }}
+                        // onClick={() => {
+                        //   setSelectedEmployee(emp);
+                        //   setAssignLeave(true);
+                        // }}
+                        onClick={() => handleOpenAssignLeave(emp.id)}
                       >
                         <LogoutIcon />
                       </span>
@@ -1098,6 +1155,16 @@ const Employees = () => {
               </button>
             </div>
             <div className="my-5 px-1">
+              {currentManagerName && (
+                <div className="my-3 px-1 text-gray-300">
+                  <p>
+                    Current Manager:{" "}
+                    <span className="font-semibold text-white">
+                      {currentManagerName}
+                    </span>
+                  </p>
+                </div>
+              )}
               <label className="block mb-1">Department</label>
               <select
                 value={selectedManager}
@@ -1114,7 +1181,7 @@ const Employees = () => {
             </div>
             <div className="flex justify-end">
               <button
-                onClick={() => handleAssignManager(selectedEmployee.id)}
+                onClick={() => handleAssignManager(selectedEmployee)}
                 className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white mt-2"
               >
                 Update
@@ -1136,6 +1203,51 @@ const Employees = () => {
                 X
               </button>
             </div>
+
+            <div className="my-4">
+              <h4 className="text-lg font-semibold mb-2">Existing Leaves</h4>
+              {employeeLeaves.length > 0 ? (
+                <table className="w-full border border-gray-700 text-sm rounded">
+                  <thead>
+                    <tr className="bg-gray-800">
+                      <th className="p-2 border border-gray-700 text-left">
+                        Leave Type
+                      </th>
+                      <th className="p-2 border border-gray-700 text-center">
+                        Allocated
+                      </th>
+                      <th className="p-2 border border-gray-700 text-center">
+                        Taken
+                      </th>
+                      <th className="p-2 border border-gray-700 text-center">
+                        Remaining
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {employeeLeaves.map((leave: any) => (
+                      <tr key={leave.id} className="hover:bg-gray-700">
+                        <td className="p-2 border border-gray-700">
+                          {leave.leaveTypeName}
+                        </td>
+                        <td className="p-2 border border-gray-700 text-center">
+                          {leave.allocated}
+                        </td>
+                        <td className="p-2 border border-gray-700 text-center">
+                          {leave.taken}
+                        </td>
+                        <td className="p-2 border border-gray-700 text-center">
+                          {leave.remaining}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <p className="text-gray-400 text-sm">No leave records found.</p>
+              )}
+            </div>
+
             <div className="my-5 px-1">
               <label className="block mb-1">Leave Type</label>
               <select

@@ -37,7 +37,7 @@ export default function Teams() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          data: {}, // agar managerId chahiye to yaha bhejna h
+          data: {}, 
         };
 
         const res = await axios.request(config);

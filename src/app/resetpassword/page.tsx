@@ -30,7 +30,7 @@ const ResetPassword = () => {
     }
 
     try {
-      const response = await axios.post(
+      await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/users/resetPassword`,
         {
           newPassword: password,
@@ -45,7 +45,6 @@ const ResetPassword = () => {
       );
 
       toast.success("Password updated successfully!");
-      console.log("Response:", response.data);
       setTimeout(() => {
         router.push("/login");
       }, 2000);

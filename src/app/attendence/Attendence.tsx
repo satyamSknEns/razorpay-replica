@@ -70,8 +70,6 @@ const LeaveAttendance = () => {
     setCheckedMap(initMap);
   }, [leaveRequest]);
 
-  // console.log("leaveHistory", leaveHistory);
-
   const validateEditForm = () => {
     let valid = true;
     const newError = {
@@ -205,7 +203,6 @@ const LeaveAttendance = () => {
       ...prev,
       [name]: formattedValue,
     }));
-    console.log("2222222", formData);
     if (formErrors[name as keyof typeof formErrors]) {
       setFormErrors((prev) => ({
         ...prev,
@@ -599,7 +596,6 @@ const LeaveAttendance = () => {
     return acc;
   }, {} as GroupedLeaves);
 
-  console.log("leaveHistory", leaveHistory);
   return (
     <>
       <div className="text-[28px] font-bold text-white px-3 pb-1">
@@ -764,142 +760,6 @@ const LeaveAttendance = () => {
                     <th className="p-4 text-center w-12">Edit</th>
                   </tr>
                 </thead>
-
-                {/* <tbody className="w-full flex flex-col">
-                  {allDates.map((date) => {
-                    const record = attendanceRecords.find(
-                      (a: any) =>
-                        new Date(a.date).toISOString().split("T")[0] === date
-                    );
-
-                    const rawStatus = String(record?.status ?? "")
-                      .trim()
-                      .toLowerCase();
-                    const normalizedStatus =
-                      rawStatus === "casul" ? "casual" : rawStatus;
-                    const leaveStatuses = ["earned", "casual", "medical"];
-                    const isLeaveStatus =
-                      leaveStatuses.includes(normalizedStatus);
-                    const badgeClasses: Record<string, string> = {
-                      earned: "bg-[#d087002e] text-[#c1830c] p-1 rounded-full",
-                      casual: "bg-[#d92d202e] text-[#f96c62] p-1 rounded-full",
-                      medical: "bg-[#d087002e] text-[#c1830c] p-1 rounded-full",
-                      default: "bg-[#d087002e] text-[#c1830c] p-1 rounded-full",
-                    };
-                    const badgeClass =
-                      badgeClasses[normalizedStatus] ?? badgeClasses.default;
-
-                    return (
-                      <tr
-                        key={date}
-                        className="border-b border-gray-600 w-full flex items-center justify-between"
-                      >
-                        <td className="p-4 items-center w-40">
-                          {new Date(date).toLocaleDateString("en-GB")}
-                        </td>
-
-                        {isLeaveStatus ? (
-                          <>
-                            <td className="p-4 flex-1 flex items-start justify-start">
-                              <div
-                                className={`flex w-20 items-center justify-center font-semibold ${badgeClass}`}
-                                title={
-                                  normalizedStatus.charAt(0).toUpperCase() +
-                                  normalizedStatus.slice(1)
-                                }
-                              >
-                                <span className="text-[12px]">
-                                  {normalizedStatus.length <= 6
-                                    ? normalizedStatus.charAt(0).toUpperCase() +
-                                      normalizedStatus.slice(1)
-                                    : normalizedStatus.charAt(0).toUpperCase() +
-                                      normalizedStatus.slice(1)}
-                                </span>
-                              </div>
-                            </td>
-                            <td
-                              className="p-4 items-center flex justify-center w-12"
-                              onClick={() => {
-                                // setDelAnimation(true);
-                                setOpen(true);
-                                setEditData({
-                                  checkIn: record?.checkIn || "",
-                                  checkOut: record?.checkOut || "",
-                                  remarks: record?.remarks || "",
-                                  leaveTypeName: record?.status || "",
-                                  date: dayjs(date).format("DD-MM-YYYY"),
-                                });
-
-                                console.log("date00", date);
-
-                                setEditFormErrors({
-                                  leaveTypeName: "",
-                                  checkIn: "",
-                                  checkOut: "",
-                                  remarks: "",
-                                });
-                              }}
-                            >
-                              <PiPencilSimpleLineFill className="text-blue-700" />
-                            </td>
-                          </>
-                        ) : (
-                          <>
-                            <td className="p-4 text-center w-28">
-                              <div
-                                className={
-                                  record?.status?.trim()
-                                    ? "text-center bg-[#00a3522e] text-[#49d08c] p-1 rounded-full"
-                                    : "text-center text-gray-400 p-1"
-                                }
-                              >
-                                {record?.status?.trim()
-                                  ? record.status.charAt(0).toUpperCase() +
-                                    record.status.slice(1)
-                                  : "--"}
-                              </div>
-                            </td>
-                            <td className="p-4 text-center w-28">
-                              {record?.checkIn || "--"}
-                            </td>
-                            <td className="p-4 text-center w-28">
-                              {record?.checkOut || "--"}
-                            </td>
-                            <td className="p-4 text-center w-28">
-                              {record?.duration || "--"}
-                            </td>
-                            <td className="p-4 text-center flex-1">
-                              {record?.remarks || "--"}
-                            </td>
-                            <td
-                              className="p-4 text-center flex justify-center w-12"
-                              onClick={() => {
-                                // setDelAnimation(true);
-                                setOpen(true);
-                                setEditData({
-                                  checkIn: record?.checkIn || "",
-                                  checkOut: record?.checkOut || "",
-                                  remarks: record?.remarks || "",
-                                  leaveTypeName: record?.status || "",
-                                  date: dayjs(date).format("DD-MM-YYYY"),
-                                });
-
-                                setEditFormErrors({
-                                  leaveTypeName: "",
-                                  checkIn: "",
-                                  checkOut: "",
-                                  remarks: "",
-                                });
-                              }}
-                            >
-                              <PiPencilSimpleLineFill className="text-blue-700" />
-                            </td>
-                          </>
-                        )}
-                      </tr>
-                    );
-                  })}
-                </tbody> */}
 
                 <tbody className="w-full flex flex-col">
                   {allDates.map((date) => {

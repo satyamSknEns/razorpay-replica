@@ -40,7 +40,6 @@ const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
   const [token, setToken] = useState<string | null>(null);
   const [data, setData] = useState<ProfileData>({});
 
-  console.log("data", data);
   useEffect(() => {
     const checkScreenSize = () => {
       setIsMobile(window.innerWidth < 768);

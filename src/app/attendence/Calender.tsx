@@ -61,7 +61,6 @@ export default function Calender({
     setSelectedDate(dayjs());
   };
 
-  console.log("currentDate", currentDate);
   const days = generateDates();
 
   return (

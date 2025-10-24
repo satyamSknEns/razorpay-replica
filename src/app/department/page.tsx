@@ -30,15 +30,12 @@ const Department = () => {
           data: {},
         };
         const allLeavesType = await axios.request(leaveConfig);
-        console.log("allLeavesType", allLeavesType.data);
         if (allLeavesType.data.success) {
           const allHistoryes = allLeavesType.data.departments;
           setDepartmentType(allHistoryes);
-          console.log("leave history", allHistoryes);
         } else {
           console.error("API error:", allLeavesType.data.message);
         }
-        console.log("allLeavesType", allLeavesType);
       } catch (error) {
         console.error("Failed to fetch the data", error);
       }
@@ -64,10 +61,10 @@ const Department = () => {
       if (response.status === 200) {
         window.location.reload();
       } else {
-        console.log("there is some this wrong in creating the leave type");
+        console.error("there is some this wrong in creating the leave type");
       }
     } catch (error) {
-      console.log("there is some error in delete leave type", error);
+      console.error("there is some error in delete leave type", error);
     }
   };
 
@@ -89,10 +86,10 @@ const Department = () => {
       if (response.status === 200) {
         window.location.reload();
       } else {
-        console.log("there is some this wrong in creating the leave type");
+        console.error("there is some this wrong in creating the leave type");
       }
     } catch (error) {
-      console.log("There is some error to creatinf the department", error);
+      console.error("There is some error to creatinf the department", error);
     } finally {
       setAddLeaveType(false);
       window.location.reload();

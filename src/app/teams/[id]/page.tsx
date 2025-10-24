@@ -126,8 +126,6 @@ const EmployeeDetail = () => {
     date: null,
   });
 
-  console.log("leaveTypes", leaveTypes, leaveHistory);
-
   const [editFormErrors, setEditFormErrors] = useState({
     leaveTypeName: "",
     remarks: "",
@@ -194,10 +192,8 @@ const EmployeeDetail = () => {
       });
 
       const requestData = listRequests?.data;
-      console.log("---", requestData);
       setRequestList(requestData || null);
       const requestAllLeaveData = listAllRequests?.data;
-      console.log("---", requestAllLeaveData);
       setAllRequestList(requestAllLeaveData || null);
 
       const empList: Employee[] = res.data.employees || [];
@@ -232,13 +228,11 @@ const EmployeeDetail = () => {
           window.location.reload();
         }, 500);
       }
-      console.log("Approved:", requestApprove.data);
     } catch (err: any) {
       console.error(
         "Error approving request:",
         err.requestApprove?.data || err.message
       );
-      // throw err;
     }
   };
 
@@ -264,7 +258,6 @@ const EmployeeDetail = () => {
           window.location.reload();
         }, 500);
       }
-      console.log("Approved:", requestApprove.data);
     } catch (err: any) {
       console.error(
         "Error approving request:",
@@ -317,7 +310,6 @@ const EmployeeDetail = () => {
         if (response.data.success) {
           const allHistoryes: LeaveItem[] = response.data.data;
           setLeaveHistory(allHistoryes);
-          console.log("leave history", allHistoryes);
         } else {
           console.error("API error:", response.data.message);
         }
@@ -327,7 +319,6 @@ const EmployeeDetail = () => {
     };
 
     const fetchAllLeaveType = async () => {
-      console.log("hello");
       try {
         const leaveConfig: AxiosRequestConfig = {
           url: `${process.env.NEXT_PUBLIC_API_URL}/users/allLeaveType`,
@@ -340,11 +331,9 @@ const EmployeeDetail = () => {
           data: {},
         };
         const allLeavesType = await axios.request(leaveConfig);
-        console.log("allLeavesType", allLeavesType.data);
         if (allLeavesType.data.success) {
           const allHistoryes: LeaveItem[] = allLeavesType.data.leaveResponse;
           setLeaveTypes(allHistoryes);
-          console.log("leave history", allHistoryes);
         } else {
           console.error("API error:", allLeavesType.data.message);
         }
@@ -434,16 +423,11 @@ const EmployeeDetail = () => {
 
   const allDates = generateAllDatesOfMonth(selectedMonth);
 
-  console.log("allDat22", requestList);
-
   const handleData = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    console.log("name----", name);
     setEditData((prev) => ({ ...prev, [name]: value }));
-
-    console.log("editData212", editData);
 
     if (editFormErrors[name as keyof typeof editFormErrors]) {
       setEditFormErrors((prev) => ({
@@ -553,7 +537,6 @@ const EmployeeDetail = () => {
       ...prev,
       [name]: formattedValue,
     }));
-    console.log("2222222", formData);
     if (formErrors[name as keyof typeof formErrors]) {
       setFormErrors((prev) => ({
         ...prev,
@@ -653,7 +636,7 @@ const EmployeeDetail = () => {
         <span className="text-white ml-1">Leave and attendance</span>
       </h1>
       <section className="flex justify-between flex-wrap gap-2">
-        <div className="lg:w-[70%] md:w-full sm:w-full w-full">
+        <div className="lg:w-[75%] md:w-full sm:w-full w-full">
           <div className="w-full overflow-x-auto mb-8">
             <Calender onMonthChange={(date) => setSelectedMonth(date)} />
             <button
@@ -763,181 +746,8 @@ const EmployeeDetail = () => {
               To update your attendance data, please click on the edit button
               next to each date.
             </p>
-            {/* <div className="my-5 w-full">
-              {employee.attendance.length === 0 ? (
-                <p>No attendance record found.</p>
-              ) : (
-                <table className="text-sm flex flex-col w-full border border-gray-700 rounded">
-                  <thead>
-                    <tr className="bg-gray-800 flex justify-between">
-                      <th className="p-4 text-start w-40">Date</th>
-                      <th className="p-4 text-center w-28">Status</th>
-                      <th className="p-4 text-center w-28">Check In</th>
-                      <th className="p-4 text-center w-28">Check Out</th>
-                      <th className="p-4 text-center w-28">Duration</th>
-                      <th className="p-4 text-center flex-1">Remarks</th>
-                      <th className="p-4 text-center flex-1">Client Info</th>
-                      <th className="p-4 text-center w-12">Edit</th>
-                    </tr>
-                  </thead>
 
-                  <tbody className="w-full flex flex-col">
-                    {allDates.map((date) => {
-                      const record = requestList?.attendance?.find(
-                        (a: any) =>
-                          new Date(a.date).toISOString().split("T")[0] === date
-                      );
-
-                      const rawStatus = String(record?.status ?? "")
-                        .trim()
-                        .toLowerCase();
-                      const normalizedStatus =
-                        rawStatus === "casul" ? "casual" : rawStatus;
-                      const leaveStatuses = ["earned", "casual", "medical"];
-                      const isLeaveStatus =
-                        leaveStatuses.includes(normalizedStatus);
-                      const badgeClasses: Record<string, string> = {
-                        earned:
-                          "bg-[#d087002e] text-[#c1830c] p-1 rounded-full",
-                        casual:
-                          "bg-[#d92d202e] text-[#f96c62] p-1 rounded-full",
-                        medical:
-                          "bg-[#d087002e] text-[#c1830c] p-1 rounded-full",
-                        default:
-                          "bg-[#d087002e] text-[#c1830c] p-1 rounded-full",
-                      };
-                      const badgeClass =
-                        badgeClasses[normalizedStatus] ?? badgeClasses.default;
-
-                      return (
-                        <tr
-                          key={date}
-                          className="border-b border-gray-600 w-full flex items-center justify-between"
-                        >
-                          <td className="p-4 items-center w-40">
-                            {new Date(date).toLocaleDateString("en-GB")}
-                          </td>
-
-                          {isLeaveStatus ? (
-                            <>
-                              <td className="p-4 flex-1 flex items-start justify-start">
-                                <div
-                                  className={`flex w-20 items-center justify-center font-semibold ${badgeClass}`}
-                                  title={
-                                    normalizedStatus.charAt(0).toUpperCase() +
-                                    normalizedStatus.slice(1)
-                                  }
-                                >
-                                  <span className="text-[12px]">
-                                    {normalizedStatus.length <= 6
-                                      ? normalizedStatus
-                                          .charAt(0)
-                                          .toUpperCase() +
-                                        normalizedStatus.slice(1)
-                                      : normalizedStatus
-                                          .charAt(0)
-                                          .toUpperCase() +
-                                        normalizedStatus.slice(1)}
-                                  </span>
-                                </div>
-                              </td>
-                              <td
-                                className="p-4 items-center flex justify-center w-12"
-                                onClick={() => {
-                                  setDelAnimation(true);
-                                  setOpen(true);
-                                  setEditData({
-                                    userId: id,
-                                    id: record?.id,
-                                    checkIn: record?.checkIn || "",
-                                    checkOut: record?.checkOut || "",
-                                    remarks: record?.remarks || "",
-                                    leaveTypeName: record?.status || "",
-                                    date: dayjs(date).format("DD-MM-YYYY"),
-                                  });
-
-                                  console.log("date00", date);
-
-                                  setEditFormErrors({
-                                    leaveTypeName: "",
-                                    checkIn: "",
-                                    checkOut: "",
-                                    remarks: "",
-                                  });
-                                }}
-                              >
-                                <PiPencilSimpleLineFill className="text-blue-700" />
-                              </td>
-                            </>
-                          ) : (
-                            <>
-                              <td className="p-4 text-center w-28">
-                                <div
-                                  className={
-                                    record?.status?.trim()
-                                      ? "text-center bg-[#00a3522e] text-[#49d08c] p-1 rounded-full"
-                                      : "text-center text-gray-400 p-1"
-                                  }
-                                >
-                                  {record?.status?.trim()
-                                    ? record.status.charAt(0).toUpperCase() +
-                                      record.status.slice(1)
-                                    : "--"}
-                                </div>
-                              </td>
-                              <td className="p-4 text-center w-28">
-                                {record?.checkIn || "--"}
-                              </td>
-                              <td className="p-4 text-center w-28">
-                                {record?.checkOut || "--"}
-                              </td>
-                              <td className="p-4 text-center w-28">
-                                {record?.duration || "--"}
-                              </td>
-                              <td className="p-4 text-center flex-1">
-                                {record?.remarks || "--"}
-                              </td>
-                              <td className="p-4 text-center flex-1">
-                                {record?.clientInfo
-                                  ? JSON.parse(record.clientInfo).ip || "--"
-                                  : "--"}
-                              </td>
-                              <td
-                                className="p-4 text-center flex justify-center w-12"
-                                onClick={() => {
-                                  setDelAnimation(true);
-                                  setOpen(true);
-                                  setEditData({
-                                    userId: id,
-                                    id: record?.id || "",
-                                    checkIn: record?.checkIn || "",
-                                    checkOut: record?.checkOut || "",
-                                    remarks: record?.remarks || "",
-                                    leaveTypeName: record?.status || "",
-                                    date: dayjs(date).format("DD-MM-YYYY"),
-                                  });
-
-                                  setEditFormErrors({
-                                    leaveTypeName: "",
-                                    checkIn: "",
-                                    checkOut: "",
-                                    remarks: "",
-                                  });
-                                }}
-                              >
-                                <PiPencilSimpleLineFill className="text-blue-700" />
-                              </td>
-                            </>
-                          )}
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              )}
-            </div> */}
-
-            <div className="my-5 w-full min-w-[750px] overflow-x-auto">
+            <div className="my-5 w-full min-w-[900px] overflow-x-auto">
               {employee.attendance.length === 0 ? (
                 <p>No attendance record found.</p>
               ) : (
@@ -1418,7 +1228,7 @@ const EmployeeDetail = () => {
           </div>
         )}
 
-        <section className="bg-gray-800 p-4 rounded shadow h-fit lg:w-[27%] md:w-full sm:w-full w-full">
+        <section className="bg-gray-800 p-4 rounded shadow h-fit lg:w-[22%] md:w-full sm:w-full w-full">
           <h3 className="text-lg font-semibold mb-4">Your Leave Balance</h3>
           <ul className="space-y-2 text-sm">
             {employee.leaveBalances.length === 0

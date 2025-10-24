@@ -20,8 +20,6 @@ const Dashboard = () => {
     };
   }
 
-  console.log("0000", data);
-
   useEffect(() => {
     const handleGetcookies = async () => {
       const storeCookies = cookies.get("token");
@@ -45,7 +43,6 @@ const Dashboard = () => {
           },
           data: {},
         };
-        console.log("config data", config.url);
         const res = await axios.request(config);
         setData(res.data);
       } catch (error) {
