@@ -121,13 +121,7 @@ const Department = () => {
             <ToastContainer position="top-right" autoClose={3000} />
             <div className="flex justify-between w-full items-center pb-5 border-b-3 border-gray-600 mt-2">
               <h3 className="text-2xl font-semibold">Add Leave Type</h3>
-
-              <button
-                className="text-white bg-red-600 px-3 py-1 rounded-full -mt-[35px] -mr-2.5 cursor-pointer"
-                onClick={() => setAddLeaveType(false)}
-              >
-                X
-              </button>
+              <CloseButton onClose={() => setAddLeaveType(false)} />
             </div>
             <div className="flex flex-col gap-2 mt-4">
               <label htmlFor="">Department Name</label>

@@ -14,6 +14,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import GroupsIcon from "@mui/icons-material/Groups";
 import TypeSpecimenIcon from "@mui/icons-material/TypeSpecimen";
+import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import SafetyDividerIcon from "@mui/icons-material/SafetyDivider";
 import { useEffect, useRef, useState } from "react";
 import { useCookies } from "next-client-cookies";
@@ -146,7 +147,7 @@ const Sidebar = ({
       ? [{ label: "Leave Type", path: "leavetype", icon: <TypeSpecimenIcon /> }]
       : []),
     ...(data.profile?.role === "admin" || data.profile?.role === "HR"
-      ? [{ label: "Managers", path: "managers", icon: <TypeSpecimenIcon /> }]
+      ? [{ label: "Managers", path: "managers", icon: <ManageAccountsIcon /> }]
       : []),
   ];
 
