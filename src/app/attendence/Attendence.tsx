@@ -950,8 +950,14 @@ const LeaveAttendance = () => {
         </div>
 
         {isOpen && (
-          <div className="fixed inset-0 bg-opacity-80 bg-[#212020ad] flex items-center justify-center z-50 ">
-            <div className="bg-gray-800 rounded-xl p-4 w-[500px] transition-all">
+          <div
+            onClick={() => setIsOpen(false)}
+            className="fixed inset-0 bg-opacity-80 bg-[#212020ad] flex items-center justify-center z-50 "
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-800 rounded-xl p-4 w-[500px] transition-all"
+            >
               <div className="flex justify-between items-center border-b border-gray-600 py-2 mb-3">
                 <h2 className="text-2xl font-semibold text-gray-200">
                   Leaves taken
@@ -981,8 +987,14 @@ const LeaveAttendance = () => {
         )}
 
         {visible && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-            <div className="bg-gray-900 text-white rounded-xl w-[90%] max-w-md p-4 relative border border-gray-700">
+          <div
+            onClick={() => setVisible(false)}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-900 text-white rounded-xl w-[90%] max-w-md p-4 relative border border-gray-700"
+            >
               <div className="flex justify-between items-center">
                 <h2 className="text-xl font-semibold mb-6">Apply for Leave</h2>
 
@@ -1088,8 +1100,14 @@ const LeaveAttendance = () => {
         )}
 
         {open && (
-          <div className="fixed inset-0 bg-black/80  flex items-center justify-center z-50 md:m-[10px] cursor-pointer">
-            <div className="bg-[#1e293b] text-white w-full max-w-md rounded-xl shadow-lg p-4 m-[10px] ">
+          <div
+            onClick={() => setOpen(false)}
+            className="fixed inset-0 bg-black/80  flex items-center justify-center z-50 md:m-[10px] cursor-pointer"
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="bg-[#1e293b] text-white w-full max-w-md rounded-xl shadow-lg p-4 m-[10px] "
+            >
               <div className="flex justify-between items-center mb-4 pt-2">
                 <h2 className="text-xl font-semibold">Edit Attendance</h2>
                 <CloseButton onClose={() => setOpen(false)} />

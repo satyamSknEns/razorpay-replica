@@ -403,23 +403,6 @@ const EmployeeDetail = () => {
   if (loading) return <p className="text-white">Loading...</p>;
   if (!employee) return <p className="text-white">Employee not found.</p>;
 
-  // function generateAllDatesOfMonth() {
-  //   const dates = [];
-  //   const today = new Date();
-  //   const year = today.getFullYear();
-  //   const month = today.getMonth();
-
-  //   const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-  //   for (let day = 2; day <= daysInMonth + 1; day++) {
-  //     const date = new Date(year, month, day);
-  //     dates.push(date.toISOString().split("T")[0]);
-  //   }
-
-  //   return dates;
-  // }
-  // const allDates = generateAllDatesOfMonth();
-
   const generateAllDatesOfMonth = (date: any) => {
     const year = date.year();
     const month = date.month();
@@ -808,7 +791,7 @@ const EmployeeDetail = () => {
                         medical:
                           "bg-[#d087002e] text-[#c1830c] p-1 rounded-full",
                         absent:
-                          "bg-[#ff00002e] text-[#ff5b5b] p-1 rounded-full", // 🔴 Absent
+                          "bg-[#ff00002e] text-[#ff5b5b] p-1 rounded-full",
                         default:
                           "bg-[#d087002e] text-[#c1830c] p-1 rounded-full",
                       };
@@ -944,14 +927,20 @@ const EmployeeDetail = () => {
         </div>
 
         {open && (
-          <div className="fixed inset-0 bg-black/80  flex items-center justify-center z-50 md:m-[10px] cursor-pointer">
+          <div
+            onClick={() => setOpen(false)}
+            className="fixed inset-0 bg-black/80  flex items-center justify-center z-50 md:m-[10px] cursor-pointer"
+          >
             <div
-              className={`bg-[#1e293b] text-white w-full max-w-md rounded-xl shadow-lg p-6 m-[10px] ${
+              onClick={(e) => e.stopPropagation()}
+              className={`bg-[#1e293b] text-white w-full max-w-md rounded-xl shadow-lg p-4 m-[10px] ${
                 animation ? "scale-up-center" : "scale-down-center"
               } `}
             >
-              <div className="flex justify-between items-center mb-4">
+              <div className="flex justify-between items-center py-1 mb-4">
                 <h2 className="text-xl font-semibold">Edit Attendance</h2>
+
+                <CloseButton onClose={() => setOpen(false)} />
               </div>
               <label className="block text-sm font-medium mb-1">Status</label>
               <select
@@ -1059,8 +1048,12 @@ const EmployeeDetail = () => {
         )}
 
         {deleteReq && (
-          <div className="fixed inset-0 bg-black/80  flex items-center justify-center z-50 md:m-[10px] cursor-pointer">
+          <div
+            onClick={() => setDeleteReq(false)}
+            className="fixed inset-0 bg-black/80  flex items-center justify-center z-50 md:m-[10px] cursor-pointer"
+          >
             <div
+              onClick={(e) => e.stopPropagation()}
               className={`bg-[#1e293b] text-white w-full max-w-md rounded-xl shadow-lg  m-[10px]  ${
                 delAnimation ? "scale-up-center" : "scale-down-center"
               }`}
@@ -1114,25 +1107,20 @@ const EmployeeDetail = () => {
         )}
 
         {visible && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <div
+            onClick={() => setVisible(false)}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+          >
             <div
-              className={`bg-gray-900 text-white rounded-2xl shadow-lg w-[90%] max-w-md p-6 relative border border-gray-700 ${
+              onClick={(e) => e.stopPropagation()}
+              className={`bg-gray-900 text-white rounded-2xl shadow-lg w-[90%] max-w-md p-4 relative ${
                 applyAnimation ? "scale-up-center" : "scale-down-center"
               }`}
             >
-              <button
-                className="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl cursor-pointer"
-                onClick={() => {
-                  setApplyAnimation(false);
-                  setTimeout(() => {
-                    setVisible(false);
-                    setApplyAnimation(true);
-                  }, 300);
-                }}
-              >
-                &times;
-              </button>
-              <h2 className="text-xl font-semibold mb-6">Apply for Leave</h2>
+              <div className="flex justify-between items-center border-b border-gray-600 mb-3">
+                <h2 className="text-xl font-semibold mb-6">Apply for Leave</h2>
+                <CloseButton onClose={() => setVisible(false)} />
+              </div>
 
               <div className="space-y-4">
                 <div>
@@ -1141,7 +1129,7 @@ const EmployeeDetail = () => {
                     name="leaveTypeName"
                     value={formData.leaveTypeName}
                     onChange={handleChange}
-                    className=" cursor-pointer w-full bg-gray-800 text-white rounded-lg border border-gray-600 px-2 py-2 focus:outline-none focus:ring focus:border-blue-500"
+                    className=" cursor-pointer w-full bg-gray-800 text-white rounded px-2 py-2 focus:outline-none focus:ring focus:border-blue-500"
                   >
                     <option value="">Select status</option>
                     <option value="casual">Casual Leave</option>
@@ -1164,7 +1152,7 @@ const EmployeeDetail = () => {
                       name="fromDate"
                       value={toInputFormat(formData.fromDate)}
                       onChange={handleChange}
-                      className="w-full px-2 bg-gray-800 text-white rounded-lg border border-gray-600 py-2 focus:outline-none focus:ring focus:border-blue-500 cursor-pointer"
+                      className="w-full px-2 bg-gray-800 text-white rounded py-2 focus:outline-none focus:ring focus:border-blue-500 cursor-pointer"
                     />
                     {formErrors.fromDate && (
                       <p className="text-red-500 text-xs mt-1">
@@ -1179,7 +1167,7 @@ const EmployeeDetail = () => {
                       name="toDate"
                       value={toInputFormat(formData.toDate)}
                       onChange={handleChange}
-                      className="w-full px-2 bg-gray-800 text-white rounded-lg border border-gray-600 py-2 focus:outline-none focus:ring focus:border-blue-500 cursor-pointer"
+                      className="w-full px-2 bg-gray-800 text-white rounded py-2 focus:outline-none focus:ring focus:border-blue-500 cursor-pointer"
                     />
                     {formErrors.toDate && (
                       <p className="text-red-500 text-xs mt-1">
@@ -1198,7 +1186,7 @@ const EmployeeDetail = () => {
                     name="remarks"
                     value={formData.remarks}
                     onChange={handleChange}
-                    className="w-full bg-gray-800 text-white rounded-lg border border-gray-600 px-2 py-2 resize-none focus:outline-none focus:ring focus:border-blue-500"
+                    className="w-full bg-gray-800 text-white rounded px-2 py-2 resize-none focus:outline-none focus:ring focus:border-blue-500"
                     rows={3}
                     placeholder="Add any comments..."
                   />
@@ -1211,7 +1199,7 @@ const EmployeeDetail = () => {
 
                 <div className="flex justify-end space-x-3 pt-4">
                   <button
-                    className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg cursor-pointer"
+                    className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded cursor-pointer"
                     onClick={() => {
                       setApplyAnimation(false);
                       setTimeout(() => {
@@ -1279,8 +1267,12 @@ const EmployeeDetail = () => {
       </section>
 
       {view && (
-        <div className="fixed inset-0 bg-opacity-80 bg-[#212020ad] flex items-center justify-center z-50 ">
+        <div
+          onClick={() => setView(false)}
+          className="fixed inset-0 bg-opacity-80 bg-[#212020ad] flex items-center justify-center z-50 "
+        >
           <div
+            onClick={(e) => e.stopPropagation()}
             className={`bg-gray-800 rounded px-4 pb-4 w-[500px] min-h-[300px] max-h-[550px] overflow-auto transition-all`}
           >
             <div className="flex justify-between border-b-2 border-gray-500 py-4 items-center">
