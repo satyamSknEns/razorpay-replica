@@ -4,7 +4,6 @@ import { PiPencilSimpleLineFill } from "react-icons/pi";
 import Calender from "./Calender";
 import axios, { AxiosRequestConfig } from "axios";
 import { useCookies } from "next-client-cookies";
-// import CloseIcon from "@mui/icons-material/Close";
 import dayjs from "dayjs";
 import CloseButton from "../components/CloseButton";
 import CustomButton from "../components/CustomButton";
@@ -25,16 +24,10 @@ const LeaveAttendance = () => {
   const [attendanceRecords, setAttendanceRecords] = useState<any[]>([]);
   const [leaveRequest, setLeaveRequest] = useState<LeaveRequest[]>([]);
   const [leave, setLeave] = useState<LeaveData | null>(null);
-  // const [animation, setAnimation] = useState<boolean>(true);
-  // const [applyAnimation, setApplyAnimation] = useState<boolean>(true);
-  // const [deleteReq, setDeleteReq] = useState(false);
-  // const [delAnimation, setDelAnimation] = useState<boolssean>(true);
   const [isOpen, setIsOpen] = useState(false);
-  // const [leaveAnimation, setLeaveAnimation] = useState(false);
   const [checkedMap, setCheckedMap] = useState<{ [key: string]: boolean }>({});
   const [loadingCheckIn, setLoadingCheckIn] = useState(false);
   const [loadingCheckOut, setLoadingCheckOut] = useState(false);
-  // const [loadingAttendance, setLoadingAttendance] = useState(true);
   const [selectedMonth, setSelectedMonth] = useState(dayjs());
   const [leaveHistory, setLeaveHistory] = useState<LeaveItem[]>([]);
   const [formErrors, setFormErrors] = useState({
@@ -380,7 +373,6 @@ const LeaveAttendance = () => {
   useEffect(() => {
     const handleAttendance = async () => {
       try {
-        // setLoadingAttendance(true);
         const config: AxiosRequestConfig = {
           url: `${process.env.NEXT_PUBLIC_API_URL}/users/getAttendanceDetails`,
           method: "POST",
@@ -394,7 +386,6 @@ const LeaveAttendance = () => {
       } catch (error) {
         console.error("Error fetching attendance:", error);
       } finally {
-        // setLoadingAttendance(false);
       }
     };
     if (token) {
