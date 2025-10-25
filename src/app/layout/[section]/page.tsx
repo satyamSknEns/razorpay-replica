@@ -20,6 +20,7 @@ const Teams = dynamic(() => import("../../teams/Teams"));
 const Employees = dynamic(() => import("../../employees/page"));
 const Department = dynamic(() => import("../../department/page"));
 const LeaveType = dynamic(() => import("../../leavetype/page"));
+const Managers = dynamic(() => import("../../managers/page"));
 
 export default function SectionPage() {
   const { section } = useParams();
@@ -53,6 +54,8 @@ export default function SectionPage() {
       return <Department />;
     case "leavetype":
       return <LeaveType />;
+    case "managers":
+      return <Managers />;
     default:
       return <div>Page {section} not found</div>;
   }
