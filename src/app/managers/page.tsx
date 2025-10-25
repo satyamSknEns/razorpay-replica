@@ -348,7 +348,7 @@ const Managers = () => {
                         <CustomButton
                           text=" Add to Team"
                           onClick={handleAddToTeam}
-                          color="bg-green-600"
+                          color="bg-blue-600"
                         />
                       </div>
                     </>

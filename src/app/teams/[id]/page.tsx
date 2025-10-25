@@ -8,9 +8,10 @@ import Button from "@mui/material/Button";
 import Calender from "@/app/attendence/Calender";
 import { PiPencilSimpleLineFill } from "react-icons/pi";
 import { RxCross2 } from "react-icons/rx";
-import CloseIcon from "@mui/icons-material/Close";
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
+import CustomButton from "@/app/components/CustomButton";
+import CloseButton from "@/app/components/CloseButton";
 
 interface Attendance {
   id: number;
@@ -1267,15 +1268,13 @@ const EmployeeDetail = () => {
                   );
                 })}
           </ul>
-
-          <button
+          <CustomButton
+            text="View Leaves Taken"
             onClick={() => {
               setView(true);
             }}
-            className="mt-4 w-full bg-blue-600 py-2 rounded text-sm cursor-pointer"
-          >
-            View Leaves Taken
-          </button>
+            color="bg-blue-600 w-full mt-3"
+          />
         </section>
       </section>
 
@@ -1288,16 +1287,7 @@ const EmployeeDetail = () => {
               <h2 className="text-2xl font-semibold text-gray-200">
                 Leaves taken
               </h2>
-              <button
-                className="bg-red-600 text-white px-3 py-.75 cursor-pointer rounded text-right"
-                onClick={() => {
-                  setTimeout(() => {
-                    setView(false);
-                  }, 300);
-                }}
-              >
-                <CloseIcon fontSize="small" className="-mt-1" />
-              </button>
+              <CloseButton onClose={() => setView(false)} />
             </div>
 
             <ul>
