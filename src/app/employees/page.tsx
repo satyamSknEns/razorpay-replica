@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import axios, { AxiosRequestConfig } from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -12,6 +13,8 @@ import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import LogoutIcon from "@mui/icons-material/Logout";
+import CloseButton from "../components/CloseButton";
+import CustomButton from "../components/CustomButton";
 
 interface Data {
   name: string;
@@ -35,6 +38,7 @@ interface EmployeeData {
 const Employees = () => {
   const cookies = useCookies();
   const token = cookies.get("token");
+  const router = useRouter();
   const [openRegesterPopup, setOpenRegesterPopup] = useState(false);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<Data>({
@@ -212,7 +216,6 @@ const Employees = () => {
     fetchAllManager();
     fetchLeavesType();
   }, [token]);
-
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -543,12 +546,11 @@ const Employees = () => {
           className="border border-gray-500 rounded-md p-2 focus:outline-none text-white"
           onChange={(e) => setSearch(e.target.value)}
         />
-        <button
+        <CustomButton
+          text="Add to Team"
           onClick={() => setOpenRegesterPopup(true)}
-          className="bg-blue-500 py-2 px-3 cursor-pointer rounded"
-        >
-          Add Employee
-        </button>
+          color="bg-blue-500"
+        />
       </div>
 
       <div className="overflow-x-auto mt-4 rounded">
@@ -573,6 +575,9 @@ const Employees = () => {
               </th>
               <th className="p-2 border border-gray-500 text-center">
                 Assign Leaves
+              </th>
+              <th className="p-2 border border-gray-500 text-center">
+                Attendence
               </th>
             </tr>
           </thead>
@@ -652,14 +657,17 @@ const Employees = () => {
                     <td className="p-2 border border-gray-700 text-center">
                       <span
                         className="bg-blue-500 pb-1.5 px-1 rounded cursor-pointer"
-                        // onClick={() => {
-                        //   setSelectedEmployee(emp);
-                        //   setAssignLeave(true);
-                        // }}
                         onClick={() => handleOpenAssignLeave(emp.id)}
                       >
                         <LogoutIcon />
                       </span>
+                    </td>
+                    <td className="p-2 border border-gray-700 text-center">
+                      <CustomButton
+                        text="redirect"
+                        onClick={() => router.push(`/teams/${emp.id}`)}
+                        color="bg-blue-500"
+                      />
                     </td>
                   </tr>
                 ))
@@ -675,8 +683,14 @@ const Employees = () => {
       </div>
 
       {openRegesterPopup && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-          <div className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-6 mx-4 animate-scale-up-center min-h-[400px] overflow-auto">
+        <div
+          onClick={() => setOpenRegesterPopup(false)}
+          className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-4 mx-4 animate-scale-up-center min-h-[400px] overflow-auto"
+          >
             <form
               method="POST"
               onSubmit={handleSubmit}
@@ -684,13 +698,7 @@ const Employees = () => {
             >
               <div className="flex justify-between w-full items-center pb-5 border-b-3 border-gray-600 mt-2">
                 <h3 className="text-2xl font-semibold">Add Employee</h3>
-
-                <button
-                  className="text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded cursor-pointer"
-                  onClick={() => setOpenRegesterPopup(false)}
-                >
-                  X
-                </button>
+                <CloseButton onClose={() => setOpenRegesterPopup(false)} />
               </div>
 
               <div className="w-full mt-3 mb-[1rem]">
@@ -818,16 +826,17 @@ const Employees = () => {
       )}
 
       {details && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-          <div className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-4 mx-4 animate-scale-up-center min-h-[350px] overflow-auto">
+        <div
+          onClick={() => setDetals(false)}
+          className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-4 mx-4 animate-scale-up-center min-h-[350px] overflow-auto"
+          >
             <div className="flex justify-between w-full items-center pb-5 border-b-2 border-gray-600 my-2">
               <h3 className="text-2xl font-semibold">Detalis</h3>
-              <button
-                className="text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded cursor-pointer"
-                onClick={() => setDetals(false)}
-              >
-                X
-              </button>
+              <CloseButton onClose={() => setDetals(false)} />
             </div>
 
             {loadingDetails ? (
@@ -956,16 +965,17 @@ const Employees = () => {
       )}
 
       {userUpdate && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-          <div className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-4 mx-4 animate-scale-up-center min-h-[350px] overflow-auto">
+        <div
+          onClick={() => setUserUpdate(false)}
+          className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+        >
+          <div
+            onClick={() => setOpenRegesterPopup(false)}
+            className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-4 mx-4 animate-scale-up-center min-h-[350px] overflow-auto"
+          >
             <div className="flex justify-between w-full items-center pb-5 border-b-2 border-gray-600 mt-2">
               <h3 className="text-2xl font-semibold">Update Details</h3>
-              <button
-                className="text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded cursor-pointer"
-                onClick={() => setUserUpdate(false)}
-              >
-                X
-              </button>
+              <CloseButton onClose={() => setUserUpdate(false)} />
             </div>
             <form
               onSubmit={(e) => {
@@ -1030,16 +1040,17 @@ const Employees = () => {
       )}
 
       {additionalDetals && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-          <div className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-4 mx-4 animate-scale-up-center min-h-[350px] overflow-auto">
+        <div
+          onClick={() => setAdditionalDetals(false)}
+          className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-4 mx-4 animate-scale-up-center min-h-[350px] overflow-auto"
+          >
             <div className="flex justify-between w-full items-center pb-5 border-b-2 border-gray-600 mt-2">
               <h3 className="text-2xl font-semibold">Add Additional Details</h3>
-              <button
-                className="text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded cursor-pointer"
-                onClick={() => setAdditionalDetals(false)}
-              >
-                X
-              </button>
+              <CloseButton onClose={() => setAdditionalDetals(false)} />
             </div>
             <form
               onSubmit={(e) => {
@@ -1143,16 +1154,17 @@ const Employees = () => {
       )}
 
       {assignManager && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-          <div className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-4 mx-4 animate-scale-up-center min-h-[150px] overflow-auto">
+        <div
+          onClick={() => setAssignManager(false)}
+          className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-4 mx-4 animate-scale-up-center min-h-[150px] overflow-auto"
+          >
             <div className="flex justify-between w-full items-center pb-5 border-b-2 border-gray-600 mt-2">
               <h3 className="text-2xl font-semibold">Assign Manager</h3>
-              <button
-                className="text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded cursor-pointer"
-                onClick={() => setAssignManager(false)}
-              >
-                X
-              </button>
+              <CloseButton onClose={() => setAssignManager(false)} />
             </div>
             <div className="my-5 px-1">
               {currentManagerName && (
@@ -1165,13 +1177,13 @@ const Employees = () => {
                   </p>
                 </div>
               )}
-              <label className="block mb-1">Department</label>
+              <label className="block mb-1">Managers</label>
               <select
                 value={selectedManager}
                 onChange={(e) => setSelectedManager(e.target.value)}
                 className="w-full text-white border border-gray-500 p-2 rounded bg-gray-700"
               >
-                <option value="">Select Department</option>
+                <option value="">Select Manager</option>
                 {managers?.map((dept: any) => (
                   <option key={dept.id} value={dept.id}>
                     {dept.name}
@@ -1180,28 +1192,28 @@ const Employees = () => {
               </select>
             </div>
             <div className="flex justify-end">
-              <button
+              <CustomButton
+                text="Update"
                 onClick={() => handleAssignManager(selectedEmployee)}
-                className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white mt-2"
-              >
-                Update
-              </button>
+                color="bg-blue-600"
+              />
             </div>
           </div>
         </div>
       )}
 
       {assignLeave && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-          <div className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-4 mx-4 animate-scale-up-center min-h-[150px] overflow-auto">
+        <div
+          onClick={() => setAssignLeave(false)}
+          className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-4 mx-4 animate-scale-up-center min-h-[150px] overflow-auto"
+          >
             <div className="flex justify-between w-full items-center pb-5 border-b-2 border-gray-600 mt-2">
               <h3 className="text-2xl font-semibold">Assign Leave</h3>
-              <button
-                className="text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded cursor-pointer"
-                onClick={() => setAssignLeave(false)}
-              >
-                X
-              </button>
+              <CloseButton onClose={() => setAssignLeave(false)} />
             </div>
 
             <div className="my-4">
@@ -1225,7 +1237,7 @@ const Employees = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {employeeLeaves.map((leave: any) => (
+                    {employeeLeaves?.map((leave: any) => (
                       <tr key={leave.id} className="hover:bg-gray-700">
                         <td className="p-2 border border-gray-700">
                           {leave.leaveTypeName}
@@ -1255,7 +1267,7 @@ const Employees = () => {
                 onChange={(e) => setLeavesTypeList(e.target.value)}
                 className="w-full text-white border border-gray-500 p-2 rounded bg-gray-700"
               >
-                <option value="">Select Department</option>
+                <option value="">Select Leave Type</option>
                 {leaveTypes?.map((dept: any) => (
                   <option key={dept.id} value={dept.id}>
                     {dept.name}
@@ -1269,33 +1281,34 @@ const Employees = () => {
               <input
                 type="number"
                 value={quantity}
+                placeholder="ex.4"
                 onChange={(e) => setQuantity(e.target.value)}
                 className="w-full p-2 rounded border border-gray-500 text-white"
               />
             </div>
             <div className="flex justify-end">
-              <button
+              <CustomButton
+                text="Add"
                 onClick={() => handleAssignLeave(selectedEmployee.id)}
-                className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white mt-2"
-              >
-                Add
-              </button>
+                color="bg-blue-600"
+              />
             </div>
           </div>
         </div>
       )}
 
       {confirmDeletepopup && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-          <div className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-4 mx-4 animate-scale-up-center min-h-[150px] overflow-auto">
+        <div
+          onClick={() => setConfirmDeletepopup(false)}
+          className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-4 mx-4 animate-scale-up-center min-h-[150px] overflow-auto"
+          >
             <div className="flex justify-between w-full items-center pb-5 border-b-2 border-gray-600 mt-2">
               <h3 className="text-2xl font-semibold">Delete Employee</h3>
-              <button
-                className="text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded cursor-pointer"
-                onClick={() => setConfirmDeletepopup(false)}
-              >
-                X
-              </button>
+              <CloseButton onClose={() => setConfirmDeletepopup(false)} />
             </div>
 
             <div>
@@ -1304,21 +1317,19 @@ const Employees = () => {
                 cannot be undone.
               </h4>
               <div className="flex gap-3 my-3 justify-end">
-                <button
+                <CustomButton
+                  text="Yes"
                   onClick={() =>
                     confirmDelete !== null &&
                     handelDeleteEmployee(confirmDelete)
                   }
-                  className="bg-red-500 py-1 px-2 rounded font-semibold cursor-pointer"
-                >
-                  Yes
-                </button>
-                <button
+                  color="bg-red-500"
+                />
+                <CustomButton
+                  text="No"
                   onClick={() => setConfirmDeletepopup(false)}
-                  className="bg-blue-500 py-1 px-2 rounded font-semibold cursor-pointer"
-                >
-                  No
-                </button>
+                  color="bg-blue-500"
+                />
               </div>
             </div>
           </div>

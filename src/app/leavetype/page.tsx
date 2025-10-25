@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import DeleteIcon from "@mui/icons-material/Delete";
+import CloseButton from "../components/CloseButton";
+import CustomButton from "../components/CustomButton";
 
 const LeaveType = () => {
   const cookies = useCookies();
@@ -13,6 +15,7 @@ const LeaveType = () => {
   const [addleaveTypes, setAddLeaveTypes] = useState("");
   const [deletedid, setDeletedId] = useState("");
   const [deletePopup, setDeletePopup] = useState(false);
+
   useEffect(() => {
     if (!token) return;
 
@@ -99,27 +102,26 @@ const LeaveType = () => {
     <div className="lg:px-6 md:px-6 sm:px-2 px-2 text-white">
       <h1 className="text-2xl font-bold mb-4">All Leaves Type</h1>
       <div className="flex justify-end pb-3">
-        <button
+        <CustomButton
+          text="Add Leave Type"
           onClick={() => setAddLeaveType(true)}
-          className="bg-blue-500 py-2 px-3 cursor-pointer rounded"
-        >
-          Add Leave Type
-        </button>
+          color="bg-blue-600"
+        />
       </div>
 
       {addLeaveType && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-          <div className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-6 mx-4 animate-scale-up-center min-h-[200px] overflow-auto">
+        <div
+          onClick={() => setAddLeaveType(false)}
+          className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-4 mx-4 animate-scale-up-center min-h-[200px] overflow-auto"
+          >
             <ToastContainer position="top-right" autoClose={3000} />
             <div className="flex justify-between w-full items-center pb-5 border-b-3 border-gray-600 mt-2">
               <h3 className="text-2xl font-semibold">Add Leave Type</h3>
-
-              <button
-                className="text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded cursor-pointer"
-                onClick={() => setAddLeaveType(false)}
-              >
-                X
-              </button>
+              <CloseButton onClose={() => setAddLeaveType(false)} />
             </div>
             <div className="flex flex-col gap-2 mt-4">
               <label htmlFor="">Department Name</label>
@@ -138,12 +140,11 @@ const LeaveType = () => {
               </select>
             </div>
             <div className="w-full my-6">
-              <button
+              <CustomButton
+                text="Submit"
                 onClick={AddLeaveType}
-                className="w-full py-2 bg-[#2E5BFF] text-white rounded-[5px] cursor-pointer"
-              >
-                Submit
-              </button>
+                color="bg-[#2E5BFF]"
+              />
             </div>
           </div>
         </div>
@@ -198,17 +199,18 @@ const LeaveType = () => {
       </div>
 
       {deletePopup && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-          <div className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-4 mx-4 animate-scale-up-center min-h-[150px] overflow-auto">
+        <div
+          onClick={() => setDeletePopup(false)}
+          className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-4 mx-4 animate-scale-up-center min-h-[150px] overflow-auto"
+          >
             <ToastContainer position="top-right" autoClose={3000} />
             <div className="flex justify-between w-full items-center pb-5 border-b-2 border-gray-600 mt-2">
               <h3 className="text-2xl font-semibold">Delete Leave Type</h3>
-              <button
-                className="text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded cursor-pointer"
-                onClick={() => setDeletePopup(false)}
-              >
-                X
-              </button>
+              <CloseButton onClose={() => setDeletePopup(false)} />
             </div>
 
             <div>
@@ -217,18 +219,16 @@ const LeaveType = () => {
                 cannot be undone.
               </h4>
               <div className="flex gap-3 my-3 justify-end">
-                <button
+                <CustomButton
+                  text="Yes"
                   onClick={() => handleDelete(Number(deletedid))}
-                  className="bg-red-500 py-1 px-2 rounded font-semibold cursor-pointer"
-                >
-                  Yes
-                </button>
-                <button
+                  color="bg-red-500"
+                />
+                <CustomButton
+                  text="No"
                   onClick={() => setDeletePopup(false)}
-                  className="bg-blue-500 py-1 px-2 rounded font-semibold cursor-pointer"
-                >
-                  No
-                </button>
+                  color="bg-blue-500"
+                />
               </div>
             </div>
           </div>
