@@ -1,15 +1,16 @@
 import { FaPaperPlane } from "react-icons/fa";
+import CustomButton from "../components/CustomButton";
 
 export default function MyPayPage() {
   return (
     <div className="min-h-screen bg-[#0f172a] text-white flex flex-col md:flex-row">
-      <main className="flex-1 px-3 pb-6 space-y-8">
+      <main className="flex-1 px-3 pb-6 space-y-4">
         <h1 className="text-[28px] font-bold text-white">Pay Slips</h1>
 
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between space-y-4 md:space-y-0 md:space-x-4 -mt-3">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between space-y-4 md:space-y-0 md:space-x-4">
           <div className="flex-1 flex flex-col gap-1.5 relative">
             <label>Select financial year</label>
-            <select className="border border-gray-500 rounded px-1 py-1 w-full outline-none bg-gray-800 text-white appearance-none pr-8">
+            <select className="border border-gray-500 rounded px-2 py-1 w-full outline-none bg-gray-800 text-white appearance-none pr-8">
               <option>2025 - 2026</option>
               <option>2024 - 2025</option>
               <option>2023 - 2024</option>
@@ -53,9 +54,11 @@ export default function MyPayPage() {
           Oops, looks like we have not processed a payroll for you.
         </p>
 
-        <button className="mt-4 border border-blue-500 text-blue-500 px-4 py-2 rounded hover:bg-blue-500 hover:text-white transition">
-          Return to dashboard
-        </button>
+        <CustomButton
+          text="Return to dashboard"
+          onClick={() => false}
+          color="bg-blue-600 hover:bg-blue-900"
+        />
       </main>
 
       <aside className="hidden lg:block w-72 p-6 space-y-4 border-l border-gray-700 bg-[#0f172a]">

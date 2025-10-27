@@ -534,7 +534,7 @@ const Employees = () => {
   };
 
   return (
-    <div className="lg:px-6 md:px-6 sm:px-2 px-2 text-white">
+    <div className="lg:px-4 md:px-4 sm:px-2 px-2 text-white">
       <ToastContainer position="top-right" autoClose={3000} />
       <h1 className="text-2xl font-bold mb-4">All Employee Details</h1>
 

@@ -6,7 +6,7 @@ export default function InsuranceForm() {
   const [gender, setGender] = useState("");
 
   return (
-    <div className="max-w-3xl  px-3 pb-6 bg-gray-900 rounded-lg shadow-md">
+    <div className="max-w-3xl  lg:px-4 md:px-4 sm:px-2 px-2 bg-gray-900">
       <h2 className="text-[28px] font-bold text-white mb-2 pb-1">
         Details for Insurance
       </h2>

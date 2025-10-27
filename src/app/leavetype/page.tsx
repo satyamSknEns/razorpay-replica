@@ -103,7 +103,7 @@ const LeaveType = () => {
   };
 
   return (
-    <div className="lg:px-6 md:px-6 sm:px-2 px-2 text-white">
+    <div className="lg:px-4 md:px-4 sm:px-2 px-2 text-white">
       <h1 className="text-2xl font-bold mb-4">All Leaves Type</h1>
       <div className="flex justify-end pb-3">
         <CustomButton

@@ -591,7 +591,7 @@ const LeaveAttendance = () => {
 
   return (
     <>
-      <div className="text-[28px] font-bold text-white px-3 pb-1">
+      <div className="text-[28px] font-bold text-white lg:px-4 md:px-4 sm:px-2 px-2 pb-1">
         Leave & Attendance
       </div>
 
