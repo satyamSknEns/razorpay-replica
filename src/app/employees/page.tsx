@@ -434,7 +434,7 @@ const Employees = () => {
         setSelectedManager(currentManager ? currentManager.id : "");
         setCurrentManagerName(currentManager ? currentManager.name : null);
       } else {
-        console.error("There is some error in assigning the manager");
+        console.error("There is some error is getting the details !");
       }
     } catch (error) {
       toast.error("Failed to update additional details");
@@ -490,7 +490,7 @@ const Employees = () => {
       if (assignedLeave.status === 200) {
         setAssignLeave(false);
       } else {
-        console.error("There is some error in assigning the manager");
+        console.error("There is some error in assigning the leave !");
       }
 
       toast.success("Leave assigned successfully !");
@@ -893,8 +893,8 @@ const Employees = () => {
                 <p className="py-1 flex gap-2">
                   <strong>Service Duration :</strong>{" "}
                   <span className="capitalize">
-                    {selectedEmployee.serviceDuration ? (
-                      `${selectedEmployee.serviceDuration.years} year${
+                    {selectedEmployee?.serviceDuration ? (
+                      `${selectedEmployee?.serviceDuration.years} year${
                         selectedEmployee.serviceDuration.years !== 1 ? "s" : ""
                       }, 
          ${selectedEmployee.serviceDuration.months} month${
@@ -904,7 +904,9 @@ const Employees = () => {
                         selectedEmployee.serviceDuration.days !== 1 ? "s" : ""
                       }`
                     ) : (
-                      <p className="text-red-300">No Any Duration</p>
+                      <span className="capitalize text-red-300">
+                        No Any Duration
+                      </span>
                     )}
                   </span>
                 </p>

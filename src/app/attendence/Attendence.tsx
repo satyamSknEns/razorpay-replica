@@ -416,7 +416,7 @@ const LeaveAttendance = () => {
       setVisible(false);
       handleRefresh();
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -441,7 +441,7 @@ const LeaveAttendance = () => {
       setOpen(false);
       handleRefresh();
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -462,7 +462,7 @@ const LeaveAttendance = () => {
         const response = await axios.request(config);
         setLeave(response.data);
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     };
     if (token) {
@@ -499,7 +499,7 @@ const LeaveAttendance = () => {
         const response = await axios.request(config);
         setLeaveRequest(response.data.requests);
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     };
 
@@ -545,7 +545,7 @@ const LeaveAttendance = () => {
       await axios.request(config);
       handleRefresh();
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 

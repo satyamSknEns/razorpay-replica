@@ -132,7 +132,6 @@ const Profile = () => {
         data: editDetail,
       };
       await axios.request(config);
-      console.log(editDetail);
       toast.success("data updated successfully");
       setAnimation(false);
       setTimeout(() => {

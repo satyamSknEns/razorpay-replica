@@ -92,9 +92,6 @@ const EmployeeDetail = () => {
   const { id } = useParams();
   const cookies = useCookies();
   const token = cookies.get("token");
-
-  console.log("id000", id);
-
   const [view, setView] = useState(false);
   const [employee, setEmployee] = useState<Employee | null>(null);
   const [requestList, setRequestList] = useState<requestList | null>(null);
@@ -198,16 +195,12 @@ const EmployeeDetail = () => {
       });
 
       const requestData = listRequests?.data;
-
-      console.log("---", requestData);
       setRequestList(requestData || null);
       const requestAllLeaveData = listAllRequests?.data;
       setAllRequestList(requestAllLeaveData || null);
 
       const empList: Employee[] = res.data.employees || [];
-      console.log("eme", empList);
       const found = empList.find((e) => e.user.id === Number(id));
-      console.log("fun", found);
       setEmployee(found || null);
     } catch (error) {
       console.error("Employee detail fetch error:", error);

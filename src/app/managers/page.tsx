@@ -53,7 +53,6 @@ const Managers = () => {
   }, []);
 
   const handelManagerTeam = async (id: number) => {
-    console.log("id", id);
     setCurrentManagerId(id);
     try {
       setManagerDetails(true);
@@ -69,8 +68,6 @@ const Managers = () => {
 
       const res = await axios.request(config);
       setEmployees(res.data.employees || []);
-
-      console.log("33333", res);
     } catch (error) {
       console.error("There was some problem to show team member", error);
     } finally {

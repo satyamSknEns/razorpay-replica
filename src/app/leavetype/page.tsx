@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { useCookies } from "next-client-cookies";
 import { useEffect, useState } from "react";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CloseButton from "../components/CloseButton";
@@ -60,11 +60,13 @@ const LeaveType = () => {
         },
       };
       const response = await axios.request(config);
+
       if (response.status === 200) {
         window.location.reload();
       } else {
         console.error("there is some this wrong in creating the leave type");
       }
+      toast.success("Leave type deleted successfully !");
     } catch (error) {
       console.error("there is some error in delete leave type", error);
     }
@@ -85,11 +87,13 @@ const LeaveType = () => {
         },
       };
       const response = await axios.request(leaveconfig);
+
       if (response.status === 200) {
         window.location.reload();
       } else {
         console.error("there is some this wrong in creating the leave type");
       }
+      toast.success("Leave type added successfully !");
     } catch (error) {
       console.error("There is some error to creatinf the department", error);
     } finally {

@@ -32,7 +32,6 @@ const Dashboard = () => {
     if (!token) return;
     const handleApi = async () => {
       try {
-        console.log(token);
         const config: AxiosRequestConfig = {
           url: `${process.env.NEXT_PUBLIC_API_URL}/users/getDetails`,
           method: "POST",
