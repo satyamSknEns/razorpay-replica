@@ -787,13 +787,13 @@ const Employees = () => {
                 </button>
               </div>
 
-              <div className="w-full mb-[1rem]">
+              <div className="w-full mb-[1rem] relative">
                 <label className="block text-[14px] mb-1">
                   Role <span className="text-red-500">*</span>
                 </label>
                 <select
                   name="employess"
-                  className="w-full outline-0 border-1 py-[5px] rounded-[5px]"
+                  className="w-full outline-0 border-1 py-[5px] rounded-[5px] appearance-none px-2"
                   value={data.employess}
                   onChange={handleChange}
                 >
@@ -810,6 +810,20 @@ const Employees = () => {
                     Employees
                   </option>
                 </select>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="absolute right-2 top-[69%] -translate-y-1/2 w-4 h-4 text-white pointer-events-none"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
               </div>
 
               <div className="button w-full">
@@ -972,7 +986,7 @@ const Employees = () => {
           className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
         >
           <div
-            onClick={() => setOpenRegesterPopup(false)}
+            onClick={(e) => e.stopPropagation()}
             className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-4 mx-4 animate-scale-up-center min-h-[350px] overflow-auto"
           >
             <div className="flex justify-between w-full items-center pb-5 border-b-2 border-gray-600 mt-2">
@@ -1010,14 +1024,14 @@ const Employees = () => {
                 />
               </div>
 
-              <div className="mb-3 px-1 pb-5 border-b-2 border-gray-600">
+              <div className="mb-3 px-1 pb-5 border-b-2 border-gray-600 relative">
                 <label className="block mb-1">Role</label>
                 <select
                   value={formData.role}
                   onChange={(e) =>
                     setFormData({ ...formData, role: e.target.value })
                   }
-                  className="w-full text-white border border-gray-500 p-2 rounded bg-gray-600"
+                  className="w-full text-white border border-gray-500 p-2 rounded bg-gray-600 appearance-none pr-8"
                 >
                   <option value="" disabled>
                     Select Role
@@ -1026,6 +1040,20 @@ const Employees = () => {
                   <option value="manager">Manager</option>
                   <option value="employees">Employee</option>
                 </select>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="absolute right-2 top-[55%] -translate-y-1/2 w-4 h-4 text-white pointer-events-none"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
               </div>
 
               <div className="flex justify-end">
@@ -1121,7 +1149,7 @@ const Employees = () => {
                 />
               </div>
 
-              <div className="mb-3 px-1">
+              <div className="mb-3 px-1 relative">
                 <label className="block mb-1">Department</label>
                 <select
                   value={additionalDetails?.department}
@@ -1131,7 +1159,7 @@ const Employees = () => {
                       department: e.target.value,
                     })
                   }
-                  className="w-full text-white border border-gray-500 p-2 rounded bg-gray-700"
+                  className="w-full text-white border border-gray-500 p-2 rounded bg-gray-700 appearance-none pr-8"
                 >
                   <option value="">Select Department</option>
                   {departmentType?.map((dept: any) => (
@@ -1140,6 +1168,20 @@ const Employees = () => {
                     </option>
                   ))}
                 </select>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="absolute right-3 top-[68%] -translate-y-1/2 w-4 h-4 text-white pointer-events-none"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
               </div>
 
               <div className="flex justify-end">
@@ -1168,7 +1210,7 @@ const Employees = () => {
               <h3 className="text-2xl font-semibold">Assign Manager</h3>
               <CloseButton onClose={() => setAssignManager(false)} />
             </div>
-            <div className="my-5 px-1">
+            <div className="my-5 px-1 relative">
               {currentManagerName && (
                 <div className="my-3 px-1 text-gray-300">
                   <p>
@@ -1183,7 +1225,7 @@ const Employees = () => {
               <select
                 value={selectedManager}
                 onChange={(e) => setSelectedManager(e.target.value)}
-                className="w-full text-white border border-gray-500 p-2 rounded bg-gray-700"
+                className="w-full text-white border border-gray-500 p-2 rounded bg-gray-700 appearance-none pr-8"
               >
                 <option value="">Select Manager</option>
                 {managers?.map((dept: any) => (
@@ -1192,6 +1234,20 @@ const Employees = () => {
                   </option>
                 ))}
               </select>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="absolute right-3 top-[70%] -translate-y-1/2 w-4 h-4 text-white pointer-events-none"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
             </div>
             <div className="flex justify-end">
               <CustomButton
@@ -1262,12 +1318,12 @@ const Employees = () => {
               )}
             </div>
 
-            <div className="my-5 px-1">
+            <div className="my-5 px-1 relative">
               <label className="block mb-1">Leave Type</label>
               <select
                 value={leavesTypeList}
                 onChange={(e) => setLeavesTypeList(e.target.value)}
-                className="w-full text-white border border-gray-500 p-2 rounded bg-gray-700"
+                className="w-full text-white border border-gray-500 p-2 rounded bg-gray-700 appearance-none pr-8"
               >
                 <option value="">Select Leave Type</option>
                 {leaveTypes?.map((dept: any) => (
@@ -1276,6 +1332,20 @@ const Employees = () => {
                   </option>
                 ))}
               </select>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="absolute right-3 top-[70%] -translate-y-1/2 w-4 h-4 text-white pointer-events-none"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
             </div>
 
             <div className="mb-3 px-1">

@@ -51,7 +51,7 @@ export default function Teams() {
   }, [token]);
 
   return (
-    <div className="p-6 text-white">
+    <div className="lg:px-6 md:px-6 sm:px-2 px-2 text-white">
       <h1 className="text-2xl font-bold mb-4">My Team</h1>
       {employees.length === 0 && <p>No team members found.</p>}
       {employees.map((emp) => (
