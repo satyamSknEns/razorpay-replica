@@ -496,9 +496,10 @@ const Employees = () => {
       const assignedLeave = await axios.request(assignLeaveRequest);
       if (assignedLeave.status === 200) {
         setAssignLeave(false);
-      } else {
-        console.error("There is some error in assigning the leave !");
       }
+      // else {
+      //   console.error("There is some error in assigning the leave !");
+      // }
 
       toast.success("Leave assigned successfully !");
       setAssignLeave(false);
@@ -1316,8 +1317,8 @@ const Employees = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {employeeLeaves?.map((leave: any) => (
-                      <tr key={leave.id} className="hover:bg-gray-700">
+                    {employeeLeaves?.map((leave: any, index: number) => (
+                      <tr key={leave.id || index} className="hover:bg-gray-700">
                         <td className="p-2 border border-gray-700">
                           {leave.leaveTypeName}
                         </td>
