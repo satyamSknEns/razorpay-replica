@@ -53,7 +53,6 @@ const Managers = () => {
   }, []);
 
   const handelManagerTeam = async (id: number) => {
-    console.log("id", id);
     setCurrentManagerId(id);
     try {
       setManagerDetails(true);
@@ -69,8 +68,6 @@ const Managers = () => {
 
       const res = await axios.request(config);
       setEmployees(res.data.employees || []);
-
-      console.log("33333", res);
     } catch (error) {
       console.error("There was some problem to show team member", error);
     } finally {
@@ -106,6 +103,7 @@ const Managers = () => {
   };
 
   const toggleEmployeeSelection = (empId: string) => {
+    console.log("---", empId);
     setSelectedEmployees((prev) =>
       prev.includes(empId)
         ? prev.filter((id) => id !== empId)
@@ -147,11 +145,11 @@ const Managers = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="lg:px-4 md:px-6 sm:px-2 px-2">
       <h2 className="text-2xl font-semibold mb-4">All Managers</h2>
 
       <div className="overflow-x-auto rounded">
-        <table className="bg-gray-700 text-left min-w-[650px] w-full">
+        <table className="bg-gray-900 text-left min-w-[650px] w-full">
           <thead className="bg-gray-800">
             <tr>
               <th className="px-4 py-2 border border-gray-500">ID</th>
@@ -303,33 +301,43 @@ const Managers = () => {
                           </thead>
                           <tbody>
                             {allEmployees.length > 0 ? (
-                              allEmployees.map((emp) => (
-                                <tr
-                                  key={emp.id}
-                                  className="hover:bg-gray-700 transition"
-                                >
-                                  <td className="px-4 py-2 border border-gray-600 text-center">
-                                    <input
-                                      type="checkbox"
-                                      checked={selectedEmployees.includes(
-                                        emp.id
-                                      )}
-                                      onChange={() =>
-                                        toggleEmployeeSelection(emp.id)
-                                      }
-                                    />
-                                  </td>
-                                  <td className="px-4 py-2 border border-gray-600">
-                                    {emp.id}
-                                  </td>
-                                  <td className="px-4 py-2 border border-gray-600">
-                                    {emp.name}
-                                  </td>
-                                  <td className="px-4 py-2 border border-gray-600">
-                                    {emp.email}
-                                  </td>
-                                </tr>
-                              ))
+                              allEmployees.map((emp) => {
+                                const isSelected = selectedEmployees.includes(
+                                  emp.id
+                                );
+                                console.log("isSelected323", isSelected);
+                                return (
+                                  <tr
+                                    key={emp.id}
+                                    className={`hover:bg-gray-700 transition cursor-pointer ${
+                                      isSelected ? "bg-gray-800" : ""
+                                    }`}
+                                    onClick={() =>
+                                      toggleEmployeeSelection(emp.id)
+                                    }
+                                  >
+                                    <td className="px-4 py-2 border border-gray-600 text-center">
+                                      <input
+                                        type="checkbox"
+                                        checked={isSelected}
+                                        onChange={() =>
+                                          toggleEmployeeSelection(emp.id)
+                                        }
+                                        onClick={(e) => e.stopPropagation()}
+                                      />
+                                    </td>
+                                    <td className="px-4 py-2 border border-gray-600">
+                                      {emp.id}
+                                    </td>
+                                    <td className="px-4 py-2 border border-gray-600">
+                                      {emp.name}
+                                    </td>
+                                    <td className="px-4 py-2 border border-gray-600">
+                                      {emp.email}
+                                    </td>
+                                  </tr>
+                                );
+                              })
                             ) : (
                               <tr>
                                 <td
@@ -348,7 +356,7 @@ const Managers = () => {
                         <CustomButton
                           text=" Add to Team"
                           onClick={handleAddToTeam}
-                          color="bg-green-600"
+                          color="bg-blue-600"
                         />
                       </div>
                     </>

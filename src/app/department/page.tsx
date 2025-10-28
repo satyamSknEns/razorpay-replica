@@ -99,7 +99,7 @@ const Department = () => {
   };
 
   return (
-    <div className="lg:px-6 md:px-6 sm:px-2 px-2 text-white">
+    <div className="lg:px-4 md:px-4 sm:px-2 px-2 text-white">
       <h1 className="text-2xl font-bold mb-4">All Departments</h1>
       <div className="flex justify-end pb-3">
         <CustomButton
@@ -120,7 +120,7 @@ const Department = () => {
           >
             <ToastContainer position="top-right" autoClose={3000} />
             <div className="flex justify-between w-full items-center pb-5 border-b-3 border-gray-600 mt-2">
-              <h3 className="text-2xl font-semibold">Add Leave Type</h3>
+              <h3 className="text-2xl font-semibold">Add Department Name</h3>
               <CloseButton onClose={() => setAddLeaveType(false)} />
             </div>
             <div className="flex flex-col gap-2 mt-4">

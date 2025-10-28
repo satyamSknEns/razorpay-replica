@@ -79,40 +79,72 @@ export default function Calender({
           >
             <EastIcon fontSize="small" />
           </button>
-          <select
-            value={currentDate.month()}
-            onChange={(e) => {
-              // setCurrentDate(currentDate.month(Number(e.target.value)));
-              const newDate = currentDate.month(Number(e.target.value));
-              setCurrentDate(newDate);
-              setSelectedDate(newDate.startOf("month"));
-            }}
-            className="bg-gray-800 rounded px-2 py-1 border border-[#4c5d75] cursor-pointer"
-          >
-            {Array.from({ length: 12 }, (_, i) => (
-              <option key={i} value={i}>
-                {dayjs().month(i).format("MMMM")}
-              </option>
-            ))}
-          </select>
-          <select
-            value={currentDate.year()}
-            onChange={(e) =>
-              // setCurrentDate(currentDate.year(Number(e.target.value)))
-              {
-                const newDate = currentDate.year(Number(e.target.value));
+          <div className="relative">
+            <select
+              value={currentDate.month()}
+              onChange={(e) => {
+                // setCurrentDate(currentDate.month(Number(e.target.value)));
+                const newDate = currentDate.month(Number(e.target.value));
                 setCurrentDate(newDate);
                 setSelectedDate(newDate.startOf("month"));
+              }}
+              className="border border-gray-500 rounded px-2 py-1 w-full outline-none bg-gray-800 text-white appearance-none pr-8"
+            >
+              {Array.from({ length: 12 }, (_, i) => (
+                <option key={i} value={i}>
+                  {dayjs().month(i).format("MMMM")}
+                </option>
+              ))}
+            </select>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="absolute right-2 top-[50%] -translate-y-1/2 w-4 h-4 text-white pointer-events-none"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </div>
+          <div className="relative">
+            <select
+              value={currentDate.year()}
+              onChange={(e) =>
+                // setCurrentDate(currentDate.year(Number(e.target.value)))
+                {
+                  const newDate = currentDate.year(Number(e.target.value));
+                  setCurrentDate(newDate);
+                  setSelectedDate(newDate.startOf("month"));
+                }
               }
-            }
-            className="bg-gray-800 rounded px-2 py-1 border border-[#4c5d75] cursor-pointer"
-          >
-            {Array.from({ length: 12 }, (_, i) => (
-              <option key={i} value={2020 + i}>
-                {2020 + i}
-              </option>
-            ))}
-          </select>
+              className="border border-gray-500 rounded px-2 py-1 w-full outline-none bg-gray-800 text-white appearance-none pr-8"
+            >
+              {Array.from({ length: 12 }, (_, i) => (
+                <option key={i} value={2020 + i}>
+                  {2020 + i}
+                </option>
+              ))}
+            </select>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="absolute right-1.5 top-[50%] -translate-y-1/2 w-4 h-4 text-white pointer-events-none"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </div>
         </div>
         <div className="border border-[#4c5d75] rounded">
           <button

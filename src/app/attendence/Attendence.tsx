@@ -4,8 +4,9 @@ import { PiPencilSimpleLineFill } from "react-icons/pi";
 import Calender from "./Calender";
 import axios, { AxiosRequestConfig } from "axios";
 import { useCookies } from "next-client-cookies";
-import CloseIcon from "@mui/icons-material/Close";
 import dayjs from "dayjs";
+import CloseButton from "../components/CloseButton";
+import CustomButton from "../components/CustomButton";
 
 type LeaveItem = {
   leaveTypeName: string;
@@ -23,16 +24,10 @@ const LeaveAttendance = () => {
   const [attendanceRecords, setAttendanceRecords] = useState<any[]>([]);
   const [leaveRequest, setLeaveRequest] = useState<LeaveRequest[]>([]);
   const [leave, setLeave] = useState<LeaveData | null>(null);
-  const [animation, setAnimation] = useState<boolean>(true);
-  const [applyAnimation, setApplyAnimation] = useState<boolean>(true);
-  // const [deleteReq, setDeleteReq] = useState(false);
-  // const [delAnimation, setDelAnimation] = useState<boolssean>(true);
   const [isOpen, setIsOpen] = useState(false);
-  const [leaveAnimation, setLeaveAnimation] = useState(false);
   const [checkedMap, setCheckedMap] = useState<{ [key: string]: boolean }>({});
   const [loadingCheckIn, setLoadingCheckIn] = useState(false);
   const [loadingCheckOut, setLoadingCheckOut] = useState(false);
-  // const [loadingAttendance, setLoadingAttendance] = useState(true);
   const [selectedMonth, setSelectedMonth] = useState(dayjs());
   const [leaveHistory, setLeaveHistory] = useState<LeaveItem[]>([]);
   const [formErrors, setFormErrors] = useState({
@@ -378,7 +373,6 @@ const LeaveAttendance = () => {
   useEffect(() => {
     const handleAttendance = async () => {
       try {
-        // setLoadingAttendance(true);
         const config: AxiosRequestConfig = {
           url: `${process.env.NEXT_PUBLIC_API_URL}/users/getAttendanceDetails`,
           method: "POST",
@@ -392,7 +386,6 @@ const LeaveAttendance = () => {
       } catch (error) {
         console.error("Error fetching attendance:", error);
       } finally {
-        // setLoadingAttendance(false);
       }
     };
     if (token) {
@@ -423,7 +416,7 @@ const LeaveAttendance = () => {
       setVisible(false);
       handleRefresh();
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -448,7 +441,7 @@ const LeaveAttendance = () => {
       setOpen(false);
       handleRefresh();
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -469,7 +462,7 @@ const LeaveAttendance = () => {
         const response = await axios.request(config);
         setLeave(response.data);
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     };
     if (token) {
@@ -506,7 +499,7 @@ const LeaveAttendance = () => {
         const response = await axios.request(config);
         setLeaveRequest(response.data.requests);
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     };
 
@@ -552,7 +545,7 @@ const LeaveAttendance = () => {
       await axios.request(config);
       handleRefresh();
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -598,7 +591,7 @@ const LeaveAttendance = () => {
 
   return (
     <>
-      <div className="text-[28px] font-bold text-white px-3 pb-1">
+      <div className="text-[28px] font-bold text-white lg:px-4 md:px-4 sm:px-2 px-2 pb-1">
         Leave & Attendance
       </div>
 
@@ -790,7 +783,7 @@ const LeaveAttendance = () => {
                       earned: "bg-[#d087002e] text-[#c1830c] p-1 rounded-full",
                       casual: "bg-[#d92d202e] text-[#f96c62] p-1 rounded-full",
                       medical: "bg-[#d087002e] text-[#c1830c] p-1 rounded-full",
-                      absent: "bg-[#ff00002e] text-[#ff5b5b] p-1 rounded-full", // 🔴 Absent badge
+                      absent: "bg-[#ff00002e] text-[#ff5b5b] p-1 rounded-full",
                       default: "bg-[#d087002e] text-[#c1830c] p-1 rounded-full",
                     };
 
@@ -907,7 +900,7 @@ const LeaveAttendance = () => {
           </section>
         </div>
 
-        <div className="w-full md:w-64 bg-gray-800 p-4 rounded shadow h-fit">
+        <div className="w-full md:w-64 bg-gray-800 p-4 rounded h-fit">
           <h3 className="text-lg font-semibold mb-4">Your leave balance</h3>
           <ul className="space-y-2 text-sm">
             <li className="text-gray-300 text-lg italic">
@@ -947,40 +940,30 @@ const LeaveAttendance = () => {
               </span>
             </li>
           </ul>
-          <button
-            onClick={() => {
-              setLeaveAnimation(true);
-              setIsOpen(true);
-            }}
-            className="mt-4 w-full bg-blue-600 py-2 rounded text-sm cursor-pointer "
-          >
-            View Leaves Taken
-          </button>
+          <div className="w-full mt-3 flex">
+            <CustomButton
+              text="View Leaves Taken"
+              onClick={() => setIsOpen(true)}
+              color="bg-blue-600 w-full"
+            />
+          </div>
         </div>
 
         {isOpen && (
-          <div className="fixed inset-0 bg-opacity-80 bg-[#212020ad] flex items-center justify-center z-50 ">
+          <div
+            onClick={() => setIsOpen(false)}
+            className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+          >
             <div
-              className={`bg-gray-800 rounded px-4 pb-4 w-[500px] transition-all ${
-                leaveAnimation ? "scale-up-center" : "scale-down-center"
-              }`}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-4 mx-4 animate-scale-up-center min-h-[200px] overflow-auto"
             >
-              <div className="flex justify-end">
-                <button
-                  className="mt-3 bg-red-600 text-white px-3 py-.75 cursor-pointer rounded text-right"
-                  onClick={() => {
-                    setLeaveAnimation(false);
-                    setTimeout(() => {
-                      setIsOpen(false);
-                    }, 300);
-                  }}
-                >
-                  <CloseIcon fontSize="small" className="-mt-1" />
-                </button>
+              <div className="flex justify-between items-center border-b border-gray-600 py-2 mb-3">
+                <h2 className="text-2xl font-semibold text-gray-200">
+                  Leaves taken
+                </h2>
+                <CloseButton onClose={() => setIsOpen(false)} />
               </div>
-              <h2 className="text-2xl font-semibold text-gray-200 border-b border-gray-600 pb-1 mb-3">
-                Leaves taken
-              </h2>
               <ul>
                 {groupedLeaves &&
                   Object.entries(groupedLeaves).map(([type, dates], index) => (
@@ -1004,34 +987,28 @@ const LeaveAttendance = () => {
         )}
 
         {visible && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <div
+            onClick={() => setVisible(false)}
+            className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+          >
             <div
-              className={`bg-gray-900 text-white rounded-2xl shadow-lg w-[90%] max-w-md p-6 relative border border-gray-700 ${
-                applyAnimation ? "scale-up-center" : "scale-down-center"
-              }`}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-4 mx-4 animate-scale-up-center min-h-[200px] overflow-auto"
             >
-              <button
-                className="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl cursor-pointer"
-                onClick={() => {
-                  setApplyAnimation(false);
-                  setTimeout(() => {
-                    setVisible(false);
-                    setApplyAnimation(true);
-                  }, 300);
-                }}
-              >
-                &times;
-              </button>
-              <h2 className="text-xl font-semibold mb-6">Apply for Leave</h2>
+              <div className="flex justify-between items-center border-b border-gray-600 pb-3 pt-2 mb-3">
+                <h2 className="text-xl font-semibold">Apply for Leave</h2>
+
+                <CloseButton onClose={() => setVisible(false)} />
+              </div>
 
               <div className="space-y-4">
-                <div>
-                  <label className="block text-sm mb-1">Status</label>
+                <div className="flex flex-col gap-2 relative">
+                  <label>Status</label>
                   <select
                     name="leaveTypeName"
                     value={formData.leaveTypeName}
                     onChange={handleChange}
-                    className=" cursor-pointer w-full bg-gray-800 text-white rounded-lg border border-gray-600 px-2 py-2 focus:outline-none focus:ring focus:border-blue-500"
+                    className="border border-gray-500 rounded p-2 w-full mb-4 outline-none bg-gray-800 text-white appearance-none pr-8"
                   >
                     <option value="">Select status</option>
                     <option value="casual">Casual Leave</option>
@@ -1039,6 +1016,20 @@ const LeaveAttendance = () => {
                     <option value="earned">Earned Leave</option>
                     <option value="unpaid">Unpaid Leave</option>
                   </select>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="absolute right-2 top-[60%] -translate-y-1/2 w-4 h-4 text-white pointer-events-none"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
                   {formErrors.leaveTypeName && (
                     <p className="text-red-500 text-xs mt-1">
                       {formErrors.leaveTypeName}
@@ -1047,14 +1038,14 @@ const LeaveAttendance = () => {
                 </div>
 
                 <div className="flex space-x-2">
-                  <div className="flex-1">
-                    <label className="block text-sm mb-1">From</label>
+                  <div className="flex-1 flex flex-col gap-1">
+                    <label>From</label>
                     <input
                       type="date"
                       name="fromDate"
                       value={toInputFormat(formData.fromDate)}
                       onChange={handleChange}
-                      className="w-full px-2 bg-gray-800 text-white rounded-lg border border-gray-600 py-2 focus:outline-none focus:ring focus:border-blue-500 cursor-pointer"
+                      className="border border-gray-500 rounded p-2 w-full mb-4 outline-none bg-gray-800 text-white"
                     />
                     {formErrors.fromDate && (
                       <p className="text-red-500 text-xs mt-1">
@@ -1062,14 +1053,14 @@ const LeaveAttendance = () => {
                       </p>
                     )}
                   </div>
-                  <div className="flex-1">
-                    <label className="block text-sm mb-1">To</label>
+                  <div className="flex-1 flex flex-col gap-1">
+                    <label>To</label>
                     <input
                       type="date"
                       name="toDate"
                       value={toInputFormat(formData.toDate)}
                       onChange={handleChange}
-                      className="w-full px-2 bg-gray-800 text-white rounded-lg border border-gray-600 py-2 focus:outline-none focus:ring focus:border-blue-500 cursor-pointer"
+                      className="border border-gray-500 rounded p-2 w-full mb-4 outline-none bg-gray-800 text-white"
                     />
                     {formErrors.toDate && (
                       <p className="text-red-500 text-xs mt-1">
@@ -1079,8 +1070,8 @@ const LeaveAttendance = () => {
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm mb-1">
+                <div className="flex flex-col gap-1">
+                  <label>
                     Remarks <span className="text-gray-400">(optional)</span>
                   </label>
 
@@ -1088,7 +1079,7 @@ const LeaveAttendance = () => {
                     name="remarks"
                     value={formData.remarks}
                     onChange={handleChange}
-                    className="w-full bg-gray-800 text-white rounded-lg border border-gray-600 px-2 py-2 resize-none focus:outline-none focus:ring focus:border-blue-500"
+                    className="resize-none border border-gray-500 rounded p-2 w-full mb-4 outline-none bg-gray-800 text-white"
                     rows={3}
                     placeholder="Add any comments..."
                   />
@@ -1099,16 +1090,10 @@ const LeaveAttendance = () => {
                   )}
                 </div>
 
-                <div className="flex justify-end space-x-3 pt-4">
+                <div className="flex justify-end space-x-3">
                   <button
                     className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg cursor-pointer"
-                    onClick={() => {
-                      setApplyAnimation(false);
-                      setTimeout(() => {
-                        setVisible(false);
-                        setApplyAnimation(true);
-                      }, 300);
-                    }}
+                    onClick={() => setVisible(false)}
                   >
                     Cancel
                   </button>
@@ -1129,168 +1114,133 @@ const LeaveAttendance = () => {
         )}
 
         {open && (
-          <div className="fixed inset-0 bg-black/80  flex items-center justify-center z-50 md:m-[10px] cursor-pointer">
+          <div
+            onClick={() => setOpen(false)}
+            className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+          >
             <div
-              className={`bg-[#1e293b] text-white w-full max-w-md rounded-xl shadow-lg p-6 m-[10px] ${
-                animation ? "scale-up-center" : "scale-down-center"
-              } `}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-4 mx-4 animate-scale-up-center min-h-[200px] overflow-auto"
             >
-              <div className="flex justify-between items-center mb-4">
+              <div className="flex justify-between items-center border-b border-gray-600 pb-3 pt-2 mb-3">
                 <h2 className="text-xl font-semibold">Edit Attendance</h2>
-                <button
-                  className="bg-red-500 py-1 px-2 rounded cursor-pointer"
-                  onClick={() => setOpen(false)}
-                >
-                  X
-                </button>
+                <CloseButton onClose={() => setOpen(false)} />
               </div>
-              <label className="block text-sm font-medium mb-1">Status</label>
-              <select
-                className="w-full mb-2 p-2 bg-gray-700 rounded-md focus:outline-none"
-                name="leaveTypeName"
-                value={editData.leaveTypeName}
-                onChange={handleData}
-              >
-                <option value="status">Status</option>
-                <option value="present">Present</option>
-                <option value="earned">Earned Leave</option>
-                <option value="casual">Casual Leave</option>
-                <option value="medical">Medical Leave</option>
-              </select>
+              <div className="space-y-1">
+                <div className="flex flex-col gap-1 relative">
+                  <label>Status</label>
+                  <select
+                    className="border border-gray-500 rounded p-2 w-full mb-4 outline-none bg-gray-800 text-white appearance-none pr-8"
+                    name="leaveTypeName"
+                    value={editData.leaveTypeName}
+                    onChange={handleData}
+                  >
+                    <option value="status">Status</option>
+                    <option value="present">Present</option>
+                    <option value="earned">Earned Leave</option>
+                    <option value="casual">Casual Leave</option>
+                    <option value="medical">Medical Leave</option>
+                  </select>
 
-              {editFormErrors.leaveTypeName && (
-                <p className="text-red-500 text-xs">
-                  {editFormErrors.leaveTypeName}
-                </p>
-              )}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="absolute right-2 top-[58%] -translate-y-1/2 w-4 h-4 text-white pointer-events-none"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
 
-              <label className="block text-sm font-medium mb-1">Check In</label>
-              <input
-                type="text"
-                name="checkIn"
-                value={editData.checkIn?.slice(0, 5)}
-                className="w-full mb-4 p-2 bg-gray-700 rounded-md focus:outline-none"
-                placeholder="hh:mm"
-                onChange={handleData}
-              />
-              {editFormErrors.checkIn && (
-                <p className="text-red-500 text-xs">{editFormErrors.checkIn}</p>
-              )}
+                  {editFormErrors.leaveTypeName && (
+                    <p className="text-red-500 text-xs">
+                      {editFormErrors.leaveTypeName}
+                    </p>
+                  )}
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="block text-sm font-medium mb-1">
+                    Check In
+                  </label>
+                  <input
+                    type="text"
+                    name="checkIn"
+                    value={editData.checkIn?.slice(0, 5)}
+                    className="border border-gray-500 rounded p-2 w-full mb-4 outline-none bg-gray-800 text-white"
+                    placeholder="hh:mm"
+                    onChange={handleData}
+                  />
+                  {editFormErrors.checkIn && (
+                    <p className="text-red-500 text-xs">
+                      {editFormErrors.checkIn}
+                    </p>
+                  )}
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="block text-sm font-medium mb-1">
+                    Check Out
+                  </label>
+                  <input
+                    type="text"
+                    name="checkOut"
+                    value={editData.checkOut?.slice(0, 5)}
+                    className="border border-gray-500 rounded p-2 w-full mb-4 outline-none bg-gray-800 text-white"
+                    placeholder="hh:mm"
+                    onChange={handleData}
+                  />
+                  {editFormErrors.checkOut && (
+                    <p className="text-red-500 text-xs">
+                      {editFormErrors.checkOut}
+                    </p>
+                  )}
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label>Remarks</label>
+                  <input
+                    type="text"
+                    className="border border-gray-500 rounded p-2 w-full mb-4 outline-none bg-gray-800 text-white"
+                    placeholder="Go to home"
+                    name="remarks"
+                    value={editData.remarks}
+                    onChange={handleData}
+                  />
+                  {editFormErrors.remarks && (
+                    <p className="text-red-500 text-xs ">
+                      {editFormErrors.remarks}
+                    </p>
+                  )}
+                </div>
 
-              <label className="block text-sm font-medium mb-1">
-                Check Out
-              </label>
-              <input
-                type="text"
-                name="checkOut"
-                value={editData.checkOut?.slice(0, 5)}
-                className="w-full mb-4 p-2 bg-gray-700 rounded-md focus:outline-none"
-                placeholder="hh:mm"
-                onChange={handleData}
-              />
-              {editFormErrors.checkOut && (
-                <p className="text-red-500 text-xs">
-                  {editFormErrors.checkOut}
-                </p>
-              )}
-
-              <label className="block text-sm font-medium mb-1">Remarks</label>
-              <input
-                type="text"
-                className="w-full mb-2 p-2 bg-gray-700 rounded-md focus:outline-none"
-                placeholder="Go to home"
-                name="remarks"
-                value={editData.remarks}
-                onChange={handleData}
-              />
-              {editFormErrors.remarks && (
-                <p className="text-red-500 text-xs ">
-                  {editFormErrors.remarks}
-                </p>
-              )}
-
-              <div className="flex gap-3 justify-end">
-                {/* <button
-                  className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-md cursor-pointer"
-                  onClick={() => setDeleteReq(true)}
-                >
-                  Delete
-                </button> */}
-                <button
-                  className="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-md cursor-pointer"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setAnimation((prev) => !prev);
-                    setTimeout(() => {
-                      setOpen(false);
-                      setAnimation((prev) => !prev);
-                    }, 300);
-                  }}
-                >
-                  Cancel
-                </button>
-                <button
-                  className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md cursor-pointer"
-                  onClick={() => {
-                    EditAttendance();
-                  }}
-                >
-                  Apply
-                </button>
+                <div className="flex gap-3 justify-end">
+                  <button
+                    className="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-md cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setTimeout(() => {
+                        setOpen(false);
+                      }, 300);
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md cursor-pointer"
+                    onClick={() => {
+                      EditAttendance();
+                    }}
+                  >
+                    Apply
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         )}
-
-        {/* {deleteReq && (
-          <div className="fixed inset-0 bg-black/80  flex items-center justify-center z-50 md:m-[10px] cursor-pointer">
-            <div
-              className={`bg-[#1e293b] text-white w-full max-w-md rounded-xl shadow-lg  m-[10px]  ${
-                delAnimation ? "scale-up-center" : "scale-down-center"
-              }`}
-            >
-              <div className="flex justify-between items-center mb-2 border-b-1 border-gray-500 p-4">
-                <h2 className="text-xl font-semibold">
-                  Delete Attendance Records
-                </h2>
-                <button
-                  className="cursor-pointer p-2"
-                  onClick={() => {
-                    setDelAnimation((prev) => !prev);
-                    setTimeout(() => {
-                      setDeleteReq(false);
-                      setDelAnimation(true);
-                    }, 300);
-                  }}
-                >
-                  <RxCross2 />
-                </button>
-              </div>
-
-              <div className="text-[18px] font-semibold my-3 border-b-1 border-gray-500 p-4">
-                Are you sure you want to delete this attendance record?
-              </div>
-
-              <div className="flex gap-3 justify-end p-4">
-                <button
-                  className="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-md cursor-pointer"
-                  onClick={() => {
-                    setDelAnimation((prev) => !prev);
-                    setTimeout(() => {
-                      setDeleteReq(false);
-                      setDelAnimation(true);
-                    }, 300);
-                  }}
-                >
-                  No
-                </button>
-                <button className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-md cursor-pointer">
-                  Yes
-                </button>
-              </div>
-            </div>
-          </div>
-        )} */}
       </div>
     </>
   );

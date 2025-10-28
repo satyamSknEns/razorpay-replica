@@ -32,7 +32,6 @@ const Dashboard = () => {
     if (!token) return;
     const handleApi = async () => {
       try {
-        console.log(token);
         const config: AxiosRequestConfig = {
           url: `${process.env.NEXT_PUBLIC_API_URL}/users/getDetails`,
           method: "POST",
@@ -57,17 +56,14 @@ const Dashboard = () => {
     <>
       <div className="flex items-start bg-gray-900 text-white overflow-y-auto">
         <div className="lg:flex flex-wrap w-full">
-          <main className="flex-1 px-2 pb-6 space-y-4">
-            {/* <div className="bg-[#3e1717] text-sm rounded p-3 border-l-5 border-red-500">
-         Your organization is currently marked as inactive on XPayroll. Please see our  <span className="underline text-blue-300 cursor-pointer">FAQ</span> to know why.
-        </div> */}
+          <main className="flex-1 lg:px-4 md:px-4 sm:px-2 px-2 pb-6 space-y-4">
             <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
-              <section className="bg-gray-800 p-4 rounded">
+              <section className="bg-gray-800 p-3 rounded">
                 <h2 className="text-xl font-semibold border-b-1 border-[#555050] pb-2">
                   Reminders
                 </h2>
                 <ul className="text-sm text-gray-400 min-h-[8rem]">
-                  <li className="border-b-1 border-[#363232] py-3">
+                  <li className="border-b-1 border-gray-700 py-3">
                     Please complete your
                     <Link
                       href={"/layout/profile"}
@@ -77,13 +73,13 @@ const Dashboard = () => {
                     </Link>
                     immediately.
                   </li>
-                  <li className="border-b-1 border-[#363232] py-3">
+                  <li className="border-b-1 border-gray-700 py-3">
                     IT declaration and proof window is o pen now
                     <Link href="#" className="text-blue-400 mx-1">
                       Save tax now.
                     </Link>
                   </li>
-                  <li className="border-b-1 border-[#363232] py-3">
+                  <li className="border-b-1 border-gray-700 py-3">
                     Please upload your compulsory
                     <Link href="#" className="text-blue-400 mx-1">
                       documents
@@ -100,17 +96,17 @@ const Dashboard = () => {
                 </ul>
               </section>
 
-              <section className="bg-gray-800 p-4 rounded">
-                <h2 className="text-xl font-semibold border-b-1 border-[#545454] pb-2">
+              <section className="bg-gray-800 p-3 rounded">
+                <h2 className="text-xl font-semibold border-b-1 border-gray-700 pb-2">
                   Quick links
                 </h2>
                 <ul className="text-sm text-blue-300 min-h-[8rem]">
-                  <li className="border-b-1 border-[#363232] py-3">
+                  <li className="border-b-1 border-gray-700 py-3">
                     <Link href="#" className="mx-1">
                       View personal transactions
                     </Link>
                   </li>
-                  <li className="pt-3">
+                  <li className="border-b-1 border-gray-700 py-3">
                     <Link href="/employeeDirectory" className="mx-1">
                       Employee directory
                     </Link>
@@ -120,47 +116,56 @@ const Dashboard = () => {
             </div>
 
             <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
-              <section className="bg-gray-800 p-4 rounded">
-                <h2 className="text-xl font-semibold border-b-1 border-[#545454] pb-2">
+              <section className="bg-gray-800 p-3 rounded">
+                <h2 className="text-xl font-semibold border-b-1 border-gray-700 pb-2">
                   Birthdays
                 </h2>
                 <ul className="text-sm text-gray-400 space-y-1 min-h-[8rem]">
                   <li className="text-gray-500 text-[10px] pt-2">15 May</li>
-                  <li className="-mt-1.5">Saumya Shikhar</li>
+                  <li className="-mt-1.5 border-b border-gray-700 pb-2">
+                    Random Persion
+                  </li>
                 </ul>
               </section>
 
-              <section className="bg-gray-800 p-4 rounded">
-                <h2 className="text-xl font-semibold border-b-1 border-[#545454] pb-2">
+              <section className="bg-gray-800 p-3 rounded">
+                <h2 className="text-xl font-semibold border-b-1 border-gray-700 pb-2">
                   Work anniversaries
                 </h2>
                 <ul className="text-sm text-gray-400 space-y-1 min-h-[8rem]">
                   <li className="text-gray-500 text-[10px] pt-2">20 MAY</li>
-                  <li className="-mt-1.5">Hema Jaiswal</li>
+                  <li className="-mt-1.5 border-b border-gray-700 pb-2">
+                    Hema Jaiswal
+                  </li>
                 </ul>
               </section>
 
-              <section className="bg-gray-800 p-4 rounded">
-                <h2 className="text-xl font-semibold border-b-1 border-[#545454] pb-2">
+              <section className="bg-gray-800 p-3 rounded">
+                <h2 className="text-xl font-semibold border-b-1 border-gray-700 pb-2">
                   On Leave
                 </h2>
                 <ul className="text-sm text-gray-400 space-y-1 overflow-y-auto min-h-[8rem]">
                   <li className="text-gray-500 text-[10px] pt-2">14 MAY</li>
-                  <li className="-mt-1.5"> Anand Vishav Singh</li>
+                  <li className="-mt-1.5 border-b border-gray-700 pb-2">
+                    {" "}
+                    Anand Vishav Singh
+                  </li>
                 </ul>
               </section>
 
-              <section className="bg-gray-800 p-4 rounded">
-                <h2 className="text-xl font-semibold border-b-1 border-[#545454] pb-2">
+              <section className="bg-gray-800 p-3 rounded">
+                <h2 className="text-xl font-semibold border-b-1 border-gray-700 pb-2">
                   Upcoming Holidays
                 </h2>
                 <ul className="text-sm text-gray-400 space-y-1 overflow-y-auto min-h-[8rem]">
                   <li className="text-gray-500 text-[10px] pt-2">14 MAY</li>
-                  <li className="-mt-1.5">Anand Vishav Singh</li>
+                  <li className="-mt-1.5 border-b border-gray-700 pb-2">
+                    Anand Vishav Singh
+                  </li>
                 </ul>
               </section>
 
-              <section className="bg-gray-800 p-4 rounded">
+              <section className="bg-gray-800 p-3 rounded">
                 <h2 className="text-lg font-semibold text-white mb-2">
                   Health insurance details are required
                 </h2>
@@ -176,7 +181,7 @@ const Dashboard = () => {
             </div>
           </main>
           <span className="hidden lg:flex border-l border-gray-700 ml-4"></span>
-          <aside className="w-64 bg-gray-900 p-6 space-y-2">
+          <aside className="w-64 bg-gray-900 lg:px-4 md:px-4 sm:px-2 px-2 space-y-2">
             <div>
               <h2 className="text-xl font-bold">Welcome,</h2>
               <h3 className="text-2xl font-bold">{data?.user?.name}</h3>

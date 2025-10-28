@@ -8,9 +8,10 @@ import Button from "@mui/material/Button";
 import Calender from "@/app/attendence/Calender";
 import { PiPencilSimpleLineFill } from "react-icons/pi";
 import { RxCross2 } from "react-icons/rx";
-import CloseIcon from "@mui/icons-material/Close";
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
+import CustomButton from "@/app/components/CustomButton";
+import CloseButton from "@/app/components/CloseButton";
 
 interface Attendance {
   id: number;
@@ -91,9 +92,6 @@ const EmployeeDetail = () => {
   const { id } = useParams();
   const cookies = useCookies();
   const token = cookies.get("token");
-
-  console.log("id000", id);
-
   const [view, setView] = useState(false);
   const [employee, setEmployee] = useState<Employee | null>(null);
   const [requestList, setRequestList] = useState<requestList | null>(null);
@@ -105,10 +103,10 @@ const EmployeeDetail = () => {
   const [leaveTypes, setLeaveTypes] = useState<LeaveItem[]>([]);
   const [delAnimation, setDelAnimation] = useState<boolean>(true);
   const [open, setOpen] = useState(false);
-  const [animation, setAnimation] = useState<boolean>(true);
+  // const [animation, setAnimation] = useState<boolean>(true);
   const [deleteReq, setDeleteReq] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [applyAnimation, setApplyAnimation] = useState<boolean>(true);
+  // const [applyAnimation, setApplyAnimation] = useState<boolean>(true);
   const [selectedMonth, setSelectedMonth] = useState(dayjs());
   const [editData, setEditData] = useState({
     userId: id,
@@ -197,16 +195,12 @@ const EmployeeDetail = () => {
       });
 
       const requestData = listRequests?.data;
-
-      console.log("---", requestData);
       setRequestList(requestData || null);
       const requestAllLeaveData = listAllRequests?.data;
       setAllRequestList(requestAllLeaveData || null);
 
       const empList: Employee[] = res.data.employees || [];
-      console.log("eme", empList);
       const found = empList.find((e) => e.user.id === Number(id));
-      console.log("fun", found);
       setEmployee(found || null);
     } catch (error) {
       console.error("Employee detail fetch error:", error);
@@ -401,23 +395,6 @@ const EmployeeDetail = () => {
 
   if (loading) return <p className="text-white">Loading...</p>;
   if (!employee) return <p className="text-white">Employee not found.</p>;
-
-  // function generateAllDatesOfMonth() {
-  //   const dates = [];
-  //   const today = new Date();
-  //   const year = today.getFullYear();
-  //   const month = today.getMonth();
-
-  //   const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-  //   for (let day = 2; day <= daysInMonth + 1; day++) {
-  //     const date = new Date(year, month, day);
-  //     dates.push(date.toISOString().split("T")[0]);
-  //   }
-
-  //   return dates;
-  // }
-  // const allDates = generateAllDatesOfMonth();
 
   const generateAllDatesOfMonth = (date: any) => {
     const year = date.year();
@@ -639,7 +616,7 @@ const EmployeeDetail = () => {
   };
 
   return (
-    <div className="p-6 text-white">
+    <div className="lg:px-6 md:px-6 sm:px-2 px-2 text-white">
       <h1 className="text-md font-bold text-[#3c5cd7] mb-4">
         People / {employee.user.name} /
         <span className="text-white ml-1">Leave and attendance</span>
@@ -807,7 +784,7 @@ const EmployeeDetail = () => {
                         medical:
                           "bg-[#d087002e] text-[#c1830c] p-1 rounded-full",
                         absent:
-                          "bg-[#ff00002e] text-[#ff5b5b] p-1 rounded-full", // 🔴 Absent
+                          "bg-[#ff00002e] text-[#ff5b5b] p-1 rounded-full",
                         default:
                           "bg-[#d087002e] text-[#c1830c] p-1 rounded-full",
                       };
@@ -943,79 +920,110 @@ const EmployeeDetail = () => {
         </div>
 
         {open && (
-          <div className="fixed inset-0 bg-black/80  flex items-center justify-center z-50 md:m-[10px] cursor-pointer">
+          <div
+            onClick={() => setOpen(false)}
+            className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+          >
             <div
-              className={`bg-[#1e293b] text-white w-full max-w-md rounded-xl shadow-lg p-6 m-[10px] ${
-                animation ? "scale-up-center" : "scale-down-center"
-              } `}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-4 mx-4 animate-scale-up-center min-h-[200px] overflow-auto"
             >
-              <div className="flex justify-between items-center mb-4">
+              <div className="flex justify-between items-center border-b-2 border-gray-600 pb-3 pt-2 mb-3">
                 <h2 className="text-xl font-semibold">Edit Attendance</h2>
+
+                <CloseButton onClose={() => setOpen(false)} />
               </div>
-              <label className="block text-sm font-medium mb-1">Status</label>
-              <select
-                className="w-full mb-2 p-2 bg-gray-700 rounded-md focus:outline-none"
-                name="leaveTypeName"
-                value={editData.leaveTypeName}
-                onChange={handleData}
-              >
-                <option value="status">Status</option>
-                <option value="present">Present</option>
-                <option value="earned">Earned Leave</option>
-                <option value="casual">Casual Leave</option>
-                <option value="medical">Medical Leave</option>
-              </select>
+              <div className="flex flex-col gap-1 relative">
+                <label>Status</label>
+                <select
+                  className="border border-gray-500 rounded p-2 w-full mb-4 outline-none bg-gray-800 text-white appearance-none pr-8"
+                  name="leaveTypeName"
+                  value={editData.leaveTypeName}
+                  onChange={handleData}
+                >
+                  <option value="status">Status</option>
+                  <option value="present">Present</option>
+                  <option value="earned">Earned Leave</option>
+                  <option value="casual">Casual Leave</option>
+                  <option value="medical">Medical Leave</option>
+                </select>
 
-              {editFormErrors.leaveTypeName && (
-                <p className="text-red-500 text-xs">
-                  {editFormErrors.leaveTypeName}
-                </p>
-              )}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="absolute right-2 top-[58%] -translate-y-1/2 w-4 h-4 text-white pointer-events-none"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
 
-              <label className="block text-sm font-medium mb-1">Check In</label>
-              <input
-                type="text"
-                name="checkIn"
-                value={editData.checkIn?.slice(0, 5)}
-                className="w-full mb-4 p-2 bg-gray-700 rounded-md focus:outline-none"
-                placeholder="hh:mm"
-                onChange={handleData}
-              />
-              {editFormErrors.checkIn && (
-                <p className="text-red-500 text-xs">{editFormErrors.checkIn}</p>
-              )}
+                {editFormErrors.leaveTypeName && (
+                  <p className="text-red-500 text-xs">
+                    {editFormErrors.leaveTypeName}
+                  </p>
+                )}
+              </div>
 
-              <label className="block text-sm font-medium mb-1">
-                Check Out
-              </label>
-              <input
-                type="text"
-                name="checkOut"
-                value={editData.checkOut?.slice(0, 5)}
-                className="w-full mb-4 p-2 bg-gray-700 rounded-md focus:outline-none"
-                placeholder="hh:mm"
-                onChange={handleData}
-              />
-              {editFormErrors.checkOut && (
-                <p className="text-red-500 text-xs">
-                  {editFormErrors.checkOut}
-                </p>
-              )}
+              <div className="flex flex-col gap-1">
+                <label>Check In</label>
+                <input
+                  type="text"
+                  name="checkIn"
+                  value={editData.checkIn?.slice(0, 5)}
+                  className="border border-gray-500 rounded p-2 w-full mb-4 outline-none bg-gray-800 text-white"
+                  placeholder="hh:mm"
+                  onChange={handleData}
+                />
+                {editFormErrors.checkIn && (
+                  <p className="text-red-500 text-xs">
+                    {editFormErrors.checkIn}
+                  </p>
+                )}
+              </div>
 
-              <label className="block text-sm font-medium mb-1">Remarks</label>
-              <input
-                type="text"
-                className="w-full mb-2 p-2 bg-gray-700 rounded-md focus:outline-none"
-                placeholder="Go to home"
-                name="remarks"
-                value={editData.remarks}
-                onChange={handleData}
-              />
-              {editFormErrors.remarks && (
-                <p className="text-red-500 text-xs ">
-                  {editFormErrors.remarks}
-                </p>
-              )}
+              <div className="flex flex-col gap-1">
+                <label className="block text-sm font-medium mb-1">
+                  Check Out
+                </label>
+                <input
+                  type="text"
+                  name="checkOut"
+                  value={editData.checkOut?.slice(0, 5)}
+                  className="border border-gray-500 rounded p-2 w-full mb-4 outline-none bg-gray-800 text-white"
+                  placeholder="hh:mm"
+                  onChange={handleData}
+                />
+                {editFormErrors.checkOut && (
+                  <p className="text-red-500 text-xs">
+                    {editFormErrors.checkOut}
+                  </p>
+                )}
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="block text-sm font-medium mb-1">
+                  Remarks
+                </label>
+                <input
+                  type="text"
+                  className="border border-gray-500 rounded p-2 w-full mb-4 outline-none bg-gray-800 text-white"
+                  placeholder="Go to home"
+                  name="remarks"
+                  value={editData.remarks}
+                  onChange={handleData}
+                />
+                {editFormErrors.remarks && (
+                  <p className="text-red-500 text-xs ">
+                    {editFormErrors.remarks}
+                  </p>
+                )}
+              </div>
 
               <div className="flex gap-3 justify-end">
                 <button
@@ -1035,10 +1043,8 @@ const EmployeeDetail = () => {
                   className="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-md cursor-pointer"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setAnimation((prev) => !prev);
                     setTimeout(() => {
                       setOpen(false);
-                      setAnimation((prev) => !prev);
                     }, 300);
                   }}
                 >
@@ -1058,8 +1064,12 @@ const EmployeeDetail = () => {
         )}
 
         {deleteReq && (
-          <div className="fixed inset-0 bg-black/80  flex items-center justify-center z-50 md:m-[10px] cursor-pointer">
+          <div
+            onClick={() => setDeleteReq(false)}
+            className="fixed inset-0 bg-black/80  flex items-center justify-center z-50 md:m-[10px] cursor-pointer"
+          >
             <div
+              onClick={(e) => e.stopPropagation()}
               className={`bg-[#1e293b] text-white w-full max-w-md rounded-xl shadow-lg  m-[10px]  ${
                 delAnimation ? "scale-up-center" : "scale-down-center"
               }`}
@@ -1113,34 +1123,27 @@ const EmployeeDetail = () => {
         )}
 
         {visible && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <div
+            onClick={() => setVisible(false)}
+            className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+          >
             <div
-              className={`bg-gray-900 text-white rounded-2xl shadow-lg w-[90%] max-w-md p-6 relative border border-gray-700 ${
-                applyAnimation ? "scale-up-center" : "scale-down-center"
-              }`}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-4 mx-4 animate-scale-up-center min-h-[200px] overflow-auto"
             >
-              <button
-                className="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl cursor-pointer"
-                onClick={() => {
-                  setApplyAnimation(false);
-                  setTimeout(() => {
-                    setVisible(false);
-                    setApplyAnimation(true);
-                  }, 300);
-                }}
-              >
-                &times;
-              </button>
-              <h2 className="text-xl font-semibold mb-6">Apply for Leave</h2>
+              <div className="flex justify-between items-center border-b-2 border-gray-600 mb-3">
+                <h2 className="text-xl font-semibold mb-6">Apply for Leave</h2>
+                <CloseButton onClose={() => setVisible(false)} />
+              </div>
 
               <div className="space-y-4">
-                <div>
-                  <label className="block text-sm mb-1">Status</label>
+                <div className="flex flex-col gap-1 relative">
+                  <label>Status</label>
                   <select
                     name="leaveTypeName"
                     value={formData.leaveTypeName}
                     onChange={handleChange}
-                    className=" cursor-pointer w-full bg-gray-800 text-white rounded-lg border border-gray-600 px-2 py-2 focus:outline-none focus:ring focus:border-blue-500"
+                    className="border border-gray-500 rounded p-2 w-full mb-4 outline-none bg-gray-800 text-white appearance-none pr-8"
                   >
                     <option value="">Select status</option>
                     <option value="casual">Casual Leave</option>
@@ -1148,6 +1151,20 @@ const EmployeeDetail = () => {
                     <option value="earned">Earned Leave</option>
                     <option value="unpaid">Unpaid Leave</option>
                   </select>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="absolute right-3 top-[58%] -translate-y-1/2 w-4 h-4 text-white pointer-events-none"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
                   {formErrors.leaveTypeName && (
                     <p className="text-red-500 text-xs mt-1">
                       {formErrors.leaveTypeName}
@@ -1156,14 +1173,14 @@ const EmployeeDetail = () => {
                 </div>
 
                 <div className="flex space-x-2">
-                  <div className="flex-1">
-                    <label className="block text-sm mb-1">From</label>
+                  <div className="flex-1 flex flex-col gap-1">
+                    <label>From</label>
                     <input
                       type="date"
                       name="fromDate"
                       value={toInputFormat(formData.fromDate)}
                       onChange={handleChange}
-                      className="w-full px-2 bg-gray-800 text-white rounded-lg border border-gray-600 py-2 focus:outline-none focus:ring focus:border-blue-500 cursor-pointer"
+                      className="border border-gray-500 rounded p-2 w-full mb-4 outline-none bg-gray-800 text-white"
                     />
                     {formErrors.fromDate && (
                       <p className="text-red-500 text-xs mt-1">
@@ -1171,14 +1188,14 @@ const EmployeeDetail = () => {
                       </p>
                     )}
                   </div>
-                  <div className="flex-1">
-                    <label className="block text-sm mb-1">To</label>
+                  <div className="flex-1 flex flex-col gap-1">
+                    <label>To</label>
                     <input
                       type="date"
                       name="toDate"
                       value={toInputFormat(formData.toDate)}
                       onChange={handleChange}
-                      className="w-full px-2 bg-gray-800 text-white rounded-lg border border-gray-600 py-2 focus:outline-none focus:ring focus:border-blue-500 cursor-pointer"
+                      className="border border-gray-500 rounded p-2 w-full mb-4 outline-none bg-gray-800 text-white"
                     />
                     {formErrors.toDate && (
                       <p className="text-red-500 text-xs mt-1">
@@ -1188,8 +1205,8 @@ const EmployeeDetail = () => {
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm mb-1">
+                <div className="flex flex-col gap-1">
+                  <label>
                     Remarks <span className="text-gray-400">(optional)</span>
                   </label>
 
@@ -1197,7 +1214,7 @@ const EmployeeDetail = () => {
                     name="remarks"
                     value={formData.remarks}
                     onChange={handleChange}
-                    className="w-full bg-gray-800 text-white rounded-lg border border-gray-600 px-2 py-2 resize-none focus:outline-none focus:ring focus:border-blue-500"
+                    className="border border-gray-500 rounded p-2 w-full mb-4 outline-none bg-gray-800 text-white resize-none"
                     rows={3}
                     placeholder="Add any comments..."
                   />
@@ -1210,14 +1227,8 @@ const EmployeeDetail = () => {
 
                 <div className="flex justify-end space-x-3 pt-4">
                   <button
-                    className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg cursor-pointer"
-                    onClick={() => {
-                      setApplyAnimation(false);
-                      setTimeout(() => {
-                        setVisible(false);
-                        setApplyAnimation(true);
-                      }, 300);
-                    }}
+                    className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded cursor-pointer"
+                    onClick={() => setVisible(false)}
                   >
                     Cancel
                   </button>
@@ -1267,37 +1278,30 @@ const EmployeeDetail = () => {
                   );
                 })}
           </ul>
-
-          <button
+          <CustomButton
+            text="View Leaves Taken"
             onClick={() => {
               setView(true);
             }}
-            className="mt-4 w-full bg-blue-600 py-2 rounded text-sm cursor-pointer"
-          >
-            View Leaves Taken
-          </button>
+            color="bg-blue-600 w-full mt-3"
+          />
         </section>
       </section>
 
       {view && (
-        <div className="fixed inset-0 bg-opacity-80 bg-[#212020ad] flex items-center justify-center z-50 ">
+        <div
+          onClick={() => setView(false)}
+          className="fixed inset-0 bg-opacity-80 bg-[#212020ad] flex items-center justify-center z-50 "
+        >
           <div
+            onClick={(e) => e.stopPropagation()}
             className={`bg-gray-800 rounded px-4 pb-4 w-[500px] min-h-[300px] max-h-[550px] overflow-auto transition-all`}
           >
             <div className="flex justify-between border-b-2 border-gray-500 py-4 items-center">
               <h2 className="text-2xl font-semibold text-gray-200">
                 Leaves taken
               </h2>
-              <button
-                className="bg-red-600 text-white px-3 py-.75 cursor-pointer rounded text-right"
-                onClick={() => {
-                  setTimeout(() => {
-                    setView(false);
-                  }, 300);
-                }}
-              >
-                <CloseIcon fontSize="small" className="-mt-1" />
-              </button>
+              <CloseButton onClose={() => setView(false)} />
             </div>
 
             <ul>

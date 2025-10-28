@@ -130,7 +130,7 @@ const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
         const profileResponse = await axios.request(profileConfig);
         setData(profileResponse.data);
       } catch (error) {
-        console.log(error);
+        console.error(error);
       } finally {
         setLoading(false);
       }

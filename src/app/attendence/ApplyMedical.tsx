@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import { CalendarIcon, X } from 'lucide-react';
+import { useState } from "react";
+import { CalendarIcon, X } from "lucide-react";
 
 export default function ApplyLeaveModal({ onClose }: { onClose: () => void }) {
-  const [status, setStatus] = useState('');
-  const [fromDate, setFromDate] = useState('');
-  const [toDate, setToDate] = useState('');
-  const [remarks, setRemarks] = useState('');
+  const [status, setStatus] = useState("");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+  const [remarks, setRemarks] = useState("");
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -44,7 +44,10 @@ export default function ApplyLeaveModal({ onClose }: { onClose: () => void }) {
                   value={fromDate}
                   onChange={(e) => setFromDate(e.target.value)}
                 />
-                <CalendarIcon className="absolute top-2.5 right-3 text-gray-400" size={18} />
+                <CalendarIcon
+                  className="absolute top-2.5 right-3 text-gray-400"
+                  size={18}
+                />
               </div>
             </div>
 
@@ -57,15 +60,20 @@ export default function ApplyLeaveModal({ onClose }: { onClose: () => void }) {
                   value={toDate}
                   onChange={(e) => setToDate(e.target.value)}
                 />
-                <CalendarIcon className="absolute top-2.5 right-3 text-gray-400" size={18} />
+                <CalendarIcon
+                  className="absolute top-2.5 right-3 text-gray-400"
+                  size={18}
+                />
               </div>
             </div>
           </div>
 
           <div>
-            <label className="block text-sm mb-1">Remarks <span className="text-gray-400">(optional)</span></label>
+            <label className="block text-sm mb-1">
+              Remarks <span className="text-gray-400">(optional)</span>
+            </label>
             <textarea
-              className="w-full bg-gray-800 text-white rounded-lg border border-gray-600 px-4 py-2 resize-none focus:outline-none focus:ring focus:border-blue-500"
+              className="border border-gray-500 rounded p-2 w-full mb-4 outline-none bg-gray-800 text-white resize-none"
               rows={3}
               placeholder="Add any comments..."
               value={remarks}
@@ -80,9 +88,7 @@ export default function ApplyLeaveModal({ onClose }: { onClose: () => void }) {
             >
               Cancel
             </button>
-            <button
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
-            >
+            <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
               Submit
             </button>
           </div>

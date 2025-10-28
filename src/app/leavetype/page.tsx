@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { useCookies } from "next-client-cookies";
 import { useEffect, useState } from "react";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CloseButton from "../components/CloseButton";
@@ -60,11 +60,13 @@ const LeaveType = () => {
         },
       };
       const response = await axios.request(config);
+
       if (response.status === 200) {
         window.location.reload();
       } else {
         console.error("there is some this wrong in creating the leave type");
       }
+      toast.success("Leave type deleted successfully !");
     } catch (error) {
       console.error("there is some error in delete leave type", error);
     }
@@ -85,11 +87,13 @@ const LeaveType = () => {
         },
       };
       const response = await axios.request(leaveconfig);
+
       if (response.status === 200) {
         window.location.reload();
       } else {
         console.error("there is some this wrong in creating the leave type");
       }
+      toast.success("Leave type added successfully !");
     } catch (error) {
       console.error("There is some error to creatinf the department", error);
     } finally {
@@ -99,7 +103,7 @@ const LeaveType = () => {
   };
 
   return (
-    <div className="lg:px-6 md:px-6 sm:px-2 px-2 text-white">
+    <div className="lg:px-4 md:px-4 sm:px-2 px-2 text-white">
       <h1 className="text-2xl font-bold mb-4">All Leaves Type</h1>
       <div className="flex justify-end pb-3">
         <CustomButton
@@ -123,10 +127,10 @@ const LeaveType = () => {
               <h3 className="text-2xl font-semibold">Add Leave Type</h3>
               <CloseButton onClose={() => setAddLeaveType(false)} />
             </div>
-            <div className="flex flex-col gap-2 mt-4">
-              <label htmlFor="">Department Name</label>
+            <div className="flex flex-col gap-2 mt-4 relative">
+              <label htmlFor="">Leave Type Name</label>
               <select
-                className="border border-gray-500 rounded p-2 w-full mb-4 outline-none bg-gray-800 text-white"
+                className="border border-gray-500 rounded p-2 w-full mb-4 outline-none bg-gray-800 text-white appearance-none pr-8"
                 value={addleaveTypes}
                 onChange={(e) => setAddLeaveTypes(e.target.value)}
                 required
@@ -138,8 +142,22 @@ const LeaveType = () => {
                 <option value="unpaid">Unpaid</option>
                 <option value="present">Present</option>
               </select>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="absolute right-2 top-[60%] -translate-y-1/2 w-4 h-4 text-white pointer-events-none"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
             </div>
-            <div className="w-full my-6">
+            <div className="flex w-full justify-end">
               <CustomButton
                 text="Submit"
                 onClick={AddLeaveType}
