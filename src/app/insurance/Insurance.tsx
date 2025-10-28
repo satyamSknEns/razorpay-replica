@@ -29,6 +29,7 @@ export default function InsuranceForm() {
             <input
               type="text"
               placeholder="Enter name"
+              required
               className="border border-gray-500 rounded px-2 py-1 w-full outline-none bg-gray-800 text-white"
             />
           </div>
@@ -37,6 +38,7 @@ export default function InsuranceForm() {
             <input
               type="date"
               placeholder="ex- 27/10/2025"
+              required
               className="border border-gray-500 rounded px-2 py-1 w-full outline-none bg-gray-800 text-white"
             />
           </div>
@@ -50,6 +52,7 @@ export default function InsuranceForm() {
                     value={g}
                     checked={gender === g}
                     onChange={() => setGender(g)}
+                    required
                     className="form-radio text-blue-600"
                   />
                   <span className="text-sm text-gray-200">{g}</span>
@@ -64,6 +67,7 @@ export default function InsuranceForm() {
           <input
             type="tel"
             placeholder="Enter your phone number"
+            required
             className="border border-gray-500 rounded px-2 py-1 w-full outline-none bg-gray-800 text-white"
           />
         </div>

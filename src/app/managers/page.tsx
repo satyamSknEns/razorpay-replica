@@ -4,6 +4,8 @@ import axios, { AxiosRequestConfig } from "axios";
 import { useCookies } from "next-client-cookies";
 import CloseButton from "../components/CloseButton";
 import CustomButton from "../components/CustomButton";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface Employee {
   user: {
@@ -103,7 +105,6 @@ const Managers = () => {
   };
 
   const toggleEmployeeSelection = (empId: string) => {
-    console.log("---", empId);
     setSelectedEmployees((prev) =>
       prev.includes(empId)
         ? prev.filter((id) => id !== empId)
@@ -146,6 +147,7 @@ const Managers = () => {
 
   return (
     <div className="lg:px-4 md:px-6 sm:px-2 px-2">
+      <ToastContainer position="top-right" autoClose={3000} />
       <h2 className="text-2xl font-semibold mb-4">All Managers</h2>
 
       <div className="overflow-x-auto rounded">
@@ -305,7 +307,6 @@ const Managers = () => {
                                 const isSelected = selectedEmployees.includes(
                                   emp.id
                                 );
-                                console.log("isSelected323", isSelected);
                                 return (
                                   <tr
                                     key={emp.id}
@@ -324,6 +325,7 @@ const Managers = () => {
                                           toggleEmployeeSelection(emp.id)
                                         }
                                         onClick={(e) => e.stopPropagation()}
+                                        required
                                       />
                                     </td>
                                     <td className="px-4 py-2 border border-gray-600">

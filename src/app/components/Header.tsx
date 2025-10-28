@@ -7,7 +7,7 @@ import Image from "next/image";
 import { useCookies } from "next-client-cookies";
 import Link from "next/link";
 import axios, { AxiosRequestConfig } from "axios";
-import logo from "../assets/logo2.png";
+import logo from "../assets/logo_01.png";
 
 interface ProfileData {
   profile?: {
@@ -169,12 +169,14 @@ const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
       )}
 
       <div className="sticky flex items-center top-0 left-0 z-40 lg:border-none md:border-none sm:border-b border-b lg:pb-0 md:mb-0 sm:mb-2 mb-2 border-gray-700">
-        <Link
-          href="/layout/dashboard"
-          className="w-full h-15 bg-[#0C1927] flex justify-between items-center p-3 relative"
-        >
-          <Image src={logo} width={200} height={60} alt="Logo img" />
-        </Link>
+        <div className="w-full">
+          <Link
+            href="/layout/dashboard"
+            className="w-60 flex lg:justify-center md:justify-start sm:justify-start justify-start p-3 relative"
+          >
+            <Image src={logo} width={60} height={60} alt="Logo img" />
+          </Link>
+        </div>
 
         <div className="flex relative items-center justify-between space-x-4 p-4 bg-gray-900 text-white rounded-lg">
           <div className="items-center space-x-1 lg:flex md:hidden sm:hidden hidden">

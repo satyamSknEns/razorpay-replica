@@ -42,6 +42,7 @@ export default function ApplyLeaveModal({ onClose }: { onClose: () => void }) {
                   type="date"
                   className="w-full bg-gray-800 text-white rounded-lg border border-gray-600 px-4 py-2 pr-10 focus:outline-none focus:ring focus:border-blue-500"
                   value={fromDate}
+                  required
                   onChange={(e) => setFromDate(e.target.value)}
                 />
                 <CalendarIcon
@@ -58,6 +59,7 @@ export default function ApplyLeaveModal({ onClose }: { onClose: () => void }) {
                   type="date"
                   className="w-full bg-gray-800 text-white rounded-lg border border-gray-600 px-4 py-2 pr-10 focus:outline-none focus:ring focus:border-blue-500"
                   value={toDate}
+                  required
                   onChange={(e) => setToDate(e.target.value)}
                 />
                 <CalendarIcon

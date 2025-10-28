@@ -298,7 +298,9 @@ const LeaveAttendance = () => {
   };
 
   const handleRefresh = () => {
-    window.location.reload();
+    setTimeout(() => {
+      window.location.reload();
+    }, 500);
   };
 
   const handleCheckInApi = async () => {
@@ -705,6 +707,7 @@ const LeaveAttendance = () => {
                             [item.id]: e.target.checked,
                           }))
                         }
+                        required
                       />
                       You have requested {item.leaveType?.name}{" "}
                       <span>from</span>
@@ -1045,6 +1048,7 @@ const LeaveAttendance = () => {
                       name="fromDate"
                       value={toInputFormat(formData.fromDate)}
                       onChange={handleChange}
+                      required
                       className="border border-gray-500 rounded p-2 w-full mb-4 outline-none bg-gray-800 text-white"
                     />
                     {formErrors.fromDate && (
@@ -1060,6 +1064,7 @@ const LeaveAttendance = () => {
                       name="toDate"
                       value={toInputFormat(formData.toDate)}
                       onChange={handleChange}
+                      required
                       className="border border-gray-500 rounded p-2 w-full mb-4 outline-none bg-gray-800 text-white"
                     />
                     {formErrors.toDate && (
@@ -1173,6 +1178,7 @@ const LeaveAttendance = () => {
                     value={editData.checkIn?.slice(0, 5)}
                     className="border border-gray-500 rounded p-2 w-full mb-4 outline-none bg-gray-800 text-white"
                     placeholder="hh:mm"
+                    required
                     onChange={handleData}
                   />
                   {editFormErrors.checkIn && (
@@ -1191,6 +1197,7 @@ const LeaveAttendance = () => {
                     value={editData.checkOut?.slice(0, 5)}
                     className="border border-gray-500 rounded p-2 w-full mb-4 outline-none bg-gray-800 text-white"
                     placeholder="hh:mm"
+                    required
                     onChange={handleData}
                   />
                   {editFormErrors.checkOut && (
@@ -1207,6 +1214,7 @@ const LeaveAttendance = () => {
                     placeholder="Go to home"
                     name="remarks"
                     value={editData.remarks}
+                    required
                     onChange={handleData}
                   />
                   {editFormErrors.remarks && (

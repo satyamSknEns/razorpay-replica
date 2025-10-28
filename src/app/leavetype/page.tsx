@@ -11,7 +11,7 @@ const LeaveType = () => {
   const cookies = useCookies();
   const token = cookies.get("token");
   const [addLeaveType, setAddLeaveType] = useState(false);
-  const [leaveTypes, setLeaveTypes] = useState([]);
+  const [leaveTypes, setLeaveTypes] = useState<any[]>([]);
   const [addleaveTypes, setAddLeaveTypes] = useState("");
   const [deletedid, setDeletedId] = useState("");
   const [deletePopup, setDeletePopup] = useState(false);
@@ -62,7 +62,9 @@ const LeaveType = () => {
       const response = await axios.request(config);
 
       if (response.status === 200) {
-        window.location.reload();
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
       } else {
         console.error("there is some this wrong in creating the leave type");
       }
@@ -86,24 +88,35 @@ const LeaveType = () => {
           name: addleaveTypes,
         },
       };
-      const response = await axios.request(leaveconfig);
+      const addresponse = await axios.request(leaveconfig);
 
-      if (response.status === 200) {
-        window.location.reload();
+      if (addresponse.status === 200 || addresponse.status === 201) {
+        setLeaveTypes((prev) => [
+          ...(prev as any[]),
+          addresponse.data.leaveType,
+        ]);
+        setAddLeaveType(false);
       } else {
-        console.error("there is some this wrong in creating the leave type");
+        toast.error("Failed to add leave type!");
       }
-      toast.success("Leave type added successfully !");
+      toast.success("Leave type added successfully!");
     } catch (error) {
-      console.error("There is some error to creatinf the department", error);
+      if (axios.isAxiosError(error) && error.response?.status === 409) {
+        toast.error("Leave type already exist !");
+      } else {
+        console.error("Error message:", error);
+        toast.error("Somthing is wrong !!");
+      }
+      // console.error("There is some error to creatinf the department", error);
     } finally {
       setAddLeaveType(false);
-      window.location.reload();
+      setAddLeaveTypes("");
     }
   };
 
   return (
     <div className="lg:px-4 md:px-4 sm:px-2 px-2 text-white">
+      <ToastContainer position="top-right" autoClose={3000} />
       <h1 className="text-2xl font-bold mb-4">All Leaves Type</h1>
       <div className="flex justify-end pb-3">
         <CustomButton
@@ -122,7 +135,6 @@ const LeaveType = () => {
             onClick={(e) => e.stopPropagation()}
             className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-4 mx-4 animate-scale-up-center min-h-[200px] overflow-auto"
           >
-            <ToastContainer position="top-right" autoClose={3000} />
             <div className="flex justify-between w-full items-center pb-5 border-b-3 border-gray-600 mt-2">
               <h3 className="text-2xl font-semibold">Add Leave Type</h3>
               <CloseButton onClose={() => setAddLeaveType(false)} />
@@ -225,7 +237,6 @@ const LeaveType = () => {
             onClick={(e) => e.stopPropagation()}
             className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-4 mx-4 animate-scale-up-center min-h-[150px] overflow-auto"
           >
-            <ToastContainer position="top-right" autoClose={3000} />
             <div className="flex justify-between w-full items-center pb-5 border-b-2 border-gray-600 mt-2">
               <h3 className="text-2xl font-semibold">Delete Leave Type</h3>
               <CloseButton onClose={() => setDeletePopup(false)} />

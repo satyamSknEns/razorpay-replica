@@ -12,7 +12,10 @@ import AddToDriveIcon from "@mui/icons-material/AddToDrive";
 import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import LogoutIcon from "@mui/icons-material/Logout";
+import ManageHistoryIcon from "@mui/icons-material/ManageHistory";
+import RecentActorsIcon from "@mui/icons-material/RecentActors";
+// import LogoutIcon from "@mui/icons-material/Logout";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import CloseButton from "../components/CloseButton";
 import CustomButton from "../components/CustomButton";
 
@@ -267,7 +270,9 @@ const Employees = () => {
         employess: "",
       });
       setOpenRegesterPopup(false);
-      window.location.reload();
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast.dismiss();
@@ -292,7 +297,10 @@ const Employees = () => {
         data: { id },
       };
       await axios.request(updateRequest);
-      window.location.reload();
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
     } catch (error) {
       console.error("There is some error to delete the employee", error);
     }
@@ -333,7 +341,10 @@ const Employees = () => {
       };
       await axios.request(updateRequest);
       setUserUpdate(false);
-      window.location.reload();
+      toast.success("Detail is updated successfully !!");
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
     } catch (error) {
       toast.error("Failed to update details");
       console.error(error);
@@ -406,12 +417,15 @@ const Employees = () => {
         data: { userId: id, ...additionalDetails },
       };
       await axios.request(updateRequest);
+      toast.success("Details updated !!");
       setAdditionalDetals(false);
     } catch (error) {
       toast.error("Failed to update additional details");
       console.error(error);
     } finally {
-      window.location.reload();
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
     }
   };
 
@@ -445,6 +459,10 @@ const Employees = () => {
 
   const handleAssignManager = async (id: number) => {
     try {
+      if (!id || !selectedManager) {
+        toast.error("Please select manager before assigning !!");
+        return;
+      }
       const updateRequest: AxiosRequestConfig = {
         url: `${process.env.NEXT_PUBLIC_API_URL}/users/assignManager`,
         method: "POST",
@@ -457,6 +475,7 @@ const Employees = () => {
       const assignedManager = await axios.request(updateRequest);
       if (assignedManager.status === 200) {
         setAssignManager(false);
+        toast.success("Manager assigned successfully !!");
       } else {
         console.error("There is some error in assigning the manager");
       }
@@ -489,9 +508,10 @@ const Employees = () => {
       const assignedLeave = await axios.request(assignLeaveRequest);
       if (assignedLeave.status === 200) {
         setAssignLeave(false);
-      } else {
-        console.error("There is some error in assigning the leave !");
       }
+      // else {
+      //   console.error("There is some error in assigning the leave !");
+      // }
 
       toast.success("Leave assigned successfully !");
       setAssignLeave(false);
@@ -545,6 +565,7 @@ const Employees = () => {
           value={search}
           className="border border-gray-500 rounded-md p-2 focus:outline-none text-white"
           onChange={(e) => setSearch(e.target.value)}
+          required
         />
         <CustomButton
           text="Add to Team"
@@ -554,7 +575,7 @@ const Employees = () => {
       </div>
 
       <div className="overflow-x-auto mt-4 rounded">
-        <table className="border border-gray-800 text-left min-w-[1400px]">
+        <table className="border border-gray-800 text-left min-w-[1500px]">
           <thead className="bg-gray-700 uppercase">
             <tr>
               <th className="p-2 border border-gray-500">ID</th>
@@ -562,21 +583,25 @@ const Employees = () => {
               <th className="p-2 border border-gray-500">Employee Code</th>
               <th className="p-2 border border-gray-500">Email</th>
               <th className="p-2 border border-gray-500">Role</th>
-              <th className="p-2 border border-gray-500 text-center">
-                Details
+              <th className="p-2 border border-gray-500 text-center whitespace-nowrap">
+                All Details
               </th>
-              <th className="p-2 border border-gray-500 text-center">Delete</th>
-              <th className="p-2 border border-gray-500 text-center">Update</th>
-              <th className="p-2 border border-gray-500 text-center">
+              <th className="p-2 border border-gray-500 text-center whitespace-nowrap">
+                Emp. Delete
+              </th>
+              <th className="p-2 border border-gray-500 text-center whitespace-nowrap">
+                Emp. Update
+              </th>
+              <th className="p-2 border border-gray-500 text-center whitespace-nowrap">
                 Add Details
               </th>
-              <th className="p-2 border border-gray-500 text-center">
+              <th className="p-2 border border-gray-500 text-center whitespace-nowrap">
                 Add Manager
               </th>
-              <th className="p-2 border border-gray-500 text-center">
+              <th className="p-2 border border-gray-500 text-center whitespace-nowrap">
                 Assign Leaves
               </th>
-              <th className="p-2 border border-gray-500 text-center">
+              <th className="p-2 border border-gray-500 text-center whitespace-nowrap">
                 Attendence
               </th>
             </tr>
@@ -591,7 +616,7 @@ const Employees = () => {
                   )
                 )
                 .map((emp, index) => (
-                  <tr key={emp.id} className="hover:bg-gray-600">
+                  <tr key={emp.id} className="hover:bg-gray-600 py-4">
                     <td className="p-2 border border-gray-700">{index + 1}</td>
                     <td className="p-2 border border-gray-700 capitalize">
                       {emp.name}
@@ -605,15 +630,15 @@ const Employees = () => {
                     </td>
                     <td className="p-2 border border-gray-700 text-center">
                       <span
-                        className="bg-blue-600 py-1.5 px-3 rounded cursor-pointer uppercase text-sm font-semibold"
+                        className="bg-blue-600 pb-2.5 pt-1 px-2 rounded cursor-pointer"
                         onClick={() => fetchEmployeeDetails(emp.id)}
                       >
-                        Open
+                        <ManageHistoryIcon />
                       </span>
                     </td>
                     <td className="p-2 border border-gray-700 text-center">
                       <span
-                        className="bg-red-500 pb-1.5 px-1 rounded cursor-pointer"
+                        className="bg-red-500 pb-2.5 pt-1 px-2 rounded cursor-pointer"
                         onClick={() => {
                           setConfirmDelete(emp.id);
                           setConfirmDeletepopup(true);
@@ -624,7 +649,7 @@ const Employees = () => {
                     </td>
                     <td className="p-2 border border-gray-700 text-center">
                       <span
-                        className="bg-blue-500 pb-1.5 px-1 rounded cursor-pointer"
+                        className="bg-blue-500 pb-2.5 pt-1 px-2 rounded cursor-pointer"
                         onClick={() => {
                           setSelectedEmployee(emp);
                           setUserUpdate(true);
@@ -635,7 +660,7 @@ const Employees = () => {
                     </td>
                     <td className="p-2 border border-gray-700 text-center">
                       <span
-                        className="bg-blue-500 pb-1.5 px-1 rounded cursor-pointer"
+                        className="bg-blue-500 pb-2.5 pt-1 px-2 rounded cursor-pointer"
                         onClick={() => {
                           setSelectedEmployee(emp);
                           fetchAdditionalDetails(emp.id);
@@ -646,7 +671,7 @@ const Employees = () => {
                     </td>
                     <td className="p-2 border border-gray-700 text-center">
                       <span
-                        className="bg-blue-500 pb-1.5 px-1 rounded cursor-pointer"
+                        className="bg-blue-500 pb-2.5 pt-1 px-2 rounded cursor-pointer"
                         onClick={() => {
                           manageManagerDetails(emp.id);
                         }}
@@ -656,18 +681,24 @@ const Employees = () => {
                     </td>
                     <td className="p-2 border border-gray-700 text-center">
                       <span
-                        className="bg-blue-500 pb-1.5 px-1 rounded cursor-pointer"
+                        className="bg-blue-500 pb-2.5 pt-1 px-2 rounded cursor-pointer"
                         onClick={() => handleOpenAssignLeave(emp.id)}
                       >
-                        <LogoutIcon />
+                        <CalendarMonthIcon />
                       </span>
                     </td>
                     <td className="p-2 border border-gray-700 text-center">
-                      <CustomButton
-                        text="redirect"
+                      {/* <CustomButton
+                        text="Details"
                         onClick={() => router.push(`/teams/${emp.id}`)}
                         color="bg-blue-500"
-                      />
+                      /> */}
+                      <span
+                        className="bg-blue-600 pb-2.5 pt-1 px-2 rounded cursor-pointer"
+                        onClick={() => router.push(`/teams/${emp.id}`)}
+                      >
+                        <RecentActorsIcon />
+                      </span>
                     </td>
                   </tr>
                 ))
@@ -711,6 +742,7 @@ const Employees = () => {
                   name="name"
                   value={data.name}
                   onChange={handleChange}
+                  required
                 />
               </div>
 
@@ -724,6 +756,7 @@ const Employees = () => {
                   name="email"
                   value={data.email}
                   onChange={handleChange}
+                  required
                 />
               </div>
 
@@ -738,6 +771,7 @@ const Employees = () => {
                     name="password"
                     value={data.password}
                     onChange={handleChange}
+                    required
                   />
                   <button
                     type="button"
@@ -773,6 +807,7 @@ const Employees = () => {
                   name="confirmPassword"
                   value={data.confirmPassword}
                   onChange={handleChange}
+                  required
                 />
                 <button
                   type="button"
@@ -796,6 +831,7 @@ const Employees = () => {
                   className="w-full outline-0 border-1 py-[5px] rounded-[5px] appearance-none px-2"
                   value={data.employess}
                   onChange={handleChange}
+                  required
                 >
                   <option value="" disabled>
                     Select Role
@@ -1009,6 +1045,7 @@ const Employees = () => {
                     setFormData({ ...formData, name: e.target.value })
                   }
                   className="w-full text-white border border-gray-500 p-2 rounded"
+                  required
                 />
               </div>
 
@@ -1021,6 +1058,7 @@ const Employees = () => {
                     setFormData({ ...formData, email: e.target.value })
                   }
                   className="w-full text-white border border-gray-500 p-2 rounded"
+                  required
                 />
               </div>
 
@@ -1031,6 +1069,7 @@ const Employees = () => {
                   onChange={(e) =>
                     setFormData({ ...formData, role: e.target.value })
                   }
+                  required
                   className="w-full text-white border border-gray-500 p-2 rounded bg-gray-600 appearance-none pr-8"
                 >
                   <option value="" disabled>
@@ -1100,6 +1139,7 @@ const Employees = () => {
                       details: e.target.value,
                     })
                   }
+                  required
                   className="w-full text-white border border-gray-500 p-2 rounded"
                 />
               </div>
@@ -1116,6 +1156,7 @@ const Employees = () => {
                     })
                   }
                   className="w-full text-white border border-gray-500 p-2 rounded"
+                  required
                 />
               </div>
 
@@ -1131,6 +1172,7 @@ const Employees = () => {
                     })
                   }
                   className="w-full text-white border border-gray-500 p-2 rounded"
+                  required
                 />
               </div>
 
@@ -1146,6 +1188,7 @@ const Employees = () => {
                     })
                   }
                   className="w-full text-white border border-gray-500 p-2 rounded"
+                  required
                 />
               </div>
 
@@ -1159,6 +1202,7 @@ const Employees = () => {
                       department: e.target.value,
                     })
                   }
+                  required
                   className="w-full text-white border border-gray-500 p-2 rounded bg-gray-700 appearance-none pr-8"
                 >
                   <option value="">Select Department</option>
@@ -1226,6 +1270,7 @@ const Employees = () => {
                 value={selectedManager}
                 onChange={(e) => setSelectedManager(e.target.value)}
                 className="w-full text-white border border-gray-500 p-2 rounded bg-gray-700 appearance-none pr-8"
+                required
               >
                 <option value="">Select Manager</option>
                 {managers?.map((dept: any) => (
@@ -1295,8 +1340,8 @@ const Employees = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {employeeLeaves?.map((leave: any) => (
-                      <tr key={leave.id} className="hover:bg-gray-700">
+                    {employeeLeaves?.map((leave: any, index: number) => (
+                      <tr key={leave.id || index} className="hover:bg-gray-700">
                         <td className="p-2 border border-gray-700">
                           {leave.leaveTypeName}
                         </td>
@@ -1324,6 +1369,7 @@ const Employees = () => {
                 value={leavesTypeList}
                 onChange={(e) => setLeavesTypeList(e.target.value)}
                 className="w-full text-white border border-gray-500 p-2 rounded bg-gray-700 appearance-none pr-8"
+                required
               >
                 <option value="">Select Leave Type</option>
                 {leaveTypes?.map((dept: any) => (
@@ -1356,6 +1402,7 @@ const Employees = () => {
                 placeholder="ex.4"
                 onChange={(e) => setQuantity(e.target.value)}
                 className="w-full p-2 rounded border border-gray-500 text-white"
+                required
               />
             </div>
             <div className="flex justify-end">
