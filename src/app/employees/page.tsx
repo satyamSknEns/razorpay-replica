@@ -333,6 +333,7 @@ const Employees = () => {
       };
       await axios.request(updateRequest);
       setUserUpdate(false);
+      toast.success("Detail is updated successfully !!");
       window.location.reload();
     } catch (error) {
       toast.error("Failed to update details");
@@ -406,6 +407,7 @@ const Employees = () => {
         data: { userId: id, ...additionalDetails },
       };
       await axios.request(updateRequest);
+      toast.success("Details updated !!");
       setAdditionalDetals(false);
     } catch (error) {
       toast.error("Failed to update additional details");
@@ -445,6 +447,10 @@ const Employees = () => {
 
   const handleAssignManager = async (id: number) => {
     try {
+      if (!id || !selectedManager) {
+        toast.error("Please select manager before assigning !!");
+        return;
+      }
       const updateRequest: AxiosRequestConfig = {
         url: `${process.env.NEXT_PUBLIC_API_URL}/users/assignManager`,
         method: "POST",
@@ -457,6 +463,7 @@ const Employees = () => {
       const assignedManager = await axios.request(updateRequest);
       if (assignedManager.status === 200) {
         setAssignManager(false);
+        toast.success("Manager assigned successfully !!");
       } else {
         console.error("There is some error in assigning the manager");
       }
@@ -545,6 +552,7 @@ const Employees = () => {
           value={search}
           className="border border-gray-500 rounded-md p-2 focus:outline-none text-white"
           onChange={(e) => setSearch(e.target.value)}
+          required
         />
         <CustomButton
           text="Add to Team"
@@ -604,12 +612,11 @@ const Employees = () => {
                       {emp.role}
                     </td>
                     <td className="p-2 border border-gray-700 text-center">
-                      <span
-                        className="bg-blue-600 py-1.5 px-3 rounded cursor-pointer uppercase text-sm font-semibold"
+                      <CustomButton
+                        text="Open"
                         onClick={() => fetchEmployeeDetails(emp.id)}
-                      >
-                        Open
-                      </span>
+                        color="bg-blue-600"
+                      />
                     </td>
                     <td className="p-2 border border-gray-700 text-center">
                       <span
@@ -664,7 +671,7 @@ const Employees = () => {
                     </td>
                     <td className="p-2 border border-gray-700 text-center">
                       <CustomButton
-                        text="redirect"
+                        text="Details"
                         onClick={() => router.push(`/teams/${emp.id}`)}
                         color="bg-blue-500"
                       />
@@ -711,6 +718,7 @@ const Employees = () => {
                   name="name"
                   value={data.name}
                   onChange={handleChange}
+                  required
                 />
               </div>
 
@@ -724,6 +732,7 @@ const Employees = () => {
                   name="email"
                   value={data.email}
                   onChange={handleChange}
+                  required
                 />
               </div>
 
@@ -738,6 +747,7 @@ const Employees = () => {
                     name="password"
                     value={data.password}
                     onChange={handleChange}
+                    required
                   />
                   <button
                     type="button"
@@ -773,6 +783,7 @@ const Employees = () => {
                   name="confirmPassword"
                   value={data.confirmPassword}
                   onChange={handleChange}
+                  required
                 />
                 <button
                   type="button"
@@ -796,6 +807,7 @@ const Employees = () => {
                   className="w-full outline-0 border-1 py-[5px] rounded-[5px] appearance-none px-2"
                   value={data.employess}
                   onChange={handleChange}
+                  required
                 >
                   <option value="" disabled>
                     Select Role
@@ -1009,6 +1021,7 @@ const Employees = () => {
                     setFormData({ ...formData, name: e.target.value })
                   }
                   className="w-full text-white border border-gray-500 p-2 rounded"
+                  required
                 />
               </div>
 
@@ -1021,6 +1034,7 @@ const Employees = () => {
                     setFormData({ ...formData, email: e.target.value })
                   }
                   className="w-full text-white border border-gray-500 p-2 rounded"
+                  required
                 />
               </div>
 
@@ -1031,6 +1045,7 @@ const Employees = () => {
                   onChange={(e) =>
                     setFormData({ ...formData, role: e.target.value })
                   }
+                  required
                   className="w-full text-white border border-gray-500 p-2 rounded bg-gray-600 appearance-none pr-8"
                 >
                   <option value="" disabled>
@@ -1100,6 +1115,7 @@ const Employees = () => {
                       details: e.target.value,
                     })
                   }
+                  required
                   className="w-full text-white border border-gray-500 p-2 rounded"
                 />
               </div>
@@ -1116,6 +1132,7 @@ const Employees = () => {
                     })
                   }
                   className="w-full text-white border border-gray-500 p-2 rounded"
+                  required
                 />
               </div>
 
@@ -1131,6 +1148,7 @@ const Employees = () => {
                     })
                   }
                   className="w-full text-white border border-gray-500 p-2 rounded"
+                  required
                 />
               </div>
 
@@ -1146,6 +1164,7 @@ const Employees = () => {
                     })
                   }
                   className="w-full text-white border border-gray-500 p-2 rounded"
+                  required
                 />
               </div>
 
@@ -1159,6 +1178,7 @@ const Employees = () => {
                       department: e.target.value,
                     })
                   }
+                  required
                   className="w-full text-white border border-gray-500 p-2 rounded bg-gray-700 appearance-none pr-8"
                 >
                   <option value="">Select Department</option>
@@ -1226,6 +1246,7 @@ const Employees = () => {
                 value={selectedManager}
                 onChange={(e) => setSelectedManager(e.target.value)}
                 className="w-full text-white border border-gray-500 p-2 rounded bg-gray-700 appearance-none pr-8"
+                required
               >
                 <option value="">Select Manager</option>
                 {managers?.map((dept: any) => (
@@ -1324,6 +1345,7 @@ const Employees = () => {
                 value={leavesTypeList}
                 onChange={(e) => setLeavesTypeList(e.target.value)}
                 className="w-full text-white border border-gray-500 p-2 rounded bg-gray-700 appearance-none pr-8"
+                required
               >
                 <option value="">Select Leave Type</option>
                 {leaveTypes?.map((dept: any) => (
@@ -1356,6 +1378,7 @@ const Employees = () => {
                 placeholder="ex.4"
                 onChange={(e) => setQuantity(e.target.value)}
                 className="w-full p-2 rounded border border-gray-500 text-white"
+                required
               />
             </div>
             <div className="flex justify-end">

@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { useCookies } from "next-client-cookies";
 import { useEffect, useState } from "react";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CloseButton from "../components/CloseButton";
@@ -11,7 +11,7 @@ const Department = () => {
   const cookies = useCookies();
   const token = cookies.get("token");
   const [addLeaveType, setAddLeaveType] = useState(false);
-  const [departmentType, setDepartmentType] = useState([]);
+  const [departmentType, setDepartmentType] = useState<any[]>([]);
   const [adddepartmentType, setAdddepartmentType] = useState("");
   const [deletedid, setDeletedId] = useState("");
   const [deletePopup, setDeletePopup] = useState(false);
@@ -45,31 +45,6 @@ const Department = () => {
     fetchAllLeaveType();
   }, [token]);
 
-  const handleDelete = async (id: number) => {
-    try {
-      const config: AxiosRequestConfig = {
-        url: `${process.env.NEXT_PUBLIC_API_URL}/users/deleteDepartment`,
-        method: "POST",
-        maxBodyLength: Infinity,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        data: {
-          id: id,
-        },
-      };
-      const response = await axios.request(config);
-      if (response.status === 200) {
-        window.location.reload();
-      } else {
-        console.error("there is some this wrong in creating the leave type");
-      }
-    } catch (error) {
-      console.error("there is some error in delete leave type", error);
-    }
-  };
-
   const AddDepartment = async () => {
     try {
       const leaveconfig: AxiosRequestConfig = {
@@ -85,21 +60,62 @@ const Department = () => {
         },
       };
       const response = await axios.request(leaveconfig);
-      if (response.status === 200) {
-        window.location.reload();
+
+      if (response.status === 200 || response.status === 201) {
+        setDepartmentType((prev: any[]) => [
+          ...(prev as any[]),
+          response.data.department,
+        ]);
+        toast.success("Department created successfully!");
       } else {
-        console.error("there is some this wrong in creating the leave type");
+        console.error("Something went wrong while creating the department");
+        toast.error("Failed to create department");
       }
     } catch (error) {
       console.error("There is some error to creatinf the department", error);
     } finally {
       setAddLeaveType(false);
-      window.location.reload();
+      setAdddepartmentType("");
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    try {
+      const config: AxiosRequestConfig = {
+        url: `${process.env.NEXT_PUBLIC_API_URL}/users/deleteDepartment`,
+        method: "POST",
+        maxBodyLength: Infinity,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        data: {
+          id: id,
+        },
+      };
+      const response = await axios.request(config);
+      // if (response.status === 200) {
+      //   window.location.reload();
+      // } else {
+      //   console.error("there is some this wrong in creating the leave type");
+      // }
+
+      if (response.status === 200) {
+        setDepartmentType((prev: any[]) => prev.filter((dep) => dep.id !== id));
+        toast.success("Department deleted successfully!");
+        setDeletePopup(false);
+      } else {
+        console.error("Error deleting department");
+        toast.error("Failed to delete department");
+      }
+    } catch (error) {
+      console.error("there is some error in delete leave type", error);
     }
   };
 
   return (
     <div className="lg:px-4 md:px-4 sm:px-2 px-2 text-white">
+      <ToastContainer position="top-right" autoClose={3000} />
       <h1 className="text-2xl font-bold mb-4">All Departments</h1>
       <div className="flex justify-end pb-3">
         <CustomButton
@@ -118,7 +134,6 @@ const Department = () => {
             onClick={(e) => e.stopPropagation()}
             className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-4 mx-4 animate-scale-up-center min-h-[200px] overflow-auto"
           >
-            <ToastContainer position="top-right" autoClose={3000} />
             <div className="flex justify-between w-full items-center pb-5 border-b-3 border-gray-600 mt-2">
               <h3 className="text-2xl font-semibold">Add Department Name</h3>
               <CloseButton onClose={() => setAddLeaveType(false)} />
@@ -202,7 +217,6 @@ const Department = () => {
             onClick={(e) => e.stopPropagation()}
             className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-4 mx-4 animate-scale-up-center min-h-[150px] overflow-auto"
           >
-            <ToastContainer position="top-right" autoClose={3000} />
             <div className="flex justify-between w-full items-center pb-5 border-b-2 border-gray-600 mt-2">
               <h3 className="text-2xl font-semibold">Delete Department Type</h3>
               <CloseButton onClose={() => setDeletePopup(false)} />

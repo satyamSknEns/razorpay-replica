@@ -48,6 +48,7 @@ export default function DocumentUpload() {
           <input
             type="text"
             value={description}
+            required
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Brief description of the document"
             className="border border-gray-500 rounded px-2 py-1 w-full outline-none bg-gray-800 text-white"
@@ -56,12 +57,13 @@ export default function DocumentUpload() {
 
         <div className="flex flex-col gap-1.5">
           <label>
-            Images or documents (maximum 5 MB each){" "}
+            Images or documents (maximum 5 MB each)
             <span className="text-red-500">*</span>
           </label>
           <input
             type="file"
             onChange={(e) => setFile(e.target.files?.[0] || null)}
+            required
             className="border border-gray-500 rounded px-2 py-1 w-full outline-none bg-gray-800 text-white"
           />
         </div>
