@@ -12,7 +12,10 @@ import AddToDriveIcon from "@mui/icons-material/AddToDrive";
 import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import LogoutIcon from "@mui/icons-material/Logout";
+import ManageHistoryIcon from "@mui/icons-material/ManageHistory";
+import RecentActorsIcon from "@mui/icons-material/RecentActors";
+// import LogoutIcon from "@mui/icons-material/Logout";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import CloseButton from "../components/CloseButton";
 import CustomButton from "../components/CustomButton";
 
@@ -572,7 +575,7 @@ const Employees = () => {
       </div>
 
       <div className="overflow-x-auto mt-4 rounded">
-        <table className="border border-gray-800 text-left min-w-[1400px]">
+        <table className="border border-gray-800 text-left min-w-[1500px]">
           <thead className="bg-gray-700 uppercase">
             <tr>
               <th className="p-2 border border-gray-500">ID</th>
@@ -580,21 +583,25 @@ const Employees = () => {
               <th className="p-2 border border-gray-500">Employee Code</th>
               <th className="p-2 border border-gray-500">Email</th>
               <th className="p-2 border border-gray-500">Role</th>
-              <th className="p-2 border border-gray-500 text-center">
-                Details
+              <th className="p-2 border border-gray-500 text-center whitespace-nowrap">
+                All Details
               </th>
-              <th className="p-2 border border-gray-500 text-center">Delete</th>
-              <th className="p-2 border border-gray-500 text-center">Update</th>
-              <th className="p-2 border border-gray-500 text-center">
+              <th className="p-2 border border-gray-500 text-center whitespace-nowrap">
+                Emp. Delete
+              </th>
+              <th className="p-2 border border-gray-500 text-center whitespace-nowrap">
+                Emp. Update
+              </th>
+              <th className="p-2 border border-gray-500 text-center whitespace-nowrap">
                 Add Details
               </th>
-              <th className="p-2 border border-gray-500 text-center">
+              <th className="p-2 border border-gray-500 text-center whitespace-nowrap">
                 Add Manager
               </th>
-              <th className="p-2 border border-gray-500 text-center">
+              <th className="p-2 border border-gray-500 text-center whitespace-nowrap">
                 Assign Leaves
               </th>
-              <th className="p-2 border border-gray-500 text-center">
+              <th className="p-2 border border-gray-500 text-center whitespace-nowrap">
                 Attendence
               </th>
             </tr>
@@ -609,7 +616,7 @@ const Employees = () => {
                   )
                 )
                 .map((emp, index) => (
-                  <tr key={emp.id} className="hover:bg-gray-600">
+                  <tr key={emp.id} className="hover:bg-gray-600 py-4">
                     <td className="p-2 border border-gray-700">{index + 1}</td>
                     <td className="p-2 border border-gray-700 capitalize">
                       {emp.name}
@@ -622,15 +629,16 @@ const Employees = () => {
                       {emp.role}
                     </td>
                     <td className="p-2 border border-gray-700 text-center">
-                      <CustomButton
-                        text="Open"
+                      <span
+                        className="bg-blue-600 pb-2.5 pt-1 px-2 rounded cursor-pointer"
                         onClick={() => fetchEmployeeDetails(emp.id)}
-                        color="bg-blue-600"
-                      />
+                      >
+                        <ManageHistoryIcon />
+                      </span>
                     </td>
                     <td className="p-2 border border-gray-700 text-center">
                       <span
-                        className="bg-red-500 pb-1.5 px-1 rounded cursor-pointer"
+                        className="bg-red-500 pb-2.5 pt-1 px-2 rounded cursor-pointer"
                         onClick={() => {
                           setConfirmDelete(emp.id);
                           setConfirmDeletepopup(true);
@@ -641,7 +649,7 @@ const Employees = () => {
                     </td>
                     <td className="p-2 border border-gray-700 text-center">
                       <span
-                        className="bg-blue-500 pb-1.5 px-1 rounded cursor-pointer"
+                        className="bg-blue-500 pb-2.5 pt-1 px-2 rounded cursor-pointer"
                         onClick={() => {
                           setSelectedEmployee(emp);
                           setUserUpdate(true);
@@ -652,7 +660,7 @@ const Employees = () => {
                     </td>
                     <td className="p-2 border border-gray-700 text-center">
                       <span
-                        className="bg-blue-500 pb-1.5 px-1 rounded cursor-pointer"
+                        className="bg-blue-500 pb-2.5 pt-1 px-2 rounded cursor-pointer"
                         onClick={() => {
                           setSelectedEmployee(emp);
                           fetchAdditionalDetails(emp.id);
@@ -663,7 +671,7 @@ const Employees = () => {
                     </td>
                     <td className="p-2 border border-gray-700 text-center">
                       <span
-                        className="bg-blue-500 pb-1.5 px-1 rounded cursor-pointer"
+                        className="bg-blue-500 pb-2.5 pt-1 px-2 rounded cursor-pointer"
                         onClick={() => {
                           manageManagerDetails(emp.id);
                         }}
@@ -673,18 +681,24 @@ const Employees = () => {
                     </td>
                     <td className="p-2 border border-gray-700 text-center">
                       <span
-                        className="bg-blue-500 pb-1.5 px-1 rounded cursor-pointer"
+                        className="bg-blue-500 pb-2.5 pt-1 px-2 rounded cursor-pointer"
                         onClick={() => handleOpenAssignLeave(emp.id)}
                       >
-                        <LogoutIcon />
+                        <CalendarMonthIcon />
                       </span>
                     </td>
                     <td className="p-2 border border-gray-700 text-center">
-                      <CustomButton
+                      {/* <CustomButton
                         text="Details"
                         onClick={() => router.push(`/teams/${emp.id}`)}
                         color="bg-blue-500"
-                      />
+                      /> */}
+                      <span
+                        className="bg-blue-600 pb-2.5 pt-1 px-2 rounded cursor-pointer"
+                        onClick={() => router.push(`/teams/${emp.id}`)}
+                      >
+                        <RecentActorsIcon />
+                      </span>
                     </td>
                   </tr>
                 ))

@@ -17,7 +17,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   return (
     <button
       onClick={onClick}
-      className={`px-4 py-2 rounded capitalize text-white font-semibold cursor-pointer transition-all duration-200 hover:opacity-90 ${color} ${className}`}
+      className={`px-4 py-1.5 rounded capitalize text-white font-semibold cursor-pointer transition-all duration-200 hover:opacity-90 ${color} ${className}`}
     >
       {text}
     </button>
