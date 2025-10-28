@@ -98,11 +98,6 @@ const Department = () => {
         },
       };
       const response = await axios.request(config);
-      // if (response.status === 200) {
-      //   window.location.reload();
-      // } else {
-      //   console.error("there is some this wrong in creating the leave type");
-      // }
 
       if (response.status === 200) {
         setDepartmentType((prev: any[]) => prev.filter((dep) => dep.id !== id));

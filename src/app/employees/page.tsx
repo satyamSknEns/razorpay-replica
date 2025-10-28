@@ -267,7 +267,9 @@ const Employees = () => {
         employess: "",
       });
       setOpenRegesterPopup(false);
-      window.location.reload();
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast.dismiss();
@@ -292,7 +294,10 @@ const Employees = () => {
         data: { id },
       };
       await axios.request(updateRequest);
-      window.location.reload();
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
     } catch (error) {
       console.error("There is some error to delete the employee", error);
     }
@@ -334,7 +339,9 @@ const Employees = () => {
       await axios.request(updateRequest);
       setUserUpdate(false);
       toast.success("Detail is updated successfully !!");
-      window.location.reload();
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
     } catch (error) {
       toast.error("Failed to update details");
       console.error(error);
@@ -413,7 +420,9 @@ const Employees = () => {
       toast.error("Failed to update additional details");
       console.error(error);
     } finally {
-      window.location.reload();
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
     }
   };
 

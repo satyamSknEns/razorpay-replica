@@ -62,7 +62,9 @@ const LeaveType = () => {
       const response = await axios.request(config);
 
       if (response.status === 200) {
-        window.location.reload();
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
       } else {
         console.error("there is some this wrong in creating the leave type");
       }
