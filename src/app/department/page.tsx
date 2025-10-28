@@ -47,6 +47,10 @@ const Department = () => {
 
   const AddDepartment = async () => {
     try {
+      if (!adddepartmentType) {
+        toast.error("Department name is require!!");
+        return;
+      }
       const leaveconfig: AxiosRequestConfig = {
         url: `${process.env.NEXT_PUBLIC_API_URL}/users/createDepartment`,
         method: "POST",
