@@ -4,7 +4,7 @@ import axios, { AxiosRequestConfig } from "axios";
 import { useCookies } from "next-client-cookies";
 import CloseButton from "../components/CloseButton";
 import CustomButton from "../components/CustomButton";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 interface Employee {
@@ -27,6 +27,7 @@ const Managers = () => {
   const [selectedEmployees, setSelectedEmployees] = useState<string[]>([]);
   const [showPopup, setShowPopup] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [loadingTeam, setLoadingTeam] = useState(false);
 
   const fetchAllManagers = async () => {
     try {
@@ -55,8 +56,9 @@ const Managers = () => {
   }, []);
 
   const handelManagerTeam = async (id: number) => {
-    setCurrentManagerId(id);
+    setLoadingTeam(true);
     try {
+      setCurrentManagerId(id);
       setManagerDetails(true);
       const config: AxiosRequestConfig = {
         url: `${process.env.NEXT_PUBLIC_API_URL}/users/listEmployees`,
@@ -73,6 +75,7 @@ const Managers = () => {
     } catch (error) {
       console.error("There was some problem to show team member", error);
     } finally {
+      setLoadingTeam(false);
     }
   };
 
@@ -127,8 +130,8 @@ const Managers = () => {
           Authorization: `Bearer ${token}`,
         },
         data: {
-          userId: currentManagerId,
-          managerId: selectedEmployees[0],
+          userId: selectedEmployees[0],
+          managerId: currentManagerId,
         },
       };
 
@@ -136,6 +139,8 @@ const Managers = () => {
       if (res.status === 200) {
         setShowPopup(false);
         setSelectedEmployees([]);
+        await handelManagerTeam(currentManagerId!);
+        toast.success("Employee added to the team!");
       } else {
         alert("Failed to add employees: " + res.data.message);
       }
@@ -214,48 +219,60 @@ const Managers = () => {
               <CloseButton onClose={() => setManagerDetails(false)} />
             </div>
             <div className="overflow-x-auto mt-4 rounded">
-              <table className="min-w-full border border-gray-600 text-left text-sm">
-                <thead className="bg-gray-800 text-gray-200">
-                  <tr>
-                    <th className="px-4 py-2 border border-gray-600">ID</th>
-                    <th className="px-4 py-2 border border-gray-600">Name</th>
-                    <th className="px-4 py-2 border border-gray-600">Email</th>
-                    <th className="px-4 py-2 border border-gray-600">Role</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {employees.length > 0 ? (
-                    employees.map((emp) => (
-                      <tr
-                        key={emp.user.id}
-                        className="hover:bg-gray-600 cursor-pointer transition-colors"
-                      >
-                        <td className="px-4 py-2 border border-gray-600">
-                          {emp.user.id}
-                        </td>
-                        <td className="px-4 py-2 border border-gray-600">
-                          {emp.user.name}
-                        </td>
-                        <td className="px-4 py-2 border border-gray-600">
-                          {emp.user.email}
-                        </td>
-                        <td className="px-4 py-2 border border-gray-600">
-                          {emp.user.role}
+              {loadingTeam ? (
+                <p className="text-center text-gray-400 my-4">
+                  Refreshing team...
+                </p>
+              ) : employees.length > 0 ? (
+                <table className="min-w-full border border-gray-600 text-left text-sm">
+                  <thead className="bg-gray-800 text-gray-200">
+                    <tr>
+                      <th className="px-4 py-2 border border-gray-600">ID</th>
+                      <th className="px-4 py-2 border border-gray-600">Name</th>
+                      <th className="px-4 py-2 border border-gray-600">
+                        Email
+                      </th>
+                      <th className="px-4 py-2 border border-gray-600">Role</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {employees.length > 0 ? (
+                      employees.map((emp) => (
+                        <tr
+                          key={emp.user.id}
+                          className="hover:bg-gray-600 cursor-pointer transition-colors"
+                        >
+                          <td className="px-4 py-2 border border-gray-600">
+                            {emp.user.id}
+                          </td>
+                          <td className="px-4 py-2 border border-gray-600">
+                            {emp.user.name}
+                          </td>
+                          <td className="px-4 py-2 border border-gray-600">
+                            {emp.user.email}
+                          </td>
+                          <td className="px-4 py-2 border border-gray-600">
+                            {emp.user.role}
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td
+                          colSpan={3}
+                          className="text-center py-4 text-gray-400 border border-gray-600"
+                        >
+                          No employees found.
                         </td>
                       </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td
-                        colSpan={3}
-                        className="text-center py-4 text-gray-400 border border-gray-600"
-                      >
-                        No employees found.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+                    )}
+                  </tbody>
+                </table>
+              ) : (
+                <p className="text-center text-gray-400 my-4">
+                  No team members found.
+                </p>
+              )}
             </div>
             <div className="text-end mt-4">
               <CustomButton
