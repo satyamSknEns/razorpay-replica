@@ -155,7 +155,7 @@ const EmployeeDetail = () => {
 
     try {
       const res = await axios.request({
-        url: `${process.env.NEXT_PUBLIC_API_URL}/users/listEmployees`,
+        url: `${process.env.NEXT_PUBLIC_API_URL}/users/listEmployeeForManager`,
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

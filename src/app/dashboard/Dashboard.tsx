@@ -8,6 +8,8 @@ const Dashboard = () => {
   const [token, setToken] = useState<string | null>(null);
   const cookies = useCookies();
 
+  console.log("Token0000", token);
+
   interface UserData {
     user?: {
       name?: string;

@@ -355,7 +355,7 @@ const Employees = () => {
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/users/getDetails`,
-        { id: employeeId },
+        { userId: employeeId },
         {
           headers: {
             "Content-Type": "application/json",
@@ -443,8 +443,18 @@ const Employees = () => {
         data: { id },
       };
       const employeeData = await axios.request(updateRequest);
+
       if (employeeData.status === 200) {
-        const currentManager = employeeData?.data?.profile?.manager;
+        const currentDetails = employeeData?.data?.profile;
+        const details = currentDetails.department;
+
+        if (!details) {
+          toast.error("Add details before assigning");
+          setAssignManager(false);
+          return;
+        }
+
+        const currentManager = currentDetails?.manager;
         setSelectedManager(currentManager ? currentManager.id : "");
         setCurrentManagerName(currentManager ? currentManager.name : null);
       } else {
@@ -463,6 +473,8 @@ const Employees = () => {
         toast.error("Please select manager before assigning !!");
         return;
       }
+
+      // if(!)
       const updateRequest: AxiosRequestConfig = {
         url: `${process.env.NEXT_PUBLIC_API_URL}/users/assignManager`,
         method: "POST",
@@ -470,7 +482,7 @@ const Employees = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        data: { userId: id, managerId: selectedManager },
+        data: { userId: id, managerId: Number(selectedManager) },
       };
       const assignedManager = await axios.request(updateRequest);
       if (assignedManager.status === 200) {
@@ -670,14 +682,20 @@ const Employees = () => {
                       </span>
                     </td>
                     <td className="p-2 border border-gray-700 text-center">
-                      <span
-                        className="bg-blue-500 pb-2.5 pt-1 px-2 rounded cursor-pointer"
-                        onClick={() => {
-                          manageManagerDetails(emp.id);
-                        }}
-                      >
-                        <AssignmentIndIcon />
-                      </span>
+                      {emp.role !== "admin" ? (
+                        <span
+                          className="bg-blue-500 pb-2.5 pt-1 px-2 rounded cursor-pointer"
+                          onClick={() => {
+                            manageManagerDetails(emp.id);
+                          }}
+                        >
+                          <AssignmentIndIcon />
+                        </span>
+                      ) : (
+                        <p className="text-green-500 border border-gray-500 rounded">
+                          Not Applicable
+                        </p>
+                      )}
                     </td>
                     <td className="p-2 border border-gray-700 text-center">
                       <span
@@ -688,11 +706,6 @@ const Employees = () => {
                       </span>
                     </td>
                     <td className="p-2 border border-gray-700 text-center">
-                      {/* <CustomButton
-                        text="Details"
-                        onClick={() => router.push(`/teams/${emp.id}`)}
-                        color="bg-blue-500"
-                      /> */}
                       <span
                         className="bg-blue-600 pb-2.5 pt-1 px-2 rounded cursor-pointer"
                         onClick={() => router.push(`/teams/${emp.id}`)}
@@ -934,12 +947,14 @@ const Employees = () => {
                     {selectedEmployee.department || "--"}
                   </span>
                 </p>
-                <p className="py-1 flex gap-2">
-                  <strong>Manager : </strong>
-                  <span className="capitalize">
-                    {selectedEmployee?.manager?.name || "--"}
-                  </span>
-                </p>
+                {!(selectedEmployee.role === "admin") && (
+                  <p className="py-1 flex gap-2">
+                    <strong>Manager : </strong>
+                    <span className="capitalize">
+                      {selectedEmployee?.manager?.name || "--"}
+                    </span>
+                  </p>
+                )}
                 <p className="py-1 flex gap-2">
                   <strong>Service Duration :</strong>{" "}
                   <span className="capitalize">
@@ -1255,7 +1270,7 @@ const Employees = () => {
               <CloseButton onClose={() => setAssignManager(false)} />
             </div>
             <div className="my-5 px-1 relative">
-              {currentManagerName && (
+              {currentManagerName ? (
                 <div className="my-3 px-1 text-gray-300">
                   <p>
                     Current Manager:{" "}
@@ -1264,8 +1279,13 @@ const Employees = () => {
                     </span>
                   </p>
                 </div>
+              ) : (
+                <p className="font-semibold text-[#91d0ff] my-3">
+                  Please fill in the details before assigning a manager.
+                </p>
               )}
-              <label className="block mb-1">Managers</label>
+
+              <label className="block mb-1.5">Managers</label>
               <select
                 value={selectedManager}
                 onChange={(e) => setSelectedManager(e.target.value)}
@@ -1281,7 +1301,7 @@ const Employees = () => {
               </select>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="absolute right-3 top-[70%] -translate-y-1/2 w-4 h-4 text-white pointer-events-none"
+                className="absolute right-3 bottom-[5%] -translate-y-1/2 w-4 h-4 text-white pointer-events-none"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
