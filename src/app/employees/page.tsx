@@ -14,6 +14,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import ManageHistoryIcon from "@mui/icons-material/ManageHistory";
 import RecentActorsIcon from "@mui/icons-material/RecentActors";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import CloseButton from "../components/CloseButton";
 import CustomButton from "../components/CustomButton";
@@ -70,6 +71,8 @@ const Employees = () => {
   const [quantity, setQuantity] = useState("");
   const [leaveTypes, setLeaveTypes] = useState([]);
   const [currentManagerName, setCurrentManagerName] = useState("");
+  const [openSalaryStructure, setOpenSalaryStructure] = useState(false);
+  const [openUserForSalary, setOpenUserForSalary] = useState<number>();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -592,6 +595,28 @@ const Employees = () => {
     }
   };
 
+  const handleSalaryStructure = async () => {
+    try {
+      setOpenSalaryStructure(true);
+      const salaryRequest: AxiosRequestConfig = {
+        url: `${process.env.NEXT_PUBLIC_API_URL}/users/createSalaryStructure`,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        data: { openUserForSalary },
+      };
+      const salaryStructure = await axios.request(salaryRequest);
+      console.log("salaryStructure", salaryStructure);
+    } catch (error) {
+      console.error(
+        "There was some problem to submit the salary structure !",
+        error
+      );
+    }
+  };
+
   return (
     <div className="lg:px-4 md:px-4 sm:px-2 px-2 text-white">
       <ToastContainer position="top-right" autoClose={3000} />
@@ -614,7 +639,7 @@ const Employees = () => {
       </div>
 
       <div className="overflow-x-auto mt-4 rounded">
-        <table className="border border-gray-800 text-left min-w-[1500px]">
+        <table className="border border-gray-800 text-left min-w-[1700px]">
           <thead className="bg-gray-700 uppercase">
             <tr>
               <th className="p-2 border border-gray-500">ID</th>
@@ -642,6 +667,9 @@ const Employees = () => {
               </th>
               <th className="p-2 border border-gray-500 text-center whitespace-nowrap">
                 Attendence
+              </th>
+              <th className="p-2 border border-gray-500 text-center whitespace-nowrap">
+                Salary Structure
               </th>
             </tr>
           </thead>
@@ -738,6 +766,17 @@ const Employees = () => {
                         onClick={() => handleOpenEmployeeDetails(emp.id)}
                       >
                         <RecentActorsIcon />
+                      </span>
+                    </td>
+                    <td className="p-2 border border-gray-700 text-center">
+                      <span
+                        className="bg-blue-600 pb-2.5 pt-1 px-2 rounded cursor-pointer"
+                        onClick={() => {
+                          setOpenUserForSalary(emp.id);
+                          setOpenSalaryStructure(true);
+                        }}
+                      >
+                        <AttachMoneyIcon />
                       </span>
                     </td>
                   </tr>
@@ -1497,6 +1536,31 @@ const Employees = () => {
                   color="bg-blue-500"
                 />
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {openSalaryStructure && (
+        <div
+          onClick={() => setOpenSalaryStructure(false)}
+          className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-4 mx-4 animate-scale-up-center min-h-[150px] overflow-auto"
+          >
+            <div className="flex justify-between w-full items-center pb-5 border-b-2 border-gray-600 mt-2">
+              <h3 className="text-2xl font-semibold">Salary Structure</h3>
+              <CloseButton onClose={() => setOpenSalaryStructure(false)} />
+            </div>
+
+            <div className="flex justify-end">
+              <CustomButton
+                text="Submit"
+                onClick={() => handleSalaryStructure()}
+                color="bg-blue-600"
+              />
             </div>
           </div>
         </div>
