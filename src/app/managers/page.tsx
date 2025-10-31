@@ -156,28 +156,29 @@ const Managers = () => {
   const handelRemoveEmployee = async (id: number) => {
     try {
       const deleteEmployeeFromManager: AxiosRequestConfig = {
-        url: `${process.env.NEXT_PUBLIC_API_URL}/users/DeleteEmployeeFromManager`,
+        url: `${process.env.NEXT_PUBLIC_API_URL}/users/removeManagers`,
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
         data: {
-          userId: id,
+          userIds: id,
+          managerIdToMatch: currentManagerId,
         },
       };
 
       const res = await axios.request(deleteEmployeeFromManager);
 
       if (res.status === 200) {
-        toast.success("Employee added to the team!");
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+        toast.success("Employee removed successfully !");
         setManagerDetails(false);
         setConfirmRemovepopup(false);
       } else {
-        alert("Failed to add employees: " + res.data.message);
+        alert(
+          "Failed to remove employees from the managers team " +
+            res.data.message
+        );
       }
     } catch (err) {
       console.error("Error assigning employees:", err);
