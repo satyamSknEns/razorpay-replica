@@ -6,6 +6,7 @@ import CloseButton from "../components/CloseButton";
 import CustomButton from "../components/CustomButton";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 interface Employee {
   user: {
@@ -28,6 +29,8 @@ const Managers = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loadingTeam, setLoadingTeam] = useState(false);
+  const [confirmRemovepopup, setConfirmRemovepopup] = useState(false);
+  const [removeEmployee, setRemoveEmployee] = useState<number>();
 
   const fetchAllManagers = async () => {
     try {
@@ -130,7 +133,7 @@ const Managers = () => {
           Authorization: `Bearer ${token}`,
         },
         data: {
-          userId: selectedEmployees[0],
+          userIds: selectedEmployees,
           managerId: currentManagerId,
         },
       };
@@ -143,6 +146,39 @@ const Managers = () => {
         toast.success("Employee added to the team!");
       } else {
         alert("Failed to add employees: " + res.data.message);
+      }
+    } catch (err) {
+      console.error("Error assigning employees:", err);
+    } finally {
+    }
+  };
+
+  const handelRemoveEmployee = async (id: number) => {
+    try {
+      const deleteEmployeeFromManager: AxiosRequestConfig = {
+        url: `${process.env.NEXT_PUBLIC_API_URL}/users/removeManagers`,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        data: {
+          userIds: id,
+          managerIdToMatch: currentManagerId,
+        },
+      };
+
+      const res = await axios.request(deleteEmployeeFromManager);
+
+      if (res.status === 200) {
+        toast.success("Employee removed successfully !");
+        setManagerDetails(false);
+        setConfirmRemovepopup(false);
+      } else {
+        alert(
+          "Failed to remove employees from the managers team " +
+            res.data.message
+        );
       }
     } catch (err) {
       console.error("Error assigning employees:", err);
@@ -215,7 +251,7 @@ const Managers = () => {
             className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-3 mx-4 animate-scale-up-center min-h-[220px] overflow-auto"
           >
             <div className="flex justify-between w-full items-center pb-5 border-b-2 border-gray-600 my-2">
-              <h3 className="text-2xl font-semibold">Manager Detalis</h3>
+              <h3 className="text-2xl font-semibold">Manager’s Team</h3>
               <CloseButton onClose={() => setManagerDetails(false)} />
             </div>
             <div className="overflow-x-auto mt-4 rounded">
@@ -233,6 +269,9 @@ const Managers = () => {
                         Email
                       </th>
                       <th className="px-4 py-2 border border-gray-600">Role</th>
+                      <th className="px-4 py-2 border border-gray-600">
+                        Remove
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -253,6 +292,18 @@ const Managers = () => {
                           </td>
                           <td className="px-4 py-2 border border-gray-600">
                             {emp.user.role}
+                          </td>
+                          <td className="px-4 py-2 border border-gray-600 text-center">
+                            <span
+                              className="bg-red-500 pb-1.5 px-1 rounded cursor-pointer"
+                              onClick={() => {
+                                setRemoveEmployee(emp.user.id);
+                                setConfirmRemovepopup(true);
+                                setManagerDetails(false);
+                              }}
+                            >
+                              <DeleteIcon fontSize="small" />
+                            </span>
                           </td>
                         </tr>
                       ))
@@ -383,6 +434,45 @@ const Managers = () => {
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {confirmRemovepopup && (
+        <div
+          onClick={() => setConfirmRemovepopup(false)}
+          className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-4 mx-4 animate-scale-up-center min-h-[150px] overflow-auto"
+          >
+            <div className="flex justify-between w-full items-center pb-5 border-b-2 border-gray-600 mt-2">
+              <h3 className="text-2xl font-semibold">Remove Employee</h3>
+              <CloseButton onClose={() => setConfirmRemovepopup(false)} />
+            </div>
+
+            <div>
+              <h4 className="text-md border-b border-gray-500 py-5">
+                Are you sure you want to unassign this employee from the list.
+              </h4>
+              <div className="flex gap-3 my-3 justify-end">
+                <CustomButton
+                  text="Yes"
+                  onClick={() => {
+                    if (removeEmployee !== undefined) {
+                      handelRemoveEmployee(removeEmployee);
+                    }
+                  }}
+                  color="bg-red-500"
+                />
+                <CustomButton
+                  text="No"
+                  onClick={() => setConfirmRemovepopup(false)}
+                  color="bg-blue-500"
+                />
+              </div>
+            </div>
           </div>
         </div>
       )}

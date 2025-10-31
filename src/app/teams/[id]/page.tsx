@@ -103,10 +103,8 @@ const EmployeeDetail = () => {
   const [leaveTypes, setLeaveTypes] = useState<LeaveItem[]>([]);
   const [delAnimation, setDelAnimation] = useState<boolean>(true);
   const [open, setOpen] = useState(false);
-  // const [animation, setAnimation] = useState<boolean>(true);
   const [deleteReq, setDeleteReq] = useState(false);
   const [visible, setVisible] = useState(false);
-  // const [applyAnimation, setApplyAnimation] = useState<boolean>(true);
   const [selectedMonth, setSelectedMonth] = useState(dayjs());
   const [editData, setEditData] = useState({
     userId: id,
@@ -161,11 +159,6 @@ const EmployeeDetail = () => {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        // data: {
-        //   // managerId: 5,
-        //   from: "2025-08-13",
-        //   to: "2025-09-11",
-        // },
         data: {
           userId: id,
         },
@@ -190,7 +183,7 @@ const EmployeeDetail = () => {
           "Content-Type": "application/json",
         },
         data: {
-          id: id,
+          userId: id,
         },
       });
 
@@ -591,7 +584,6 @@ const EmployeeDetail = () => {
     const checked = e.target.checked;
     setSelectAll(checked);
     if (checked) {
-      // select all IDs
       const allIds = requestList?.pending?.map((item: any) => item.id) || [];
       setSelectedIds(allIds);
     } else {
@@ -736,187 +728,178 @@ const EmployeeDetail = () => {
             </p>
 
             <div className="my-5 w-full min-w-[900px] overflow-x-auto">
-              {employee.attendance.length === 0 ? (
-                <p>No attendance record found.</p>
-              ) : (
-                <table className="text-sm flex flex-col w-full border border-gray-700 rounded">
-                  <thead>
-                    <tr className="bg-gray-800 flex justify-between">
-                      <th className="p-4 text-start w-40">Date</th>
-                      <th className="p-4 text-center w-28">Status</th>
-                      <th className="p-4 text-center w-28">Check In</th>
-                      <th className="p-4 text-center w-28">Check Out</th>
-                      <th className="p-4 text-center w-28">Duration</th>
-                      <th className="p-4 text-center flex-1">Remarks</th>
-                      <th className="p-4 text-center flex-1">Client Info</th>
-                      <th className="p-4 text-center w-12">Edit</th>
-                    </tr>
-                  </thead>
+              <table className="text-sm flex flex-col w-full border border-gray-700 rounded">
+                <thead>
+                  <tr className="bg-gray-800 flex justify-between">
+                    <th className="p-4 text-start w-40">Date</th>
+                    <th className="p-4 text-center w-28">Status</th>
+                    <th className="p-4 text-center w-28">Check In</th>
+                    <th className="p-4 text-center w-28">Check Out</th>
+                    <th className="p-4 text-center w-28">Duration</th>
+                    <th className="p-4 text-center flex-1">Remarks</th>
+                    <th className="p-4 text-center flex-1">Client Info</th>
+                    <th className="p-4 text-center w-12">Edit</th>
+                  </tr>
+                </thead>
 
-                  <tbody className="w-full flex flex-col">
-                    {allDates.map((date) => {
-                      const record = requestList?.attendance?.find(
-                        (a: any) =>
-                          new Date(a.date).toISOString().split("T")[0] === date
-                      );
+                <tbody className="w-full flex flex-col">
+                  {allDates.map((date) => {
+                    const record = requestList?.attendance?.find(
+                      (a: any) =>
+                        new Date(a.date).toISOString().split("T")[0] === date
+                    );
 
-                      const today = new Date().toISOString().split("T")[0];
-                      const isPastDate = date < today;
+                    const today = new Date().toISOString().split("T")[0];
+                    const isPastDate = date < today;
 
-                      const rawStatus = String(record?.status ?? "")
-                        .trim()
-                        .toLowerCase();
-                      const normalizedStatus =
-                        rawStatus === "casul" ? "casual" : rawStatus;
+                    const rawStatus = String(record?.status ?? "")
+                      .trim()
+                      .toLowerCase();
+                    const normalizedStatus =
+                      rawStatus === "casul" ? "casual" : rawStatus;
 
-                      const leaveStatuses = ["earned", "casual", "medical"];
-                      const isLeaveStatus =
-                        leaveStatuses.includes(normalizedStatus);
+                    const leaveStatuses = ["earned", "casual", "medical"];
+                    const isLeaveStatus =
+                      leaveStatuses.includes(normalizedStatus);
 
-                      const finalStatus =
-                        !record && isPastDate
-                          ? "absent"
-                          : normalizedStatus || record?.status;
+                    const finalStatus = record?.status
+                      ? normalizedStatus
+                      : isPastDate
+                      ? "absent"
+                      : "--";
 
-                      const badgeClasses: Record<string, string> = {
-                        earned:
-                          "bg-[#d087002e] text-[#c1830c] p-1 rounded-full",
-                        casual:
-                          "bg-[#d92d202e] text-[#f96c62] p-1 rounded-full",
-                        medical:
-                          "bg-[#d087002e] text-[#c1830c] p-1 rounded-full",
-                        absent:
-                          "bg-[#ff00002e] text-[#ff5b5b] p-1 rounded-full",
-                        default:
-                          "bg-[#d087002e] text-[#c1830c] p-1 rounded-full",
-                      };
+                    const badgeClasses: Record<string, string> = {
+                      earned: "bg-[#d087002e] text-[#c1830c] p-1 rounded-full",
+                      casual: "bg-[#d92d202e] text-[#f96c62] p-1 rounded-full",
+                      medical: "bg-[#d087002e] text-[#c1830c] p-1 rounded-full",
+                      absent: "bg-[#ff00002e] text-[#ff5b5b] p-1 rounded-full",
+                      default: "bg-[#d087002e] text-[#c1830c] p-1 rounded-full",
+                    };
 
-                      const badgeClass =
-                        badgeClasses[finalStatus] ?? badgeClasses.default;
+                    const badgeClass =
+                      badgeClasses[finalStatus] ?? badgeClasses.default;
 
-                      return (
-                        <tr
-                          key={date}
-                          className="border-b border-gray-600 w-full flex items-center justify-between"
-                        >
-                          <td className="p-4 items-center w-40">
-                            {new Date(date).toLocaleDateString("en-GB")}
-                          </td>
+                    return (
+                      <tr
+                        key={date}
+                        className="border-b border-gray-600 w-full flex items-center justify-between"
+                      >
+                        <td className="p-4 items-center w-40">
+                          {new Date(date).toLocaleDateString("en-GB")}
+                        </td>
 
-                          {isLeaveStatus || finalStatus === "absent" ? (
-                            <>
-                              <td className="p-4 flex-1 flex items-start justify-start">
-                                <div
-                                  className={`flex w-20 items-center justify-center font-semibold ${badgeClass}`}
-                                  title={
-                                    finalStatus.charAt(0).toUpperCase() +
-                                    finalStatus.slice(1)
-                                  }
-                                >
-                                  <span className="text-[12px]">
-                                    {finalStatus.charAt(0).toUpperCase() +
-                                      finalStatus.slice(1)}
-                                  </span>
-                                </div>
-                              </td>
-
-                              <td
-                                className="p-4 items-center flex justify-center w-12 cursor-pointer"
-                                onClick={() => {
-                                  setDelAnimation(true);
-                                  setOpen(true);
-                                  setEditData({
-                                    userId: id,
-                                    id: record?.id || "",
-                                    checkIn: record?.checkIn || "",
-                                    checkOut: record?.checkOut || "",
-                                    remarks: record?.remarks || "",
-                                    leaveTypeName:
-                                      record?.status || finalStatus,
-                                    date: dayjs(date).format("DD-MM-YYYY"),
-                                  });
-                                  setEditFormErrors({
-                                    leaveTypeName: "",
-                                    checkIn: "",
-                                    checkOut: "",
-                                    remarks: "",
-                                  });
-                                }}
+                        {isLeaveStatus || finalStatus === "absent" ? (
+                          <>
+                            <td className="p-4 flex-1 flex items-start justify-start">
+                              <div
+                                className={`flex w-20 items-center justify-center font-semibold ${badgeClass}`}
+                                title={
+                                  finalStatus.charAt(0).toUpperCase() +
+                                  finalStatus.slice(1)
+                                }
                               >
-                                <PiPencilSimpleLineFill className="text-blue-700" />
-                              </td>
-                            </>
-                          ) : (
-                            <>
-                              <td className="p-4 text-center w-28">
-                                <div
-                                  className={
-                                    record?.status?.trim()
-                                      ? "text-center bg-[#00a3522e] text-[#49d08c] p-1 rounded-full"
-                                      : "text-center text-gray-400 p-1"
-                                  }
-                                >
-                                  {record?.status?.trim()
-                                    ? record.status.charAt(0).toUpperCase() +
-                                      record.status.slice(1)
-                                    : "--"}
-                                </div>
-                              </td>
+                                <span className="text-[12px]">
+                                  {finalStatus.charAt(0).toUpperCase() +
+                                    finalStatus.slice(1)}
+                                </span>
+                              </div>
+                            </td>
 
-                              <td className="p-4 text-center w-28">
-                                {record?.checkIn || "--"}
-                              </td>
-
-                              <td className="p-4 text-center w-28">
-                                {record?.checkOut || "--"}
-                              </td>
-
-                              <td className="p-4 text-center w-28">
-                                {record?.duration || "--"}
-                              </td>
-
-                              <td className="p-4 text-center flex-1">
-                                {record?.remarks || "--"}
-                              </td>
-
-                              <td className="p-4 text-center flex-1">
-                                {record?.clientInfo
-                                  ? JSON.parse(record.clientInfo).ip || "--"
+                            <td
+                              className="p-4 items-center flex justify-center w-12 cursor-pointer"
+                              onClick={() => {
+                                setDelAnimation(true);
+                                setOpen(true);
+                                setEditData({
+                                  userId: id,
+                                  id: record?.id || "",
+                                  checkIn: record?.checkIn || "",
+                                  checkOut: record?.checkOut || "",
+                                  remarks: record?.remarks || "",
+                                  leaveTypeName: record?.status || finalStatus,
+                                  date: dayjs(date).format("DD-MM-YYYY"),
+                                });
+                                setEditFormErrors({
+                                  leaveTypeName: "",
+                                  checkIn: "",
+                                  checkOut: "",
+                                  remarks: "",
+                                });
+                              }}
+                            >
+                              <PiPencilSimpleLineFill className="text-blue-700" />
+                            </td>
+                          </>
+                        ) : (
+                          <>
+                            <td className="p-4 text-center w-28">
+                              <div
+                                className={
+                                  record?.status?.trim()
+                                    ? "text-center bg-[#00a3522e] text-[#49d08c] p-1 rounded-full"
+                                    : "text-center text-gray-400 p-1"
+                                }
+                              >
+                                {record?.status?.trim()
+                                  ? record.status.charAt(0).toUpperCase() +
+                                    record.status.slice(1)
                                   : "--"}
-                              </td>
+                              </div>
+                            </td>
 
-                              <td
-                                className="p-4 text-center flex justify-center w-12 cursor-pointer"
-                                onClick={() => {
-                                  setDelAnimation(true);
-                                  setOpen(true);
-                                  setEditData({
-                                    userId: id,
-                                    id: record?.id || "",
-                                    checkIn: record?.checkIn || "",
-                                    checkOut: record?.checkOut || "",
-                                    remarks: record?.remarks || "",
-                                    leaveTypeName: record?.status || "",
-                                    date: dayjs(date).format("DD-MM-YYYY"),
-                                  });
-                                  setEditFormErrors({
-                                    leaveTypeName: "",
-                                    checkIn: "",
-                                    checkOut: "",
-                                    remarks: "",
-                                  });
-                                }}
-                              >
-                                <PiPencilSimpleLineFill className="text-blue-700" />
-                              </td>
-                            </>
-                          )}
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              )}
+                            <td className="p-4 text-center w-28">
+                              {record?.checkIn || "--"}
+                            </td>
+
+                            <td className="p-4 text-center w-28">
+                              {record?.checkOut || "--"}
+                            </td>
+
+                            <td className="p-4 text-center w-28">
+                              {record?.duration || "--"}
+                            </td>
+
+                            <td className="p-4 text-center flex-1">
+                              {record?.remarks || "--"}
+                            </td>
+
+                            <td className="p-4 text-center flex-1">
+                              {record?.clientInfo
+                                ? JSON.parse(record.clientInfo).ip || "--"
+                                : "--"}
+                            </td>
+
+                            <td
+                              className="p-4 text-center flex justify-center w-12 cursor-pointer"
+                              onClick={() => {
+                                setDelAnimation(true);
+                                setOpen(true);
+                                setEditData({
+                                  userId: id,
+                                  id: record?.id || "",
+                                  checkIn: record?.checkIn || "",
+                                  checkOut: record?.checkOut || "",
+                                  remarks: record?.remarks || "",
+                                  leaveTypeName: record?.status || "",
+                                  date: dayjs(date).format("DD-MM-YYYY"),
+                                });
+                                setEditFormErrors({
+                                  leaveTypeName: "",
+                                  checkIn: "",
+                                  checkOut: "",
+                                  remarks: "",
+                                });
+                              }}
+                            >
+                              <PiPencilSimpleLineFill className="text-blue-700" />
+                            </td>
+                          </>
+                        )}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
           </section>
         </div>
