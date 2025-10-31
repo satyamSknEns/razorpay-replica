@@ -14,7 +14,6 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import ManageHistoryIcon from "@mui/icons-material/ManageHistory";
 import RecentActorsIcon from "@mui/icons-material/RecentActors";
-// import LogoutIcon from "@mui/icons-material/Logout";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import CloseButton from "../components/CloseButton";
 import CustomButton from "../components/CustomButton";
@@ -736,7 +735,6 @@ const Employees = () => {
                     <td className="p-2 border border-gray-700 text-center">
                       <span
                         className="bg-blue-600 pb-2.5 pt-1 px-2 rounded cursor-pointer"
-                        // onClick={() => router.push(`/teams/${emp.id}`)}
                         onClick={() => handleOpenEmployeeDetails(emp.id)}
                       >
                         <RecentActorsIcon />

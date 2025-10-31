@@ -103,10 +103,8 @@ const EmployeeDetail = () => {
   const [leaveTypes, setLeaveTypes] = useState<LeaveItem[]>([]);
   const [delAnimation, setDelAnimation] = useState<boolean>(true);
   const [open, setOpen] = useState(false);
-  // const [animation, setAnimation] = useState<boolean>(true);
   const [deleteReq, setDeleteReq] = useState(false);
   const [visible, setVisible] = useState(false);
-  // const [applyAnimation, setApplyAnimation] = useState<boolean>(true);
   const [selectedMonth, setSelectedMonth] = useState(dayjs());
   const [editData, setEditData] = useState({
     userId: id,
@@ -161,11 +159,6 @@ const EmployeeDetail = () => {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        // data: {
-        //   // managerId: 5,
-        //   from: "2025-08-13",
-        //   to: "2025-09-11",
-        // },
         data: {
           userId: id,
         },
@@ -591,7 +584,6 @@ const EmployeeDetail = () => {
     const checked = e.target.checked;
     setSelectAll(checked);
     if (checked) {
-      // select all IDs
       const allIds = requestList?.pending?.map((item: any) => item.id) || [];
       setSelectedIds(allIds);
     } else {
@@ -770,11 +762,6 @@ const EmployeeDetail = () => {
                     const isLeaveStatus =
                       leaveStatuses.includes(normalizedStatus);
 
-                    // const finalStatus =
-                    //   !record && isPastDate
-                    //     ? "absent"
-                    //     : normalizedStatus || record?.status;
-
                     const finalStatus = record?.status
                       ? normalizedStatus
                       : isPastDate
@@ -913,7 +900,6 @@ const EmployeeDetail = () => {
                   })}
                 </tbody>
               </table>
-              {/* )} */}
             </div>
           </section>
         </div>
