@@ -1035,45 +1035,47 @@ const PayslipPage = () => {
     URL.revokeObjectURL(url);
   };
 
-
-const downloadPDF = async () => {
-  try {
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/users/generate-pdf`,
-      {}, 
-      {
-        responseType: 'blob',
-        headers: {
-          'Accept': 'application/pdf'
+  const downloadPDF = async () => {
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/users/generate-pdf`,
+        {},
+        {
+          responseType: "blob",
+          headers: {
+            Accept: "application/pdf",
+          },
         }
+      );
+
+      if (!response.data || response.data.size === 0) {
+        throw new Error("Received empty PDF data");
       }
-    );
 
-    if (!response.data || response.data.size === 0) {
-      throw new Error("Received empty PDF data");
+      const blob = new Blob([response.data], { type: "application/pdf" });
+      const blobUrl = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = "generated.pdf";
+      window.open(link.href, "_blank");
+
+      document.body.appendChild(link);
+      link.click();
+
+      setTimeout(() => {
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(blobUrl);
+      }, 100);
+    } catch (error) {
+      console.error("Download failed:", error);
+      alert(
+        `Failed to download PDF: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
     }
-
-    const blob = new Blob([response.data], { type: 'application/pdf' });
-    const blobUrl = window.URL.createObjectURL(blob);
-
-    const link = document.createElement('a');
-    link.href = blobUrl;
-    link.download = 'generated.pdf';
-    window.open(link.href, '_blank');
-    
-    document.body.appendChild(link);
-    link.click();
-
-    setTimeout(() => {
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(blobUrl);
-    }, 100);
-  } catch (error) {
-    console.error("Download failed:", error);
-    alert(`Failed to download PDF: ${error instanceof Error ? error.message : 'Unknown error'}`);
-  }
-};
-
+  };
 
   return (
     <div className="p-6">
@@ -1089,7 +1091,12 @@ const downloadPDF = async () => {
       >
         Download Payslip
       </button>
-      <button onClick={downloadPDF} className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 cursor-pointer ms-5">Download PDF</button>
+      <button
+        onClick={downloadPDF}
+        className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 cursor-pointer ms-5"
+      >
+        Download PDF
+      </button>
     </div>
   );
 };
