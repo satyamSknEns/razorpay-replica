@@ -607,7 +607,7 @@ const Employees = () => {
           required
         />
         <CustomButton
-          text="Add to Team"
+          text="Add employee"
           onClick={() => setOpenRegesterPopup(true)}
           color="bg-blue-500"
         />
