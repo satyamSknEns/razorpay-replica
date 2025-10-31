@@ -131,7 +131,7 @@ const Managers = () => {
           Authorization: `Bearer ${token}`,
         },
         data: {
-          userId: selectedEmployees[0],
+          userIds: selectedEmployees,
           managerId: currentManagerId,
         },
       };
