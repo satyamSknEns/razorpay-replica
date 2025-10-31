@@ -565,6 +565,34 @@ const Employees = () => {
     }
   };
 
+  const handleOpenEmployeeDetails = async (id: number) => {
+    try {
+      const updateRequest: AxiosRequestConfig = {
+        url: `${process.env.NEXT_PUBLIC_API_URL}/users/getUserProfile`,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        data: { id },
+      };
+      const employeeData = await axios.request(updateRequest);
+
+      if (employeeData.status === 200) {
+        const currentDetails = employeeData?.data?.profile;
+        const details = currentDetails.department;
+
+        if (!details) {
+          toast.error("Add details before open the Attendence Details");
+          return;
+        }
+      }
+      router.push(`/teams/${id}`);
+    } catch (error) {
+      console.error("There was some problem to show the details", error);
+    }
+  };
+
   return (
     <div className="lg:px-4 md:px-4 sm:px-2 px-2 text-white">
       <ToastContainer position="top-right" autoClose={3000} />
@@ -708,7 +736,8 @@ const Employees = () => {
                     <td className="p-2 border border-gray-700 text-center">
                       <span
                         className="bg-blue-600 pb-2.5 pt-1 px-2 rounded cursor-pointer"
-                        onClick={() => router.push(`/teams/${emp.id}`)}
+                        // onClick={() => router.push(`/teams/${emp.id}`)}
+                        onClick={() => handleOpenEmployeeDetails(emp.id)}
                       >
                         <RecentActorsIcon />
                       </span>

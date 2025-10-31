@@ -6,6 +6,7 @@ import CloseButton from "../components/CloseButton";
 import CustomButton from "../components/CustomButton";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 interface Employee {
   user: {
@@ -150,6 +151,33 @@ const Managers = () => {
     }
   };
 
+  const handelDeleteEmployee = async (id: number) => {
+    console.log("there is id", id);
+    try {
+      const deleteEmployeeFromManager: AxiosRequestConfig = {
+        url: `${process.env.NEXT_PUBLIC_API_URL}/users/DeleteEmployeeFromManager`,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        data: {
+          userId: id,
+        },
+      };
+
+      const res = await axios.request(deleteEmployeeFromManager);
+      if (res.status === 200) {
+        toast.success("Employee added to the team!");
+      } else {
+        alert("Failed to add employees: " + res.data.message);
+      }
+    } catch (err) {
+      console.error("Error assigning employees:", err);
+    } finally {
+    }
+  };
+
   return (
     <div className="lg:px-4 md:px-6 sm:px-2 px-2">
       <ToastContainer position="top-right" autoClose={3000} />
@@ -233,6 +261,9 @@ const Managers = () => {
                         Email
                       </th>
                       <th className="px-4 py-2 border border-gray-600">Role</th>
+                      <th className="px-4 py-2 border border-gray-600">
+                        Remove
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -253,6 +284,14 @@ const Managers = () => {
                           </td>
                           <td className="px-4 py-2 border border-gray-600">
                             {emp.user.role}
+                          </td>
+                          <td className="px-4 py-2 border border-gray-600 text-center">
+                            <span
+                              className="bg-red-500 pb-1.5 px-1 rounded cursor-pointer"
+                              onClick={() => handelDeleteEmployee(emp.user.id)}
+                            >
+                              <DeleteIcon fontSize="small" />
+                            </span>
                           </td>
                         </tr>
                       ))
