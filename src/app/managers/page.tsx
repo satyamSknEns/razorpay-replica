@@ -154,7 +154,6 @@ const Managers = () => {
   };
 
   const handelRemoveEmployee = async (id: number) => {
-    console.log("there is id", id);
     try {
       const deleteEmployeeFromManager: AxiosRequestConfig = {
         url: `${process.env.NEXT_PUBLIC_API_URL}/users/DeleteEmployeeFromManager`,
@@ -169,8 +168,14 @@ const Managers = () => {
       };
 
       const res = await axios.request(deleteEmployeeFromManager);
+
       if (res.status === 200) {
         toast.success("Employee added to the team!");
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+        setManagerDetails(false);
+        setConfirmRemovepopup(false);
       } else {
         alert("Failed to add employees: " + res.data.message);
       }
@@ -245,7 +250,7 @@ const Managers = () => {
             className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-3 mx-4 animate-scale-up-center min-h-[220px] overflow-auto"
           >
             <div className="flex justify-between w-full items-center pb-5 border-b-2 border-gray-600 my-2">
-              <h3 className="text-2xl font-semibold">Manager Detalis</h3>
+              <h3 className="text-2xl font-semibold">Manager’s Team</h3>
               <CloseButton onClose={() => setManagerDetails(false)} />
             </div>
             <div className="overflow-x-auto mt-4 rounded">
@@ -293,6 +298,7 @@ const Managers = () => {
                               onClick={() => {
                                 setRemoveEmployee(emp.user.id);
                                 setConfirmRemovepopup(true);
+                                setManagerDetails(false);
                               }}
                             >
                               <DeleteIcon fontSize="small" />
