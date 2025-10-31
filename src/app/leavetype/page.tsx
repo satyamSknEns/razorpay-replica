@@ -185,9 +185,7 @@ const LeaveType = () => {
           <thead className="bg-gray-700 uppercase text-sm">
             <tr>
               <th className="px-4 py-2 border border-gray-600">id</th>
-              <th className="px-4 py-2 border border-gray-600 text-center">
-                Leave Name
-              </th>
+              <th className="px-4 py-2 border border-gray-600">Leave Name</th>
               <th className="px-4 py-2 border border-gray-600 text-center">
                 Delete
               </th>
@@ -201,7 +199,7 @@ const LeaveType = () => {
                   <td className="px-4 py-2 border border-gray-600">
                     {index + 1}
                   </td>
-                  <td className="px-4 py-2 capitalize text-center border border-gray-600">
+                  <td className="px-4 py-2 capitalize border border-gray-600">
                     {item.name}
                   </td>
                   <td className="px-4 py-2 text-center border border-gray-600">
