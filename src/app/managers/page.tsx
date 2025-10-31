@@ -29,6 +29,8 @@ const Managers = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loadingTeam, setLoadingTeam] = useState(false);
+  const [confirmRemovepopup, setConfirmRemovepopup] = useState(false);
+  const [removeEmployee, setRemoveEmployee] = useState<number>();
 
   const fetchAllManagers = async () => {
     try {
@@ -151,7 +153,7 @@ const Managers = () => {
     }
   };
 
-  const handelDeleteEmployee = async (id: number) => {
+  const handelRemoveEmployee = async (id: number) => {
     console.log("there is id", id);
     try {
       const deleteEmployeeFromManager: AxiosRequestConfig = {
@@ -288,7 +290,10 @@ const Managers = () => {
                           <td className="px-4 py-2 border border-gray-600 text-center">
                             <span
                               className="bg-red-500 pb-1.5 px-1 rounded cursor-pointer"
-                              onClick={() => handelDeleteEmployee(emp.user.id)}
+                              onClick={() => {
+                                setRemoveEmployee(emp.user.id);
+                                setConfirmRemovepopup(true);
+                              }}
                             >
                               <DeleteIcon fontSize="small" />
                             </span>
@@ -422,6 +427,45 @@ const Managers = () => {
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {confirmRemovepopup && (
+        <div
+          onClick={() => setConfirmRemovepopup(false)}
+          className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-4 mx-4 animate-scale-up-center min-h-[150px] overflow-auto"
+          >
+            <div className="flex justify-between w-full items-center pb-5 border-b-2 border-gray-600 mt-2">
+              <h3 className="text-2xl font-semibold">Remove Employee</h3>
+              <CloseButton onClose={() => setConfirmRemovepopup(false)} />
+            </div>
+
+            <div>
+              <h4 className="text-md border-b border-gray-500 py-5">
+                Are you sure you want to unassign this employee from the list.
+              </h4>
+              <div className="flex gap-3 my-3 justify-end">
+                <CustomButton
+                  text="Yes"
+                  onClick={() => {
+                    if (removeEmployee !== undefined) {
+                      handelRemoveEmployee(removeEmployee);
+                    }
+                  }}
+                  color="bg-red-500"
+                />
+                <CustomButton
+                  text="No"
+                  onClick={() => setConfirmRemovepopup(false)}
+                  color="bg-blue-500"
+                />
+              </div>
+            </div>
           </div>
         </div>
       )}
