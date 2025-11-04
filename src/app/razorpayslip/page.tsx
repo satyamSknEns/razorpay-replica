@@ -36,6 +36,9 @@ interface profile {
 
 interface grossSalary {
   grossSalary?: number;
+  loanDeduction?: number;
+  netSalary?: number;
+  totalDeductions?: number;
 }
 
 const PayslipDocument = () => {
@@ -162,9 +165,23 @@ const PayslipDocument = () => {
             </Text>
           </View>
 
-          <Text style={{ fontSize: 9, fontWeight: "semibold", color: "#000" }}>
-            Payslip: May 2025
-          </Text>
+          <View
+            style={{
+              fontSize: 9,
+              fontWeight: "semibold",
+              color: "#000",
+              display: "flex",
+              flexDirection: "row",
+            }}
+          >
+            <Text>Payslip : </Text>
+            <Text>
+              {new Date().toLocaleString("default", {
+                month: "long",
+                year: "numeric",
+              })}
+            </Text>
+          </View>
         </View>
 
         <View
@@ -193,7 +210,7 @@ const PayslipDocument = () => {
                 fontWeight: "semibold",
               }}
             >
-              0
+              {salaryData.netSalary}
             </Text>
           </View>
           <View style={{ margin: "0 12px" }}>
@@ -224,7 +241,7 @@ const PayslipDocument = () => {
                 fontSize: "11px",
               }}
             >
-              + 0
+              + {salaryData.grossSalary}
             </Text>
           </View>
           <View
@@ -251,7 +268,7 @@ const PayslipDocument = () => {
                 fontSize: "11px",
               }}
             >
-              - 0
+              - {salaryData.totalDeductions}
             </Text>
           </View>
         </View>
@@ -526,7 +543,9 @@ const PayslipDocument = () => {
                 Total Deductions
               </Text>
               <Text style={{ flex: 1, textAlign: "center" }}></Text>
-              <Text style={{ flex: 1, textAlign: "right" }}>5000</Text>
+              <Text style={{ flex: 1, textAlign: "right" }}>
+                {salaryData.totalDeductions}
+              </Text>
             </View>
           </View>
         </View>
