@@ -792,7 +792,7 @@ const PayslipDocument = () => {
               }}
             >
               <Text>Present Days : </Text>
-              <Text> 30 days</Text>
+              <Text> 31 days</Text>
             </View>
             <View
               style={{
@@ -802,7 +802,7 @@ const PayslipDocument = () => {
               }}
             >
               <Text>Total Days : </Text>
-              <Text>30 days</Text>
+              <Text>31 days</Text>
             </View>
             <View
               style={{
@@ -812,7 +812,7 @@ const PayslipDocument = () => {
               }}
             >
               <Text>Absent Days : </Text>
-              <Text> 15</Text>
+              <Text> 00 days</Text>
             </View>
             <View
               style={{
@@ -1212,6 +1212,7 @@ const PayslipDocument = () => {
                 fontSize: "12px",
                 borderLeft: "3px solid #a77500",
                 paddingLeft: "10px",
+                fontWeight: "semibold",
               }}
             >
               Tax for May 2025
@@ -1258,7 +1259,6 @@ const PayslipDocument = () => {
                 style={{
                   flex: 2,
                   textAlign: "left",
-                  fontWeight: "semibold",
                 }}
               >
                 Tax to be deducted this month
@@ -1268,7 +1268,6 @@ const PayslipDocument = () => {
                 style={{
                   flex: 1,
                   textAlign: "right",
-                  fontWeight: "semibold",
                 }}
               >
                 0
