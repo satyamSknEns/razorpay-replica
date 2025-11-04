@@ -78,6 +78,23 @@ const Employees = () => {
     email: "",
     role: "",
   });
+  const [salaryStructure, setSalaryStructure] = useState({
+    basicSalary: "",
+    hra: "",
+    da: "",
+    conveyanceAllowance: "",
+    medicalAllowance: "",
+    specialAllowance: "",
+    bonus: "",
+    pfEmployee: "",
+    pfEmployer: "",
+    esiEmployee: "",
+    esiEmployer: "",
+    tds: "",
+    professionalTax: "",
+    loanDeduction: "",
+    otherDeductions: "",
+  });
 
   const [additionalDetails, setAdditionalDetails] = useState({
     details: "",
@@ -595,6 +612,50 @@ const Employees = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchSalaryStructure = async () => {
+      if (!openUserForSalary || !openSalaryStructure) return;
+
+      try {
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_URL}/users/getSalaryStructureByUserId`,
+          { userId: openUserForSalary },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (response?.data) {
+          setSalaryStructure({
+            basicSalary: response.data.basicSalary || "",
+            hra: response.data.hra || "",
+            da: response.data.da || "",
+            conveyanceAllowance: response.data.conveyanceAllowance || "",
+            medicalAllowance: response.data.medicalAllowance || "",
+            specialAllowance: response.data.specialAllowance || "",
+            bonus: response.data.bonus || "",
+            pfEmployee: response.data.pfEmployee || "",
+            pfEmployer: response.data.pfEmployer || "",
+            esiEmployee: response.data.esiEmployee || "",
+            esiEmployer: response.data.esiEmployer || "",
+            tds: response.data.tds || "",
+            professionalTax: response.data.professionalTax || "",
+            loanDeduction: response.data.loanDeduction || "",
+            otherDeductions: response.data.otherDeductions || "",
+          });
+        } else {
+          console.log("user data is not exist");
+        }
+      } catch (err) {
+        console.error("No existing salary structure found:", err);
+      }
+    };
+
+    fetchSalaryStructure();
+  }, [token, openUserForSalary, openSalaryStructure]);
+
   const handleSalaryStructure = async () => {
     try {
       setOpenSalaryStructure(true);
@@ -605,11 +666,17 @@ const Employees = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        data: { openUserForSalary },
+        data: {
+          employeeId: openUserForSalary,
+          ...salaryStructure,
+          createdBy: "Admin",
+        },
       };
-      const salaryStructure = await axios.request(salaryRequest);
-      console.log("salaryStructure", salaryStructure);
+      await axios.request(salaryRequest);
+      setOpenSalaryStructure(false);
+      toast.success("Data is stored");
     } catch (error) {
+      toast.error("There was some error to store data");
       console.error(
         "There was some problem to submit the salary structure !",
         error
@@ -1176,10 +1243,15 @@ const Employees = () => {
                 </svg>
               </div>
 
-              <div className="flex justify-end">
+              <div className="flex justify-end mt-4 gap-3">
+                <CustomButton
+                  text="Cancel"
+                  onClick={() => setUserUpdate(false)}
+                  color="border border-gray-600 hover:bg-red-500"
+                />
                 <button
                   type="submit"
-                  className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white mt-2"
+                  className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white"
                 >
                   Update
                 </button>
@@ -1309,10 +1381,15 @@ const Employees = () => {
                 </svg>
               </div>
 
-              <div className="flex justify-end">
+              <div className="flex justify-end gap-3 mt-4">
+                <CustomButton
+                  text="Cancel"
+                  onClick={() => setAdditionalDetals(false)}
+                  color="border border-gray-600 hover:bg-red-500"
+                />
                 <button
                   type="submit"
-                  className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white mt-2"
+                  className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white"
                 >
                   Update
                 </button>
@@ -1380,7 +1457,12 @@ const Employees = () => {
                 />
               </svg>
             </div>
-            <div className="flex justify-end">
+            <div className="flex justify-end gap-3">
+              <CustomButton
+                text="Cancel"
+                onClick={() => setAssignManager(false)}
+                color="border border-gray-600 hover:bg-red-500"
+              />
               <CustomButton
                 text="Update"
                 onClick={() => handleAssignManager(selectedEmployee)}
@@ -1491,7 +1573,12 @@ const Employees = () => {
                 required
               />
             </div>
-            <div className="flex justify-end">
+            <div className="flex justify-end gap-3">
+              <CustomButton
+                text="Cancel"
+                onClick={() => setAssignLeave(false)}
+                color="border border-gray-600 hover:bg-red-500"
+              />
               <CustomButton
                 text="Add"
                 onClick={() => handleAssignLeave(selectedEmployee.id)}
@@ -1548,14 +1635,262 @@ const Employees = () => {
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-4 mx-4 animate-scale-up-center min-h-[150px] overflow-auto"
+            className="bg-[#1C2431] text-white w-full max-w-lg rounded-xl p-4 mx-4 animate-scale-up-center min-h-[150px] max-h-[600px] overflow-auto"
           >
-            <div className="flex justify-between w-full items-center pb-5 border-b-2 border-gray-600 mt-2">
+            <div className="flex justify-between w-full items-center pb-3 border-b-2 border-gray-600 mt-2 mb-3">
               <h3 className="text-2xl font-semibold">Salary Structure</h3>
               <CloseButton onClose={() => setOpenSalaryStructure(false)} />
             </div>
 
-            <div className="flex justify-end">
+            <div className="mb-3 px-1">
+              <label className="block mb-1">Basic Salary</label>
+              <input
+                type="number"
+                value={salaryStructure.basicSalary}
+                placeholder="ex-7500"
+                onChange={(e) =>
+                  setSalaryStructure({
+                    ...salaryStructure,
+                    basicSalary: e.target.value,
+                  })
+                }
+                className="w-full p-2 rounded border border-gray-500 text-white"
+                required
+              />
+            </div>
+
+            <div className="mb-3 px-1">
+              <label className="block mb-1">HRA</label>
+              <input
+                type="number"
+                value={salaryStructure.hra}
+                placeholder="ex-1500"
+                onChange={(e) =>
+                  setSalaryStructure({
+                    ...salaryStructure,
+                    hra: e.target.value,
+                  })
+                }
+                className="w-full p-2 rounded border border-gray-500 text-white"
+                required
+              />
+            </div>
+            <div className="mb-3 px-1">
+              <label className="block mb-1">DA</label>
+              <input
+                type="number"
+                value={salaryStructure.da}
+                placeholder="ex.4"
+                onChange={(e) =>
+                  setSalaryStructure({ ...salaryStructure, da: e.target.value })
+                }
+                className="w-full p-2 rounded border border-gray-500 text-white"
+                required
+              />
+            </div>
+            <div className="mb-3 px-1">
+              <label className="block mb-1">Conveyance Allowance</label>
+              <input
+                type="number"
+                value={salaryStructure.conveyanceAllowance}
+                placeholder="ex.4"
+                onChange={(e) =>
+                  setSalaryStructure({
+                    ...salaryStructure,
+                    conveyanceAllowance: e.target.value,
+                  })
+                }
+                className="w-full p-2 rounded border border-gray-500 text-white"
+                required
+              />
+            </div>
+            <div className="mb-3 px-1">
+              <label className="block mb-1">Medical Allowance</label>
+              <input
+                type="number"
+                value={salaryStructure.medicalAllowance}
+                placeholder="ex.4"
+                onChange={(e) =>
+                  setSalaryStructure({
+                    ...salaryStructure,
+                    medicalAllowance: e.target.value,
+                  })
+                }
+                className="w-full p-2 rounded border border-gray-500 text-white"
+                required
+              />
+            </div>
+            <div className="mb-3 px-1">
+              <label className="block mb-1">Special Allowance</label>
+              <input
+                type="number"
+                value={salaryStructure.specialAllowance}
+                placeholder="ex.4"
+                onChange={(e) =>
+                  setSalaryStructure({
+                    ...salaryStructure,
+                    specialAllowance: e.target.value,
+                  })
+                }
+                className="w-full p-2 rounded border border-gray-500 text-white"
+                required
+              />
+            </div>
+
+            <div className="mb-3 px-1">
+              <label className="block mb-1">Bonus</label>
+              <input
+                type="number"
+                value={salaryStructure.bonus}
+                placeholder="ex.4"
+                onChange={(e) =>
+                  setSalaryStructure({
+                    ...salaryStructure,
+                    bonus: e.target.value,
+                  })
+                }
+                className="w-full p-2 rounded border border-gray-500 text-white"
+                required
+              />
+            </div>
+
+            <div className="mb-3 px-1">
+              <label className="block mb-1">PF Employee</label>
+              <input
+                type="number"
+                value={salaryStructure.pfEmployee}
+                placeholder="ex.4"
+                onChange={(e) =>
+                  setSalaryStructure({
+                    ...salaryStructure,
+                    pfEmployee: e.target.value,
+                  })
+                }
+                className="w-full p-2 rounded border border-gray-500 text-white"
+                required
+              />
+            </div>
+
+            <div className="mb-3 px-1">
+              <label className="block mb-1">PF Employer</label>
+              <input
+                type="number"
+                value={salaryStructure.pfEmployer}
+                placeholder="ex.4"
+                onChange={(e) =>
+                  setSalaryStructure({
+                    ...salaryStructure,
+                    pfEmployer: e.target.value,
+                  })
+                }
+                className="w-full p-2 rounded border border-gray-500 text-white"
+                required
+              />
+            </div>
+            <div className="mb-3 px-1">
+              <label className="block mb-1">ESI Employee</label>
+              <input
+                type="number"
+                value={salaryStructure.esiEmployee}
+                placeholder="ex.4"
+                onChange={(e) =>
+                  setSalaryStructure({
+                    ...salaryStructure,
+                    esiEmployee: e.target.value,
+                  })
+                }
+                className="w-full p-2 rounded border border-gray-500 text-white"
+                required
+              />
+            </div>
+
+            <div className="mb-3 px-1">
+              <label className="block mb-1">ESI Employer</label>
+              <input
+                type="number"
+                value={salaryStructure.esiEmployer}
+                placeholder="ex.4"
+                onChange={(e) =>
+                  setSalaryStructure({
+                    ...salaryStructure,
+                    esiEmployer: e.target.value,
+                  })
+                }
+                className="w-full p-2 rounded border border-gray-500 text-white"
+                required
+              />
+            </div>
+            <div className="mb-3 px-1">
+              <label className="block mb-1">TDS</label>
+              <input
+                type="number"
+                value={salaryStructure.tds}
+                placeholder="ex.4"
+                onChange={(e) =>
+                  setSalaryStructure({
+                    ...salaryStructure,
+                    tds: e.target.value,
+                  })
+                }
+                className="w-full p-2 rounded border border-gray-500 text-white"
+                required
+              />
+            </div>
+            <div className="mb-3 px-1">
+              <label className="block mb-1">Professional Tax</label>
+              <input
+                type="number"
+                value={salaryStructure.professionalTax}
+                placeholder="ex.4"
+                onChange={(e) =>
+                  setSalaryStructure({
+                    ...salaryStructure,
+                    professionalTax: e.target.value,
+                  })
+                }
+                className="w-full p-2 rounded border border-gray-500 text-white"
+                required
+              />
+            </div>
+            <div className="mb-3 px-1">
+              <label className="block mb-1">Loan Deduction</label>
+              <input
+                type="number"
+                value={salaryStructure.loanDeduction}
+                placeholder="ex.4"
+                onChange={(e) =>
+                  setSalaryStructure({
+                    ...salaryStructure,
+                    loanDeduction: e.target.value,
+                  })
+                }
+                className="w-full p-2 rounded border border-gray-500 text-white"
+                required
+              />
+            </div>
+            <div className="mb-5 px-1">
+              <label className="block mb-1">Other Deductions</label>
+              <input
+                type="number"
+                value={salaryStructure.otherDeductions}
+                placeholder="ex.4"
+                onChange={(e) =>
+                  setSalaryStructure({
+                    ...salaryStructure,
+                    otherDeductions: e.target.value,
+                  })
+                }
+                className="w-full p-2 rounded border border-gray-500 text-white"
+                required
+              />
+            </div>
+
+            <div className="flex justify-end gap-3">
+              <CustomButton
+                text="Cancel"
+                onClick={() => setOpenSalaryStructure(false)}
+                color="border border-gray-600 hover:bg-red-500"
+              />
               <CustomButton
                 text="Submit"
                 onClick={() => handleSalaryStructure()}
