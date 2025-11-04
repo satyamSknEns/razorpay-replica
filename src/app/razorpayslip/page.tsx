@@ -34,18 +34,11 @@ interface profile {
   };
 }
 
-interface grossSalary {
-  grossSalary?: number;
-  loanDeduction?: number;
-  netSalary?: number;
-  totalDeductions?: number;
-}
-
 const PayslipDocument = () => {
   const [data, setData] = useState<profile>({});
   const [token, setToken] = useState<string | null>(null);
   const [userDegignation, setUserDegignation] = useState();
-  const [salaryData, setSalaryData] = useState<grossSalary>({});
+  const [salaryData, setSalaryData] = useState<any>({});
   const cookies = useCookies();
 
   useEffect(() => {
@@ -116,18 +109,19 @@ const PayslipDocument = () => {
       <Page size="A4" style={{ padding: "0 20px" }}>
         <View
           style={{
-            backgroundColor: "#80b0f84a",
+            backgroundColor: "#e8d8c3",
             padding: 5,
-            color: "#737373",
+            color: "#2e2e2f",
             flexDirection: "row",
             justifyContent: "center",
             alignItems: "center",
-            margin: "8px 0",
+            margin: "2px 0",
+            borderRadius: "2px",
           }}
         >
           <VisibilityIcon />
           <Text style={{ fontSize: 11 }}>
-            You are viewing the preview version of this payslip
+            You are viewing your detailed salary breakdown for this month.
           </Text>
         </View>
 
@@ -136,7 +130,7 @@ const PayslipDocument = () => {
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "space-between",
-            padding: "12px 0",
+            padding: "10px 0",
           }}
         >
           <View
@@ -189,7 +183,7 @@ const PayslipDocument = () => {
             display: "flex",
             flexDirection: "row",
             justifyContent: "center",
-            padding: "16px 0",
+            padding: "8px 0",
           }}
         >
           <View style={{ margin: "0 12px" }}>
@@ -210,7 +204,7 @@ const PayslipDocument = () => {
                 fontWeight: "semibold",
               }}
             >
-              {salaryData.netSalary}
+              {salaryData.netSalary || "NA"}
             </Text>
           </View>
           <View style={{ margin: "0 12px" }}>
@@ -241,7 +235,7 @@ const PayslipDocument = () => {
                 fontSize: "11px",
               }}
             >
-              + {salaryData.grossSalary}
+              + {salaryData.grossSalary || "NA"}
             </Text>
           </View>
           <View
@@ -268,27 +262,33 @@ const PayslipDocument = () => {
                 fontSize: "11px",
               }}
             >
-              - {salaryData.totalDeductions}
+              - {salaryData.totalDeductions || "NA"}
             </Text>
           </View>
         </View>
 
-        <View style={{ padding: "12px 0", fontSize: "10px" }}>
+        <View style={{ padding: "10px 0", fontSize: "10px" }}>
           <View
             style={{
               display: "flex",
               flexDirection: "row",
-              marginBottom: "8px",
+              marginBottom: "2px",
+              border: "1px solid #a4a4a5",
+              padding: "6px",
+              borderRadius: "2px",
             }}
           >
             <Text style={{ fontWeight: "semibold" }}>Employee Code : </Text>
-            <Text> ENS-0{data?.profile?.id}</Text>
+            <Text> ENS-0{data?.profile?.id || "NA"}</Text>
           </View>
           <View
             style={{
               display: "flex",
               flexDirection: "row",
-              marginBottom: "8px",
+              marginBottom: "2px",
+              border: "1px solid #a4a4a5",
+              padding: "6px",
+              borderRadius: "2px",
             }}
           >
             <Text style={{ fontWeight: "semibold" }}>Name : </Text>
@@ -299,56 +299,68 @@ const PayslipDocument = () => {
                     .split(" ")
                     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
                     .join(" ")
-                : ""}
+                : "NA"}
             </Text>
           </View>
           <View
             style={{
               display: "flex",
               flexDirection: "row",
-              marginBottom: "8px",
+              marginBottom: "2px",
+              border: "1px solid #a4a4a5",
+              padding: "6px",
+              borderRadius: "2px",
             }}
           >
             <Text style={{ fontWeight: "semibold" }}>Email : </Text>
-            <Text> {data?.profile?.email}</Text>
+            <Text> {data?.profile?.email || "NA"}</Text>
           </View>
           <View
             style={{
               display: "flex",
               flexDirection: "row",
-              marginBottom: "8px",
+              marginBottom: "2px",
+              border: "1px solid #a4a4a5",
+              padding: "6px",
+              borderRadius: "2px",
             }}
           >
             <Text style={{ fontWeight: "semibold" }}>Designation : </Text>
-            <Text>{userDegignation}</Text>
+            <Text>{userDegignation || "NA"}</Text>
           </View>
           <View
             style={{
               display: "flex",
               flexDirection: "row",
-              marginBottom: "8px",
+              marginBottom: "2px",
+              border: "1px solid #a4a4a5",
+              padding: "6px",
+              borderRadius: "2px",
             }}
           >
             <Text style={{ fontWeight: "semibold" }}>Department : </Text>
-            <Text>{data?.profile?.department}</Text>
+            <Text>{data?.profile?.department || "NA"}</Text>
           </View>
           <View
             style={{
               display: "flex",
               flexDirection: "row",
-              marginBottom: "8px",
+              marginBottom: "2px",
+              border: "1px solid #a4a4a5",
+              padding: "6px",
+              borderRadius: "2px",
             }}
           >
             <Text style={{ fontWeight: "semibold" }}>Date of Joining : </Text>
             <Text>
               {data?.profile?.joiningDate
                 ? new Date(data.profile.joiningDate).toLocaleDateString("en-GB")
-                : ""}
+                : "NA"}
             </Text>
           </View>
         </View>
 
-        <View style={{ padding: "12px 0" }}>
+        <View style={{ padding: "10px 0" }}>
           <View
             style={{
               display: "flex",
@@ -364,7 +376,7 @@ const PayslipDocument = () => {
                 paddingLeft: "10px",
               }}
             >
-              Gross Pay (A)
+              Salary Structure
             </Text>
             <Text
               style={{
@@ -382,7 +394,7 @@ const PayslipDocument = () => {
                 letterSpacing: "0.25px",
               }}
             >
-              The total money you earned before the deductions
+              Breakdown of your full salary components
             </Text>
           </View>
 
@@ -401,6 +413,7 @@ const PayslipDocument = () => {
                 paddingVertical: 6,
                 paddingHorizontal: 8,
                 width: "100%",
+                borderBottom: "2px solid #bbe4c8",
               }}
             >
               <Text
@@ -415,20 +428,11 @@ const PayslipDocument = () => {
               <Text
                 style={{
                   flex: 1,
-                  textAlign: "center",
-                  fontWeight: "semibold",
-                }}
-              >
-                Monthly
-              </Text>
-              <Text
-                style={{
-                  flex: 1,
                   textAlign: "right",
                   fontWeight: "semibold",
                 }}
               >
-                Total Amount
+                Earning
               </Text>
             </View>
             <View
@@ -439,16 +443,143 @@ const PayslipDocument = () => {
                 width: "100%",
               }}
             >
-              <Text style={{ flex: 2, textAlign: "left" }}>Gross Pay</Text>
-              <Text style={{ flex: 1, textAlign: "center" }}></Text>
+              <Text style={{ flex: 2, textAlign: "left" }}>Basic Salary</Text>
               <Text style={{ flex: 1, textAlign: "right" }}>
-                {salaryData?.grossSalary}
+                {salaryData?.basicSalary || "NA"}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                paddingVertical: 6,
+                paddingHorizontal: 8,
+                width: "100%",
+              }}
+            >
+              <Text style={{ flex: 2, textAlign: "left" }}>HRA</Text>
+              <Text style={{ flex: 1, textAlign: "right" }}>
+                {salaryData?.hra || "NA"}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                paddingVertical: 6,
+                paddingHorizontal: 8,
+                width: "100%",
+              }}
+            >
+              <Text style={{ flex: 2, textAlign: "left" }}>DA</Text>
+              <Text style={{ flex: 1, textAlign: "right" }}>
+                {salaryData?.da || "NA"}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                paddingVertical: 6,
+                paddingHorizontal: 8,
+                width: "100%",
+              }}
+            >
+              <Text style={{ flex: 2, textAlign: "left" }}>
+                Special Allowance
+              </Text>
+              <Text style={{ flex: 1, textAlign: "right" }}>
+                {salaryData?.specialAllowance || "NA"}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                paddingVertical: 6,
+                paddingHorizontal: 8,
+                width: "100%",
+              }}
+            >
+              <Text style={{ flex: 2, textAlign: "left" }}>
+                Conveyance Allowance
+              </Text>
+              <Text style={{ flex: 1, textAlign: "right" }}>
+                {salaryData?.conveyanceAllowance || "NA"}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                paddingVertical: 6,
+                paddingHorizontal: 8,
+                width: "100%",
+              }}
+            >
+              <Text style={{ flex: 2, textAlign: "left" }}>
+                Medical Allowance
+              </Text>
+              <Text style={{ flex: 1, textAlign: "right" }}>
+                {salaryData?.medicalAllowance || "NA"}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                paddingVertical: 6,
+                paddingHorizontal: 8,
+                width: "100%",
+              }}
+            >
+              <Text style={{ flex: 2, textAlign: "left" }}>Bonus</Text>
+              <Text style={{ flex: 1, textAlign: "right" }}>
+                {salaryData?.bonus || "NA"}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                paddingVertical: 6,
+                paddingHorizontal: 8,
+                width: "100%",
+                borderBottom: "2px solid #bbe4c8",
+              }}
+            >
+              <Text style={{ flex: 2, textAlign: "left" }}>OverTime</Text>
+              <Text style={{ flex: 1, textAlign: "right" }}>
+                {salaryData?.overtimePay || "NA"}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                paddingVertical: 6,
+                paddingHorizontal: 8,
+                width: "100%",
+                borderBottom: "2px solid #bbe4c8",
+              }}
+            >
+              <Text style={{ flex: 2, textAlign: "left" }}>Gross Salary</Text>
+              <Text style={{ flex: 1, textAlign: "right" }}>
+                {salaryData?.grossSalary || "NA"}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                paddingVertical: 6,
+                paddingHorizontal: 8,
+                width: "100%",
+                fontWeight: "semibold",
+              }}
+            >
+              <Text style={{ flex: 2, textAlign: "left" }}>
+                Net Take Home Pay
+              </Text>
+              <Text style={{ flex: 1, textAlign: "right" }}>
+                {salaryData?.netSalary || "NA"}
               </Text>
             </View>
           </View>
         </View>
 
-        <View style={{ padding: "12px 0" }}>
+        <View style={{ padding: "10px 0" }}>
           <View
             style={{
               display: "flex",
@@ -501,11 +632,12 @@ const PayslipDocument = () => {
                 paddingVertical: 6,
                 paddingHorizontal: 8,
                 width: "100%",
+                borderBottom: "2px solid #e4bfbf",
               }}
             >
               <Text
                 style={{
-                  flex: 2,
+                  flex: 1,
                   textAlign: "left",
                   fontWeight: "semibold",
                 }}
@@ -515,20 +647,53 @@ const PayslipDocument = () => {
               <Text
                 style={{
                   flex: 1,
-                  textAlign: "center",
-                  fontWeight: "semibold",
-                }}
-              >
-                Monthly
-              </Text>
-              <Text
-                style={{
-                  flex: 1,
                   textAlign: "right",
                   fontWeight: "semibold",
                 }}
               >
-                Total Amount
+                Amount
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                paddingVertical: 6,
+                paddingHorizontal: 8,
+                width: "100%",
+              }}
+            >
+              <Text style={{ flex: 2, textAlign: "left" }}>PF Employee</Text>
+
+              <Text style={{ flex: 1, textAlign: "right" }}>
+                {salaryData?.pfEmployee}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                paddingVertical: 6,
+                paddingHorizontal: 8,
+                width: "100%",
+              }}
+            >
+              <Text style={{ flex: 2, textAlign: "left" }}>ESI Employee</Text>
+
+              <Text style={{ flex: 1, textAlign: "right" }}>
+                {salaryData?.esiEmployee}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                paddingVertical: 6,
+                paddingHorizontal: 8,
+                width: "100%",
+              }}
+            >
+              <Text style={{ flex: 2, textAlign: "left" }}>TDS</Text>
+
+              <Text style={{ flex: 1, textAlign: "right" }}>
+                {salaryData?.tds}
               </Text>
             </View>
             <View
@@ -540,11 +705,59 @@ const PayslipDocument = () => {
               }}
             >
               <Text style={{ flex: 2, textAlign: "left" }}>
+                Professional Tax
+              </Text>
+
+              <Text style={{ flex: 1, textAlign: "right" }}>
+                {salaryData?.professionalTax || "NA"}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                paddingVertical: 6,
+                paddingHorizontal: 8,
+                width: "100%",
+              }}
+            >
+              <Text style={{ flex: 2, textAlign: "left" }}>Loan Deduction</Text>
+
+              <Text style={{ flex: 1, textAlign: "right" }}>
+                {salaryData?.loanDeduction || "NA"}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                paddingVertical: 6,
+                paddingHorizontal: 8,
+                width: "100%",
+                borderBottom: "2px solid #e4bfbf",
+              }}
+            >
+              <Text style={{ flex: 2, textAlign: "left" }}>
+                Other Deductions
+              </Text>
+
+              <Text style={{ flex: 1, textAlign: "right" }}>
+                {salaryData?.otherDeductions}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                paddingVertical: 6,
+                paddingHorizontal: 8,
+                width: "100%",
+                fontWeight: "semibold",
+              }}
+            >
+              <Text style={{ flex: 2, textAlign: "left" }}>
                 Total Deductions
               </Text>
-              <Text style={{ flex: 1, textAlign: "center" }}></Text>
+
               <Text style={{ flex: 1, textAlign: "right" }}>
-                {salaryData.totalDeductions}
+                {salaryData?.totalDeductions}
               </Text>
             </View>
           </View>
@@ -552,52 +765,69 @@ const PayslipDocument = () => {
 
         <View
           style={{
-            display: "flex",
-            flexDirection: "row",
             fontSize: "10px",
-            width: "100%",
-            justifyContent: "space-between",
-            padding: "12px 0",
+            padding: "12px",
+            marginTop: "16px",
+            border: "2px solid #a6a7ab",
+            borderRadius: "4px",
           }}
         >
-          <View style={{ width: "50%", marginLeft: "12px" }}>
+          <Text
+            style={{
+              fontWeight: "semibold",
+              fontSize: "12px",
+              marginBottom: "8px",
+              paddingBottom: "4px",
+              textDecoration: "underline",
+            }}
+          >
+            Attendance & Leave
+          </Text>
+          <View style={{ marginLeft: "12px" }}>
             <View
               style={{
                 display: "flex",
                 flexDirection: "row",
-                margin: "8px 0",
+                margin: "4px 0",
               }}
             >
-              <Text style={{ fontWeight: "semibold" }}>Payable Days : </Text>
+              <Text>Present Days : </Text>
               <Text> 30 days</Text>
             </View>
             <View
               style={{
                 display: "flex",
                 flexDirection: "row",
-                margin: "8px 0",
+                margin: "4px 0",
               }}
             >
-              <Text style={{ fontWeight: "semibold" }}>Regime Opted : </Text>
-              <Text>New Regime</Text>
+              <Text>Total Days : </Text>
+              <Text>30 days</Text>
             </View>
-          </View>
-
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              margin: "8px 0",
-              width: "50%",
-              marginLeft: "12px",
-            }}
-          >
-            <Text style={{ fontWeight: "semibold" }}>Leave Balance : </Text>
-            <Text> 15</Text>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                margin: "4px 0",
+              }}
+            >
+              <Text>Absent Days : </Text>
+              <Text> 15</Text>
+            </View>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                margin: "4px 0",
+              }}
+            >
+              <Text>Overtime Hours : </Text>
+              <Text>NA</Text>
+            </View>
           </View>
         </View>
 
-        <View style={{ padding: "12px 0" }}>
+        <View style={{ padding: "10px 0" }}>
           <View
             style={{
               display: "flex",
@@ -650,6 +880,7 @@ const PayslipDocument = () => {
                 paddingVertical: 6,
                 paddingHorizontal: 8,
                 width: "100%",
+                borderBottom: "2px solid #c1bcd9",
               }}
             >
               <Text
@@ -707,7 +938,7 @@ const PayslipDocument = () => {
           </View>
         </View>
 
-        <View style={{ padding: "12px 0" }}>
+        <View style={{ padding: "10px 0" }}>
           <View
             style={{
               display: "flex",
@@ -760,6 +991,7 @@ const PayslipDocument = () => {
                 paddingVertical: 6,
                 paddingHorizontal: 8,
                 width: "100%",
+                borderBottom: "2px solid #ddc4d2",
               }}
             >
               <Text
@@ -837,7 +1069,7 @@ const PayslipDocument = () => {
           </View>
         </View>
 
-        <View style={{ padding: "12px 0", marginTop: "20px" }}>
+        <View style={{ padding: "10px 0" }}>
           <View
             style={{
               display: "flex",
@@ -891,6 +1123,7 @@ const PayslipDocument = () => {
                 paddingVertical: 6,
                 paddingHorizontal: 8,
                 width: "100%",
+                borderBottom: "2px solid #c4d7d5",
               }}
             >
               <Text
@@ -966,7 +1199,7 @@ const PayslipDocument = () => {
           </View>
         </View>
 
-        <View style={{ padding: "12px 0" }}>
+        <View style={{ padding: "10px 0" }}>
           <View
             style={{
               display: "flex",
@@ -977,7 +1210,6 @@ const PayslipDocument = () => {
             <Text
               style={{
                 fontSize: "12px",
-                fontWeight: "semibold",
                 borderLeft: "3px solid #a77500",
                 paddingLeft: "10px",
               }}
@@ -1058,7 +1290,7 @@ const PayslipDocument = () => {
           </View>
         </View>
 
-        <View style={{ padding: "12px 0" }}>
+        <View style={{ padding: "10px 0" }}>
           <View
             style={{
               display: "flex",
