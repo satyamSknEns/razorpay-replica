@@ -400,11 +400,12 @@ const PayslipDocument = () => {
 
           <View
             style={{
-              width: "100%",
+              width: "98%",
+              margin: "10px 0 0 auto",
               fontSize: "10px",
-              margin: "10px 0 0px 10px",
               backgroundColor: "#eafbf0",
               borderRadius: "2px",
+              textAlign: "right",
             }}
           >
             <View
@@ -619,9 +620,9 @@ const PayslipDocument = () => {
 
           <View
             style={{
-              width: "100%",
+              width: "98%",
+              margin: "10px 0 0 auto",
               fontSize: "10px",
-              margin: "10px 0 0px 10px",
               backgroundColor: "#ffe3e3",
               borderRadius: "2px",
             }}
@@ -867,9 +868,9 @@ const PayslipDocument = () => {
 
           <View
             style={{
-              width: "100%",
+              width: "98%",
+              margin: "10px 0 0 auto",
               fontSize: "10px",
-              margin: "10px 0 0px 10px",
               backgroundColor: "#f0edff",
               borderRadius: "2px",
             }}
@@ -978,9 +979,9 @@ const PayslipDocument = () => {
 
           <View
             style={{
-              width: "100%",
+              width: "98%",
+              margin: "10px 0 0 auto",
               fontSize: "10px",
-              margin: "10px 0 0px 10px",
               backgroundColor: "#ffe8f5",
               borderRadius: "2px",
             }}
@@ -1110,9 +1111,9 @@ const PayslipDocument = () => {
 
           <View
             style={{
-              width: "100%",
+              width: "98%",
+              margin: "10px 0 0 auto",
               fontSize: "10px",
-              margin: "10px 0 0px 10px",
               backgroundColor: "#e5fffc",
               borderRadius: "2px",
             }}
@@ -1240,9 +1241,9 @@ const PayslipDocument = () => {
 
           <View
             style={{
-              width: "100%",
+              width: "98%",
+              margin: "10px 0 0 auto",
               fontSize: "10px",
-              margin: "10px 0 0px 10px",
               backgroundColor: "#fff9e9",
               borderRadius: "2px",
             }}
@@ -1329,10 +1330,10 @@ const PayslipDocument = () => {
 
           <View
             style={{
-              width: "100%",
+              width: "98%",
+              margin: "10px 0 0 auto",
               fontSize: "10px",
               backgroundColor: "#f5e8e3",
-              margin: "10px 0 4px 10px",
               borderRadius: "2px",
             }}
           >
@@ -1565,7 +1566,7 @@ const PayslipDocument = () => {
               </Text>
             </View>
           </View>
-          <Text style={{ fontSize: "10px" }}>
+          <Text style={{ fontSize: "10px", marginTop: "5px" }}>
             * These may change if there is a change in your income
           </Text>
         </View>
