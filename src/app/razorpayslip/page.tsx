@@ -45,9 +45,6 @@ const PayslipDocument: React.FC<PayslipDocumentProps> = ({ month, year }) => {
   const [userDegignation, setUserDegignation] = useState();
   const [salaryData, setSalaryData] = useState<any>({});
   const [monthlyLeave, setMonthlyLeave] = useState<any>({});
-  // const currentDate = new Date();
-  // const [month, setMonth] = useState(currentDate.getMonth() + 1);
-  // const [year, setYear] = useState(currentDate.getFullYear());
 
   useEffect(() => {
     if (!token) return;
