@@ -237,9 +237,9 @@ const Page = () => {
             <option value="" disabled>
               Select Role
             </option>
-            <option value="admin" className="bg-[#1C2431]">
+            {/* <option value="admin" className="bg-[#1C2431]">
               Admin
-            </option>
+            </option> */}
             <option value="manager" className="bg-[#1C2431]">
               Manager
             </option>
