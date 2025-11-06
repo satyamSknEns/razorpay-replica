@@ -77,7 +77,10 @@ const PayslipDocument: React.FC<PayslipDocumentProps> = ({ month, year }) => {
       }
     };
 
-    const handleSalaryStructure = async () => {
+    const handleSalaryStructure = async (
+      selectedMonth = month,
+      selectedYear = year
+    ) => {
       try {
         const config: AxiosRequestConfig = {
           url: `${process.env.NEXT_PUBLIC_API_URL}/users/getSalaryStructureByUserId`,
@@ -86,7 +89,10 @@ const PayslipDocument: React.FC<PayslipDocumentProps> = ({ month, year }) => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          data: {},
+          data: {
+            month: selectedMonth,
+            year: selectedYear,
+          },
         };
         const res = await axios.request(config);
         setSalaryData(res.data);
@@ -95,7 +101,10 @@ const PayslipDocument: React.FC<PayslipDocumentProps> = ({ month, year }) => {
       }
     };
 
-    const handleMonthlyLeave = async () => {
+    const handleMonthlyLeave = async (
+      selectedMonth = month,
+      selectedYear = year
+    ) => {
       try {
         const responseLeave: AxiosRequestConfig = {
           url: `${process.env.NEXT_PUBLIC_API_URL}/users/getMonthlyLeave`,
@@ -105,51 +114,23 @@ const PayslipDocument: React.FC<PayslipDocumentProps> = ({ month, year }) => {
             Authorization: `Bearer ${token}`,
           },
           data: {
-            month: 11,
-            year: 2025,
+            month: selectedMonth,
+            year: selectedYear,
           },
         };
+
         const res = await axios.request(responseLeave);
         setMonthlyLeave(res.data);
       } catch (error) {
         console.error("API Error:", error);
+      } finally {
       }
     };
 
     handleApi();
     handleSalaryStructure();
-    handleMonthlyLeave();
-  }, [token]);
-
-  const handleMonthlyLeave = async (
-    selectedMonth = month,
-    selectedYear = year
-  ) => {
-    try {
-      const responseLeave: AxiosRequestConfig = {
-        url: `${process.env.NEXT_PUBLIC_API_URL}/users/getMonthlyLeave`,
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        data: {
-          month: selectedMonth,
-          year: selectedYear,
-        },
-      };
-
-      const res = await axios.request(responseLeave);
-      setMonthlyLeave(res.data);
-    } catch (error) {
-      console.error("API Error:", error);
-    } finally {
-    }
-  };
-
-  useEffect(() => {
     handleMonthlyLeave(month, year);
-  }, [month, year]);
+  }, [token, month, year]);
 
   const months = [
     "January",
