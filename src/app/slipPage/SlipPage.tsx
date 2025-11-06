@@ -1,23 +1,67 @@
-import { FaPaperPlane } from "react-icons/fa";
-import CustomButton from "../components/CustomButton";
+"use client";
+import dynamic from "next/dynamic";
+import { useState } from "react";
+const PayslipPage = dynamic(() => import("../razorpayslip/page"), {
+  ssr: false,
+});
 
 export default function MyPayPage() {
-  return (
-    <div className="min-h-screen bg-[#0f172a] text-white flex flex-col md:flex-row">
-      <main className="flex-1 px-3 pb-6 space-y-4">
-        <h1 className="text-[28px] font-bold text-white">Pay Slips</h1>
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
 
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between space-y-4 md:space-y-0 md:space-x-4">
-          <div className="flex-1 flex flex-col gap-1.5 relative">
-            <label>Select financial year</label>
-            <select className="border border-gray-500 rounded px-2 py-1 w-full outline-none bg-gray-800 text-white appearance-none pr-8">
-              <option>2025 - 2026</option>
-              <option>2024 - 2025</option>
-              <option>2023 - 2024</option>
+  const currentDate = new Date();
+  const [month, setMonth] = useState(currentDate.getMonth() + 1);
+  const [year, setYear] = useState(currentDate.getFullYear());
+
+  const handleMonthlyLeave = (selectedMonth: number, selectedYear: number) => {
+    console.log("Fetch salary slip for:", selectedMonth, selectedYear);
+  };
+
+  const handleMonthChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newMonth = Number(e.target.value);
+    setMonth(newMonth);
+    handleMonthlyLeave(newMonth, year);
+  };
+
+  const handleYearInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newYear = Number(e.target.value);
+    setYear(newYear);
+    if (!isNaN(newYear)) handleMonthlyLeave(month, newYear);
+  };
+
+  return (
+    <div className="min-h-screen bg-[#0f172a] text-white w-full">
+      <h1 className="text-[28px] font-bold text-white">Pay Slips</h1>
+      <div className="flex gap-3 items-center flex-wrap">
+        <h2 className="text-lg font-semibold">Select Month and Year -</h2>
+        <div className="flex gap-3">
+          <div className="w-full relative">
+            <select
+              value={month}
+              onChange={handleMonthChange}
+              className="w-full text-white border border-gray-500 p-2 rounded bg-gray-800 appearance-none pr-8"
+            >
+              {months.map((m, i) => (
+                <option key={i} value={i + 1}>
+                  {m}
+                </option>
+              ))}
             </select>
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="absolute right-2 bottom-0 -translate-y-1/2 w-4 h-4 text-white pointer-events-none"
+              className="absolute right-2 top-[50%] -translate-y-1/2 w-4 h-4 text-white pointer-events-none"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -30,55 +74,31 @@ export default function MyPayPage() {
               />
             </svg>
           </div>
-
-          <button className="flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded">
+          <div className="w-full relative">
+            <input
+              type="number"
+              value={year}
+              onChange={handleYearInputChange}
+              className="w-full text-white border border-gray-500 p-2 rounded bg-gray-800 appearance-none pr-8"
+            />
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
+              className="absolute right-2 top-[50%] -translate-y-1/2 w-4 h-4 text-white pointer-events-none"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
+              strokeWidth="2"
             >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4"
+                d="M19 9l-7 7-7-7"
               />
             </svg>
-            <span>Download Payslips</span>
-          </button>
-        </div>
-
-        <p className="text-gray-300">
-          Oops, looks like we have not processed a payroll for you.
-        </p>
-
-        <CustomButton
-          text="Return to dashboard"
-          onClick={() => false}
-          color="bg-blue-600 hover:bg-blue-900"
-        />
-      </main>
-
-      <aside className="hidden lg:block w-72 p-6 space-y-4 border-l border-gray-700 bg-[#0f172a]">
-        <div className="border border-gray-600 p-4 rounded relative">
-          <span className="block text-lg font-semibold">Form 16</span>
-          <p className="text-sm text-gray-400">View / download your Form 16</p>
-          <div className="absolute top-2 right-2 text-blue-500">
-            <FaPaperPlane className="text-blue-500 text-sm" />
           </div>
         </div>
-        <div className="border border-gray-600 p-4 rounded relative">
-          <span className="block text-lg font-semibold">Salary Advance</span>
-          <p className="text-sm text-gray-400">
-            View or request an salary advance
-          </p>
-          <div className="absolute top-2 right-2 text-blue-500">
-            <FaPaperPlane className="text-blue-500 text-sm" />
-          </div>
-        </div>
-      </aside>
+      </div>
+      <PayslipPage month={month} year={year} />
     </div>
   );
 }

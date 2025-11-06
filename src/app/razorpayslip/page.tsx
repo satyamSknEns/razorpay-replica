@@ -33,21 +33,18 @@ interface profile {
     joiningDate?: any;
   };
 }
+interface PayslipDocumentProps {
+  month: number;
+  year: number;
+}
 
-const PayslipDocument = () => {
+const PayslipDocument: React.FC<PayslipDocumentProps> = ({ month, year }) => {
+  const cookies = useCookies();
+  const token = cookies.get("token");
   const [data, setData] = useState<profile>({});
-  const [token, setToken] = useState<string | null>(null);
   const [userDegignation, setUserDegignation] = useState();
   const [salaryData, setSalaryData] = useState<any>({});
-  const cookies = useCookies();
-
-  useEffect(() => {
-    const handleGetcookies = async () => {
-      const storeCookies = cookies.get("token");
-      setToken(storeCookies ?? null);
-    };
-    handleGetcookies();
-  }, []);
+  const [monthlyLeave, setMonthlyLeave] = useState<any>({});
 
   useEffect(() => {
     if (!token) return;
@@ -80,7 +77,10 @@ const PayslipDocument = () => {
       }
     };
 
-    const handleSalaryStructure = async () => {
+    const handleSalaryStructure = async (
+      selectedMonth = month,
+      selectedYear = year
+    ) => {
       try {
         const config: AxiosRequestConfig = {
           url: `${process.env.NEXT_PUBLIC_API_URL}/users/getSalaryStructureByUserId`,
@@ -89,7 +89,10 @@ const PayslipDocument = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          data: {},
+          data: {
+            month: selectedMonth,
+            year: selectedYear,
+          },
         };
         const res = await axios.request(config);
         setSalaryData(res.data);
@@ -98,11 +101,51 @@ const PayslipDocument = () => {
       }
     };
 
+    const handleMonthlyLeave = async (
+      selectedMonth = month,
+      selectedYear = year
+    ) => {
+      try {
+        const responseLeave: AxiosRequestConfig = {
+          url: `${process.env.NEXT_PUBLIC_API_URL}/users/getMonthlyLeave`,
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          data: {
+            month: selectedMonth,
+            year: selectedYear,
+          },
+        };
+
+        const res = await axios.request(responseLeave);
+        setMonthlyLeave(res.data);
+      } catch (error) {
+        console.error("API Error:", error);
+      } finally {
+      }
+    };
+
     handleApi();
     handleSalaryStructure();
-  }, [token]);
+    handleMonthlyLeave(month, year);
+  }, [token, month, year]);
 
-  console.log("data::", salaryData);
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
 
   return (
     <Document>
@@ -168,13 +211,14 @@ const PayslipDocument = () => {
               flexDirection: "row",
             }}
           >
-            <Text>Payslip : </Text>
-            <Text>
-              {new Date().toLocaleString("default", {
-                month: "long",
-                year: "numeric",
-              })}
-            </Text>
+            <View>
+              <Text>
+                Payslip :
+                <Text>
+                  {months[month - 1]} {year}
+                </Text>
+              </Text>
+            </View>
           </View>
         </View>
 
@@ -204,7 +248,7 @@ const PayslipDocument = () => {
                 fontWeight: "semibold",
               }}
             >
-              {salaryData.netSalary || "NA"}
+              {salaryData.netSalary || "00"}
             </Text>
           </View>
           <View style={{ margin: "0 12px" }}>
@@ -235,7 +279,7 @@ const PayslipDocument = () => {
                 fontSize: "11px",
               }}
             >
-              + {salaryData.grossSalary || "NA"}
+              + {salaryData.grossSalary || "00"}
             </Text>
           </View>
           <View
@@ -262,105 +306,156 @@ const PayslipDocument = () => {
                 fontSize: "11px",
               }}
             >
-              - {salaryData.totalDeductions || "NA"}
+              - {salaryData.totalDeductions || "00"}
             </Text>
           </View>
         </View>
 
-        <View style={{ padding: "10px 0", fontSize: "10px" }}>
+        <View
+          style={{
+            padding: "14px 0",
+            fontSize: "10px",
+            borderTop: "2px solid #e2cbae",
+            marginTop: "8px",
+          }}
+        >
           <View
             style={{
               display: "flex",
               flexDirection: "row",
-              marginBottom: "2px",
-              border: "1px solid #a4a4a5",
-              padding: "6px",
-              borderRadius: "2px",
+              width: "100%",
+              justifyContent: "space-between",
+              marginBottom: "6px",
             }}
           >
-            <Text style={{ fontWeight: "semibold" }}>Employee Code : </Text>
-            <Text> ENS-0{data?.profile?.id || "NA"}</Text>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                marginBottom: "2px",
+                border: "1px solid #a4a4a5",
+                padding: "6px",
+                borderRadius: "2px",
+                width: "49%",
+              }}
+            >
+              <Text style={{ fontWeight: "semibold" }}>Employee Code : </Text>
+              <Text> ENS-{data?.profile?.id || "NA"}</Text>
+            </View>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                marginBottom: "2px",
+                border: "1px solid #a4a4a5",
+                padding: "6px",
+                borderRadius: "2px",
+                width: "49%",
+              }}
+            >
+              <Text style={{ fontWeight: "semibold" }}>Name : </Text>
+              <Text style={{ textDecorationStyle: "capitalize" }}>
+                {data?.profile?.name
+                  ? data.profile.name
+                      .toLowerCase()
+                      .split(" ")
+                      .map(
+                        (word) => word.charAt(0).toUpperCase() + word.slice(1)
+                      )
+                      .join(" ")
+                  : "NA"}
+              </Text>
+            </View>
           </View>
           <View
             style={{
               display: "flex",
               flexDirection: "row",
-              marginBottom: "2px",
-              border: "1px solid #a4a4a5",
-              padding: "6px",
-              borderRadius: "2px",
+              width: "100%",
+              justifyContent: "space-between",
+              marginBottom: "6px",
             }}
           >
-            <Text style={{ fontWeight: "semibold" }}>Name : </Text>
-            <Text style={{ textDecorationStyle: "capitalize" }}>
-              {data?.profile?.name
-                ? data.profile.name
-                    .toLowerCase()
-                    .split(" ")
-                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                    .join(" ")
-                : "NA"}
-            </Text>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                marginBottom: "2px",
+                border: "1px solid #a4a4a5",
+                padding: "6px",
+                borderRadius: "2px",
+                width: "49%",
+              }}
+            >
+              <Text style={{ fontWeight: "semibold" }}>Email : </Text>
+              <Text> {data?.profile?.email || "NA"}</Text>
+            </View>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                marginBottom: "2px",
+                border: "1px solid #a4a4a5",
+                padding: "6px",
+                borderRadius: "2px",
+                width: "49%",
+              }}
+            >
+              <Text style={{ fontWeight: "semibold" }}>Designation : </Text>
+              <Text>{userDegignation || "NA"}</Text>
+            </View>
           </View>
           <View
             style={{
               display: "flex",
               flexDirection: "row",
-              marginBottom: "2px",
-              border: "1px solid #a4a4a5",
-              padding: "6px",
-              borderRadius: "2px",
+              width: "100%",
+              justifyContent: "space-between",
             }}
           >
-            <Text style={{ fontWeight: "semibold" }}>Email : </Text>
-            <Text> {data?.profile?.email || "NA"}</Text>
-          </View>
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              marginBottom: "2px",
-              border: "1px solid #a4a4a5",
-              padding: "6px",
-              borderRadius: "2px",
-            }}
-          >
-            <Text style={{ fontWeight: "semibold" }}>Designation : </Text>
-            <Text>{userDegignation || "NA"}</Text>
-          </View>
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              marginBottom: "2px",
-              border: "1px solid #a4a4a5",
-              padding: "6px",
-              borderRadius: "2px",
-            }}
-          >
-            <Text style={{ fontWeight: "semibold" }}>Department : </Text>
-            <Text>{data?.profile?.department || "NA"}</Text>
-          </View>
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              marginBottom: "2px",
-              border: "1px solid #a4a4a5",
-              padding: "6px",
-              borderRadius: "2px",
-            }}
-          >
-            <Text style={{ fontWeight: "semibold" }}>Date of Joining : </Text>
-            <Text>
-              {data?.profile?.joiningDate
-                ? new Date(data.profile.joiningDate).toLocaleDateString("en-GB")
-                : "NA"}
-            </Text>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                marginBottom: "2px",
+                border: "1px solid #a4a4a5",
+                padding: "6px",
+                borderRadius: "2px",
+                width: "49%",
+              }}
+            >
+              <Text style={{ fontWeight: "semibold" }}>Department : </Text>
+              <Text>{data?.profile?.department || "NA"}</Text>
+            </View>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                marginBottom: "2px",
+                border: "1px solid #a4a4a5",
+                padding: "6px",
+                borderRadius: "2px",
+                width: "49%",
+              }}
+            >
+              <Text style={{ fontWeight: "semibold" }}>Date of Joining : </Text>
+              <Text>
+                {data?.profile?.joiningDate
+                  ? new Date(data?.profile?.joiningDate).toLocaleDateString(
+                      "en-GB"
+                    )
+                  : "NA"}
+              </Text>
+            </View>
           </View>
         </View>
 
-        <View style={{ padding: "10px 0" }}>
+        <View
+          style={{
+            padding: "14px 0",
+            borderTop: "2px solid #e2cbae",
+          }}
+        >
           <View
             style={{
               display: "flex",
@@ -446,7 +541,7 @@ const PayslipDocument = () => {
             >
               <Text style={{ flex: 2, textAlign: "left" }}>Basic Salary</Text>
               <Text style={{ flex: 1, textAlign: "right" }}>
-                {salaryData?.basicSalary || "NA"}
+                {salaryData?.basicSalary || "00"}
               </Text>
             </View>
             <View
@@ -459,7 +554,7 @@ const PayslipDocument = () => {
             >
               <Text style={{ flex: 2, textAlign: "left" }}>HRA</Text>
               <Text style={{ flex: 1, textAlign: "right" }}>
-                {salaryData?.hra || "NA"}
+                {salaryData?.hra || "00"}
               </Text>
             </View>
             <View
@@ -472,7 +567,7 @@ const PayslipDocument = () => {
             >
               <Text style={{ flex: 2, textAlign: "left" }}>DA</Text>
               <Text style={{ flex: 1, textAlign: "right" }}>
-                {salaryData?.da || "NA"}
+                {salaryData?.da || "00"}
               </Text>
             </View>
             <View
@@ -487,7 +582,7 @@ const PayslipDocument = () => {
                 Special Allowance
               </Text>
               <Text style={{ flex: 1, textAlign: "right" }}>
-                {salaryData?.specialAllowance || "NA"}
+                {salaryData?.specialAllowance || "00"}
               </Text>
             </View>
             <View
@@ -502,7 +597,7 @@ const PayslipDocument = () => {
                 Conveyance Allowance
               </Text>
               <Text style={{ flex: 1, textAlign: "right" }}>
-                {salaryData?.conveyanceAllowance || "NA"}
+                {salaryData?.conveyanceAllowance || "00"}
               </Text>
             </View>
             <View
@@ -517,7 +612,7 @@ const PayslipDocument = () => {
                 Medical Allowance
               </Text>
               <Text style={{ flex: 1, textAlign: "right" }}>
-                {salaryData?.medicalAllowance || "NA"}
+                {salaryData?.medicalAllowance || "00"}
               </Text>
             </View>
             <View
@@ -530,7 +625,7 @@ const PayslipDocument = () => {
             >
               <Text style={{ flex: 2, textAlign: "left" }}>Bonus</Text>
               <Text style={{ flex: 1, textAlign: "right" }}>
-                {salaryData?.bonus || "NA"}
+                {salaryData?.bonus || "00"}
               </Text>
             </View>
             <View
@@ -544,7 +639,7 @@ const PayslipDocument = () => {
             >
               <Text style={{ flex: 2, textAlign: "left" }}>OverTime</Text>
               <Text style={{ flex: 1, textAlign: "right" }}>
-                {salaryData?.overtimePay || "NA"}
+                {salaryData?.overtimePay || "00"}
               </Text>
             </View>
             <View
@@ -558,7 +653,7 @@ const PayslipDocument = () => {
             >
               <Text style={{ flex: 2, textAlign: "left" }}>Gross Salary</Text>
               <Text style={{ flex: 1, textAlign: "right" }}>
-                {salaryData?.grossSalary || "NA"}
+                {salaryData?.grossSalary || "00"}
               </Text>
             </View>
             <View
@@ -574,7 +669,7 @@ const PayslipDocument = () => {
                 Net Take Home Pay
               </Text>
               <Text style={{ flex: 1, textAlign: "right" }}>
-                {salaryData?.netSalary || "NA"}
+                {salaryData?.netSalary || "00"}
               </Text>
             </View>
           </View>
@@ -666,7 +761,7 @@ const PayslipDocument = () => {
               <Text style={{ flex: 2, textAlign: "left" }}>PF Employee</Text>
 
               <Text style={{ flex: 1, textAlign: "right" }}>
-                {salaryData?.pfEmployee}
+                {salaryData?.pfEmployee || "00"}
               </Text>
             </View>
             <View
@@ -680,7 +775,7 @@ const PayslipDocument = () => {
               <Text style={{ flex: 2, textAlign: "left" }}>ESI Employee</Text>
 
               <Text style={{ flex: 1, textAlign: "right" }}>
-                {salaryData?.esiEmployee}
+                {salaryData?.esiEmployee || "00"}
               </Text>
             </View>
             <View
@@ -694,7 +789,7 @@ const PayslipDocument = () => {
               <Text style={{ flex: 2, textAlign: "left" }}>TDS</Text>
 
               <Text style={{ flex: 1, textAlign: "right" }}>
-                {salaryData?.tds}
+                {salaryData?.tds || "00"}
               </Text>
             </View>
             <View
@@ -710,7 +805,7 @@ const PayslipDocument = () => {
               </Text>
 
               <Text style={{ flex: 1, textAlign: "right" }}>
-                {salaryData?.professionalTax || "NA"}
+                {salaryData?.professionalTax || "00"}
               </Text>
             </View>
             <View
@@ -724,7 +819,23 @@ const PayslipDocument = () => {
               <Text style={{ flex: 2, textAlign: "left" }}>Loan Deduction</Text>
 
               <Text style={{ flex: 1, textAlign: "right" }}>
-                {salaryData?.loanDeduction || "NA"}
+                {salaryData?.loanDeduction || "00"}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                paddingVertical: 6,
+                paddingHorizontal: 8,
+                width: "100%",
+              }}
+            >
+              <Text style={{ flex: 2, textAlign: "left" }}>
+                Other Deductions
+              </Text>
+
+              <Text style={{ flex: 1, textAlign: "right" }}>
+                {salaryData?.otherDeductions || "00"}
               </Text>
             </View>
             <View
@@ -736,12 +847,10 @@ const PayslipDocument = () => {
                 borderBottom: "2px solid #e4bfbf",
               }}
             >
-              <Text style={{ flex: 2, textAlign: "left" }}>
-                Other Deductions
-              </Text>
+              <Text style={{ flex: 2, textAlign: "left" }}>Loss of Pay</Text>
 
               <Text style={{ flex: 1, textAlign: "right" }}>
-                {salaryData?.otherDeductions}
+                {salaryData?.basicRemovingLOP || "00"}
               </Text>
             </View>
             <View
@@ -758,7 +867,7 @@ const PayslipDocument = () => {
               </Text>
 
               <Text style={{ flex: 1, textAlign: "right" }}>
-                {salaryData?.totalDeductions}
+                {salaryData?.totalDeductions || "00"}
               </Text>
             </View>
           </View>
@@ -768,7 +877,7 @@ const PayslipDocument = () => {
           style={{
             fontSize: "10px",
             padding: "12px",
-            marginTop: "16px",
+            margin: "20px 0 10px 0",
             border: "2px solid #a6a7ab",
             borderRadius: "4px",
           }}
@@ -789,41 +898,40 @@ const PayslipDocument = () => {
               style={{
                 display: "flex",
                 flexDirection: "row",
-                margin: "4px 0",
+                marginBottom: "4px",
+                border: "1px solid #a4a4a5",
+                padding: "6px",
+                borderRadius: "2px",
               }}
             >
               <Text>Present Days : </Text>
-              <Text> 31 days</Text>
+              <Text>{monthlyLeave?.monthlyLeave || 0} days</Text>
             </View>
             <View
               style={{
                 display: "flex",
                 flexDirection: "row",
-                margin: "4px 0",
+                marginBottom: "4px",
+                border: "1px solid #a4a4a5",
+                padding: "6px",
+                borderRadius: "2px",
               }}
             >
               <Text>Total Days : </Text>
-              <Text>31 days</Text>
+              <Text>{monthlyLeave?.totalDaysInMonth || "0"} days</Text>
             </View>
             <View
               style={{
                 display: "flex",
                 flexDirection: "row",
-                margin: "4px 0",
+                marginBottom: "2px",
+                border: "1px solid #a4a4a5",
+                padding: "6px",
+                borderRadius: "2px",
               }}
             >
               <Text>Absent Days : </Text>
-              <Text> 00 days</Text>
-            </View>
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                margin: "4px 0",
-              }}
-            >
-              <Text>Overtime Hours : </Text>
-              <Text>NA</Text>
+              <Text>{monthlyLeave?.totalLeaveDays || "0 days"}</Text>
             </View>
           </View>
         </View>
@@ -1575,8 +1683,8 @@ const PayslipDocument = () => {
   );
 };
 
-const PayslipPage = () => {
-  const docRef = useRef(<PayslipDocument />);
+const PayslipPage: React.FC<PayslipDocumentProps> = ({ month, year }) => {
+  const docRef = useRef(<PayslipDocument month={month} year={year} />);
 
   const handleDownload = async () => {
     const blob = await pdf(docRef.current).toBlob();
@@ -1634,7 +1742,7 @@ const PayslipPage = () => {
     <div className="p-6">
       <div className="mb-6" style={{ height: "800px" }}>
         <PDFViewer width="100%" height="100%">
-          <PayslipDocument />
+          <PayslipDocument month={month} year={year} />
         </PDFViewer>
       </div>
 
