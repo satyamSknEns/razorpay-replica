@@ -905,7 +905,7 @@ const PayslipDocument: React.FC<PayslipDocumentProps> = ({ month, year }) => {
               }}
             >
               <Text>Present Days : </Text>
-              <Text>{monthlyLeave?.monthlyLeave || "30 days"}</Text>
+              <Text>{monthlyLeave?.monthlyLeave || 0} days</Text>
             </View>
             <View
               style={{
