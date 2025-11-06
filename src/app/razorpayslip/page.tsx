@@ -311,102 +311,151 @@ const PayslipDocument: React.FC<PayslipDocumentProps> = ({ month, year }) => {
           </View>
         </View>
 
-        <View style={{ padding: "10px 0", fontSize: "10px" }}>
+        <View
+          style={{
+            padding: "14px 0",
+            fontSize: "10px",
+            borderTop: "2px solid #e2cbae",
+            marginTop: "8px",
+          }}
+        >
           <View
             style={{
               display: "flex",
               flexDirection: "row",
-              marginBottom: "2px",
-              border: "1px solid #a4a4a5",
-              padding: "6px",
-              borderRadius: "2px",
+              width: "100%",
+              justifyContent: "space-between",
+              marginBottom: "6px",
             }}
           >
-            <Text style={{ fontWeight: "semibold" }}>Employee Code : </Text>
-            <Text> ENS-{data?.profile?.id || "NA"}</Text>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                marginBottom: "2px",
+                border: "1px solid #a4a4a5",
+                padding: "6px",
+                borderRadius: "2px",
+                width: "49%",
+              }}
+            >
+              <Text style={{ fontWeight: "semibold" }}>Employee Code : </Text>
+              <Text> ENS-{data?.profile?.id || "NA"}</Text>
+            </View>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                marginBottom: "2px",
+                border: "1px solid #a4a4a5",
+                padding: "6px",
+                borderRadius: "2px",
+                width: "49%",
+              }}
+            >
+              <Text style={{ fontWeight: "semibold" }}>Name : </Text>
+              <Text style={{ textDecorationStyle: "capitalize" }}>
+                {data?.profile?.name
+                  ? data.profile.name
+                      .toLowerCase()
+                      .split(" ")
+                      .map(
+                        (word) => word.charAt(0).toUpperCase() + word.slice(1)
+                      )
+                      .join(" ")
+                  : "NA"}
+              </Text>
+            </View>
           </View>
           <View
             style={{
               display: "flex",
               flexDirection: "row",
-              marginBottom: "2px",
-              border: "1px solid #a4a4a5",
-              padding: "6px",
-              borderRadius: "2px",
+              width: "100%",
+              justifyContent: "space-between",
+              marginBottom: "6px",
             }}
           >
-            <Text style={{ fontWeight: "semibold" }}>Name : </Text>
-            <Text style={{ textDecorationStyle: "capitalize" }}>
-              {data?.profile?.name
-                ? data.profile.name
-                    .toLowerCase()
-                    .split(" ")
-                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                    .join(" ")
-                : "NA"}
-            </Text>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                marginBottom: "2px",
+                border: "1px solid #a4a4a5",
+                padding: "6px",
+                borderRadius: "2px",
+                width: "49%",
+              }}
+            >
+              <Text style={{ fontWeight: "semibold" }}>Email : </Text>
+              <Text> {data?.profile?.email || "NA"}</Text>
+            </View>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                marginBottom: "2px",
+                border: "1px solid #a4a4a5",
+                padding: "6px",
+                borderRadius: "2px",
+                width: "49%",
+              }}
+            >
+              <Text style={{ fontWeight: "semibold" }}>Designation : </Text>
+              <Text>{userDegignation || "NA"}</Text>
+            </View>
           </View>
           <View
             style={{
               display: "flex",
               flexDirection: "row",
-              marginBottom: "2px",
-              border: "1px solid #a4a4a5",
-              padding: "6px",
-              borderRadius: "2px",
+              width: "100%",
+              justifyContent: "space-between",
             }}
           >
-            <Text style={{ fontWeight: "semibold" }}>Email : </Text>
-            <Text> {data?.profile?.email || "NA"}</Text>
-          </View>
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              marginBottom: "2px",
-              border: "1px solid #a4a4a5",
-              padding: "6px",
-              borderRadius: "2px",
-            }}
-          >
-            <Text style={{ fontWeight: "semibold" }}>Designation : </Text>
-            <Text>{userDegignation || "NA"}</Text>
-          </View>
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              marginBottom: "2px",
-              border: "1px solid #a4a4a5",
-              padding: "6px",
-              borderRadius: "2px",
-            }}
-          >
-            <Text style={{ fontWeight: "semibold" }}>Department : </Text>
-            <Text>{data?.profile?.department || "NA"}</Text>
-          </View>
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              marginBottom: "2px",
-              border: "1px solid #a4a4a5",
-              padding: "6px",
-              borderRadius: "2px",
-            }}
-          >
-            <Text style={{ fontWeight: "semibold" }}>Date of Joining : </Text>
-            <Text>
-              {data?.profile?.joiningDate
-                ? new Date(data?.profile?.joiningDate).toLocaleDateString(
-                    "en-GB"
-                  )
-                : "NA"}
-            </Text>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                marginBottom: "2px",
+                border: "1px solid #a4a4a5",
+                padding: "6px",
+                borderRadius: "2px",
+                width: "49%",
+              }}
+            >
+              <Text style={{ fontWeight: "semibold" }}>Department : </Text>
+              <Text>{data?.profile?.department || "NA"}</Text>
+            </View>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                marginBottom: "2px",
+                border: "1px solid #a4a4a5",
+                padding: "6px",
+                borderRadius: "2px",
+                width: "49%",
+              }}
+            >
+              <Text style={{ fontWeight: "semibold" }}>Date of Joining : </Text>
+              <Text>
+                {data?.profile?.joiningDate
+                  ? new Date(data?.profile?.joiningDate).toLocaleDateString(
+                      "en-GB"
+                    )
+                  : "NA"}
+              </Text>
+            </View>
           </View>
         </View>
 
-        <View style={{ padding: "10px 0" }}>
+        <View
+          style={{
+            padding: "14px 0",
+            borderTop: "2px solid #e2cbae",
+          }}
+        >
           <View
             style={{
               display: "flex",
@@ -788,6 +837,21 @@ const PayslipDocument: React.FC<PayslipDocumentProps> = ({ month, year }) => {
 
               <Text style={{ flex: 1, textAlign: "right" }}>
                 {salaryData?.otherDeductions || "00"}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                paddingVertical: 6,
+                paddingHorizontal: 8,
+                width: "100%",
+                borderBottom: "2px solid #e4bfbf",
+              }}
+            >
+              <Text style={{ flex: 2, textAlign: "left" }}>Loss of Pay</Text>
+
+              <Text style={{ flex: 1, textAlign: "right" }}>
+                {salaryData?.basicRemovingLOP || "00"}
               </Text>
             </View>
             <View
