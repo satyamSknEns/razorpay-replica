@@ -877,7 +877,7 @@ const PayslipDocument: React.FC<PayslipDocumentProps> = ({ month, year }) => {
           style={{
             fontSize: "10px",
             padding: "12px",
-            margin: "16px 0 10px 0",
+            margin: "20px 0 10px 0",
             border: "2px solid #a6a7ab",
             borderRadius: "4px",
           }}
