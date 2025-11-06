@@ -1,5 +1,9 @@
-import PayslipPage from "../razorpayslip/page";
+"use client";
+import dynamic from "next/dynamic";
 import { useState } from "react";
+const PayslipPage = dynamic(() => import("../razorpayslip/page"), {
+  ssr: false,
+});
 
 export default function MyPayPage() {
   const months = [
