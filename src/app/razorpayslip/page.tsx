@@ -828,7 +828,6 @@ const PayslipDocument: React.FC<PayslipDocumentProps> = ({ month, year }) => {
                 paddingVertical: 6,
                 paddingHorizontal: 8,
                 width: "100%",
-                borderBottom: "2px solid #e4bfbf",
               }}
             >
               <Text style={{ flex: 2, textAlign: "left" }}>
